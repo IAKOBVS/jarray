@@ -7,7 +7,7 @@
 
 #define MIN_SIZE 8
 
-int jarrAdd(jarr *dest, int src)
+int jarrAdd(Jarr *dest, int src)
 {
 	/* *dest->size must be initialized with 0 if empty */
 	if (!dest->size) {
@@ -28,7 +28,7 @@ ERR:
 	return 0;
 }
 
-int isJarr(jarr *structPtr)
+int isJarr(Jarr *structPtr)
 {
 	if (!*((unsigned char *)&*structPtr))
 		return 0;

@@ -3,15 +3,15 @@
 
 #define newJarr(_NAME_OF_ARRAY, _TYPE_OF_ARRAY) jarr _NAME_OF_ARRAY = {.size = 0, .len = 0, .type = _TYPE_OF_ARRAY}
 
-typedef struct jarr {
+typedef struct Jarr {
 	int size;
 	int len;
 	int type;
 	int *itemInt;
 	float *itemFl;
 	double *itemDbl;
-} jarr;
+} Jarr;
 
-int addToJarr(jarr *dest, int src);
+int addToJarr(Jarr *dest, int src);
 
 #endif
