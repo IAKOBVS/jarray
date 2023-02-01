@@ -10,15 +10,17 @@
 int jarrCatInt(Jarr *dest, ...)
 {
 	/* *dest->size must be initialized with 0 if empty */
+	int argNum=0;
 	va_list ap;
 	va_start(ap, dest);
 	for (;;) {
-		int argvStr = va_arg(ap, int);
-		if (!argvStr)
+		char *argvStr = va_arg(ap, char*);
+		if (argvStr[0] == 'Z')
 			break;
-		++dest->len;
+		++argNum;
 	}
 	va_end(ap);
+	dest->len+= argNum;
 	if (!dest->size) {
 		int *tmp = dest->itemInt;
 		dest->size
@@ -34,12 +36,10 @@ int jarrCatInt(Jarr *dest, ...)
 			goto ERR;
 	}
 	va_start(ap, dest);
-	for (;;) {
+	do {
 		int argvStr = va_arg(ap, int);
-		if (!argvStr)
-			break;
 		dest->itemInt = &argvStr;
-	}
+	} while (argNum--);
 	va_end(ap);
 	return dest->size;
 ERR:
