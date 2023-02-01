@@ -7,7 +7,7 @@
 
 #define MIN_SIZE 8
 
-int jarrCatInt(Jarr *dest, ...)
+int jarr_cat_int(Jarr *dest, ...)
 {
 	/* *dest->size must be initialized with 0 if empty */
 	int argNum=0;
