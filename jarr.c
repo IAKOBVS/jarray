@@ -12,13 +12,11 @@ int addToJarr(jarr *dest, int src)
 	/* *dest->size must be initialized with 0 if empty */
 	if (!dest->size) {
 		dest->size = MIN_SIZE;
-		if (!(dest->itemInt =
-		malloc(dest->size)))
+		if (!(dest->itemInt = malloc(dest->size)))
 			goto ERR;
 	} else if (dest->size < 2 * (dest->len + 1)) {
 		dest->size *= 2;
-		if (!(dest->itemInt =
-		realloc(dest->itemInt, dest->size * sizeof src)))
+		if (!(dest->itemInt = realloc(dest->itemInt, dest->size * sizeof src)))
 			goto ERR;
 	}
 	(dest->itemInt)[dest->len] = src;
