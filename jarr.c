@@ -7,7 +7,7 @@
 
 #define MIN_SIZE 8
 
-int addToJarr(jarr *dest, int src)
+int jarrAdd(jarr *dest, int src)
 {
 	/* *dest->size must be initialized with 0 if empty */
 	if (!dest->size) {
