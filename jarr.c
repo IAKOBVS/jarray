@@ -43,11 +43,11 @@ int jarr_cat_int(Jarr *dest, ...)
 	va_end(ap);
 	return dest->size;
 ERR:
-	perror("int jarrCatInt(jarr *dest, jarr *src): ");
+	perror("int jarr_cat_int(jarr *dest, jarr *src): ");
 	return 0;
 }
 
-int jarrAddInt(Jarr *dest, int src)
+int jarraddint(Jarr *dest, int src)
 {
 	/* *dest->size must be initialized with 0 if empty */
 	if (!dest->size) {
@@ -68,7 +68,7 @@ ERR:
 	return 0;
 }
 
-int isJarr(Jarr *structPtr)
+int isjarr(Jarr *structPtr)
 {
 	if (!*((unsigned char *)&*structPtr))
 		return 0;
