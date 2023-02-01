@@ -35,6 +35,7 @@ int jarr_cat_int(Jarr *dest, ...)
 	} while (argNum--);
 	va_end(ap);
 	return dest->size;
+
 ERR:
 	perror("int jarr_cat_int(jarr *dest, jarr *src): ");
 	return 0;
