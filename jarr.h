@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#define newJarr(_NAME_OF_ARRAY, _TYPE_OF_ARRAY) Jarr _NAME_OF_ARRAY = {.size = 0, .len = 0, .type = _TYPE_OF_ARRAY}
+#define newjarr(_NAME_OF_ARRAY, _TYPE_OF_ARRAY) Jarr _NAME_OF_ARRAY = {.size = 0, .len = 0, .type = _TYPE_OF_ARRAY}
 #define jarrcatint(STR, ...) jarr_cat_int(STR, __VA_ARGS__, "")
 
 typedef struct Jarr {
