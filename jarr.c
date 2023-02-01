@@ -5,11 +5,13 @@
 
 #include "jarr.h"
 
+#define MIN_SIZE 8
+
 int addToJarr(jarr *dest, int src)
 {
 	/* *dest->size must be initialized with 0 if empty */
 	if (!dest->size) {
-		dest->size = 8;
+		dest->size = MIN_SIZE;
 		if (!(dest->itemInt = malloc(dest->size)))
 			goto ERR;
 	} else if (dest->size < 2 * (dest->len + 1)) {
