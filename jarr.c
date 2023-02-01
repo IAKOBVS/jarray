@@ -16,10 +16,8 @@ int addToJarr(jarr *dest, int src)
 			goto ERR;
 	} else if (dest->size < 2 * (dest->len + 1)) {
 		dest->size *= 2;
-		int *tmp = dest->itemInt;
 		if (!(dest->itemInt = realloc(dest->itemInt, dest->size * sizeof src)))
 			goto ERR;
-		memcpy(dest->itemInt, tmp, dest->len);
 	}
 	(dest->itemInt)[dest->len] = src;
 	dest->len += 1;
