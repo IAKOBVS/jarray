@@ -24,9 +24,9 @@ int jarr_cat_int(Jarr *dest, ...)
 	if (!dest->size) {
 		int *tmp = dest->itemInt;
 		dest->size
-			= (MIN_SIZE > 2 * dest->len)
-			? MIN_SIZE
-			: (2 * dest->len);
+		= (MIN_SIZE > 2 * dest->len)
+		? MIN_SIZE
+		: (2 * dest->len);
 		if (!(dest->itemInt = malloc(dest->size * sizeof(int))))
 			goto ERR;
 		memcpy(dest->itemInt, tmp, dest->len * sizeof(int));
