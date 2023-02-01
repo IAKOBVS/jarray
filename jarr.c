@@ -9,7 +9,6 @@
 
 int jarr_cat_int(Jarr *dest, ...)
 {
-	/* *dest->size must be initialized with 0 if empty */
 	int argNum=0;
 	va_list ap;
 	va_start(ap, dest);
@@ -21,18 +20,12 @@ int jarr_cat_int(Jarr *dest, ...)
 	}
 	va_end(ap);
 	dest->len+= argNum;
-	if (!dest->size) {
-		int *tmp = dest->itemInt;
-		dest->size
-		= (MIN_SIZE > 2 * dest->len)
-		? MIN_SIZE
-		: (2 * dest->len);
-		if (!(dest->itemInt = malloc(dest->size * sizeof(int))))
-			goto ERR;
-		memcpy(dest->itemInt, tmp, dest->len * sizeof(int));
-	} else if (dest->size < 2 * dest->len) {
-		dest->size *= 2;
-		if (!(dest->itemInt = realloc(dest->itemInt, dest->size)))
+	if (dest->size < 2 * dest->len) {
+		if (!(dest->itemInt = realloc(dest->itemInt,
+			sizeof(int)
+			* ((dest->size *= 2 > 2 * dest->len)
+			? dest->size
+			: 2 * dest->len))))
 			goto ERR;
 	}
 	va_start(ap, dest);
@@ -49,14 +42,13 @@ ERR:
 
 int jarraddint(Jarr *dest, int src)
 {
-	/* *dest->size must be initialized with 0 if empty */
-	if (!dest->size) {
-		dest->size = MIN_SIZE;
-		if (!(dest->itemInt = malloc(dest->size)))
-			goto ERR;
-	} else if (dest->size < 2 * (dest->len + 1)) {
+	if (dest->size < 2 * (dest->len + 1)) {
 		dest->size *= 2;
-		if (!(dest->itemInt = realloc(dest->itemInt, dest->size * sizeof src)))
+		if (!(dest->itemInt = realloc(dest->itemInt,
+			sizeof(int)
+			* ((dest->size *= 2 > 2 * dest->len)
+			? dest->size
+			: 2 * dest->len))))
 			goto ERR;
 	}
 	(dest->itemInt)[dest->len] = src;
