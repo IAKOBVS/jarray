@@ -12,12 +12,11 @@ int jarrCatInt(Jarr *dest, ...)
 	/* *dest->size must be initialized with 0 if empty */
 	va_list ap;
 	va_start(ap, dest);
-	int argNum=0;
 	for (;;) {
 		int argvStr = va_arg(ap, int);
 		if (!argvStr)
 			break;
-		++argNum;
+		++dest->len;
 	}
 	va_end(ap);
 	if (!dest->size) {
