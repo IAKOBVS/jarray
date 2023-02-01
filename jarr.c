@@ -9,10 +9,10 @@ int addToJarr(jarr *dest, int src)
 {
 	/* *dest->size must be initialized with 0 if empty */
 	if (!dest->size) {
-		dest->size = 2 * (dest->len + 1);
+		dest->size = 8;
 		if (!(dest->itemInt = malloc(dest->size)))
 			goto ERR;
-	} else if (dest->size < 2 * (dest->len)) {
+	} else if (dest->size < 2 * (dest->len + 1)) {
 		dest->size *= 2;
 		int *tmp = dest->itemInt;
 		if (!(dest->itemInt = realloc(dest->itemInt, dest->size * sizeof src)))
