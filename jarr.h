@@ -11,7 +11,7 @@
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
 	if (!(JARR.itemInt = malloc(JARR.size * sizeof (int)))) { \
 		perror(""); exit(EXIT_FAILURE); } \
-	_jarrJoin(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #define initJarr(JARR, JARR_TYPE) \
 	Jarr JARR; \
 	switch (JARR_TYPE) { \
@@ -25,7 +25,7 @@
 		JARR.typeSize = sizeof(int); \
 	}
 #define newJarr(JARR, JARR_TYPE, ...) \
-	initJarr(JARR_JARR_TYPE) \
+	initJarr(JARR, JARR_TYPE) \
 	ALLOC_JARR(JARR, JARR_TYPE, __VA_ARGS__)
 #define freeJarr(JARR) \
 	if (JARR.size) free(JARR.itemInt)
