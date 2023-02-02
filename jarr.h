@@ -30,7 +30,8 @@
 #define freeJarr(JARR) \
 	if (JARR.size) free(JARR.itemInt)
 #define jarrPr(JARR, INDEX) \
-	printf("arr is %d: \n	size is %zu\n		len is %zu\n", (JARR.itemInt)[INDEX], JARR.size, JARR.len)
+	for (int i; i<JARR.len; ++i) \
+		printf("%d\n", JARR.itemInt)
 
 typedef struct Jarr {
 	size_t size;
