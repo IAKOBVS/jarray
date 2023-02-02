@@ -2,7 +2,6 @@
 #define JARR_H_DEF
 
 #include <stdlib.h>
-#include <assert.h>
 
 #define PP_NARG(...) \
          PP_NARG_(__VA_ARGS__,PP_RSEQ_N())
@@ -45,6 +44,7 @@
 		perror(""); exit(EXIT_FAILURE); } \
 	_jarrJoin(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #define newJarr(JARR, JARR_TYPE, ...) \
+	Jarr JARR; \
 	switch (JARR_TYPE) { \
 	case 'f': \
 		JARR.typeSize = sizeof(float); \
@@ -55,9 +55,10 @@
 	default: \
 		JARR.typeSize = sizeof(int); \
 	} \
-	Jarr JARR = {.typeSize = JARR_TYPE}; \
 	ALLOC_JARR(JARR, JARR_TYPE, __VA_ARGS__)
 #define freeJarr(JARR) \
+	if (JARR.size) free(JARR.itemInt)
+#define initJarr(JARR) \
 	switch (JARR_TYPE) { \
 	case 'f': \
 		JARR.typeSize = sizeof(float); \
@@ -68,8 +69,8 @@
 	default: \
 		JARR.typeSize = sizeof(int); \
 	}
-#define jstrPr(JARR, INDEX) \
-	printf("arr is %d: \nsize is %zu\nlen is %zu\n", JARR.itemInt[INDEX], JARR.size, JARR.len)
+#define jarrPr(JARR, INDEX) \
+	printf("arr is %d: \n	size is %zu\n		len is %zu\n", (JARR.itemInt)[INDEX], JARR.size, JARR.len)
 
 typedef struct Jarr {
 	size_t size;
@@ -81,10 +82,11 @@ typedef struct Jarr {
 } Jarr;
 
 int _jarrJoinInt(Jarr *dest, int argc, ...);
-#define jarrJoinInt(JSTR) _jarrJoinInt(&JSTR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+#define jarrJoinInt(JARR, ...) _jarrJoinInt(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 int _jarrJoin(Jarr *dest, int argc, ...);
-#define jarrJoin(JSTR) _jarrJoin(&JSTR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-int _JarrAddInt(Jarr *dest, int src);
+#define jarrJoin(JARR, ...) _jarrJoin(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+int _jarrAdd(Jarr *dest, int src);
+#define jarrAdd(JARR, JARR_NUM) _jarrAdd(&JARR, JARR_NUM)
 int is_Jarr(Jarr *structPtr);
 
 #endif
