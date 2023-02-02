@@ -7,9 +7,9 @@
 
 #define MIN_SIZE 8
 
-#define GOTO_ERR_IF(STATE) \
+#define ERROR_IF(STATE) \
 	if (STATE) { \
-		goto ERR; \
+		goto ERROR; \
 	}
 
 int private_jarrJoinInt(Jarr *dest, ...)
@@ -26,7 +26,7 @@ int private_jarrJoinInt(Jarr *dest, ...)
 	va_end(ap);
 	dest->len+= argNum;
 	if (dest->size < 2 * dest->len) {
-		GOTO_ERR_IF(!(dest->itemInt
+		ERROR_IF(!(dest->itemInt
 			= realloc(dest->itemInt,
 			sizeof(int)
 			* (dest->size
@@ -41,7 +41,7 @@ int private_jarrJoinInt(Jarr *dest, ...)
 	va_end(ap);
 	return dest->size;
 
-ERR:
+ERROR:
 	perror("int jarr_cat_int(jarr *dest, jarr *src): ");
 	return 0;
 }
@@ -50,7 +50,7 @@ int private_jarrAddInt(Jarr *dest, int src)
 {
 	if (dest->size < 2 * (dest->len + 1)) {
 		dest->size *= 2;
-		GOTO_ERR_IF(!(dest->itemInt
+		ERROR_IF(!(dest->itemInt
 			= realloc(dest->itemInt,
 			sizeof(int)
 			* (dest->size
@@ -61,7 +61,7 @@ int private_jarrAddInt(Jarr *dest, int src)
 	dest->len += 1;
 	return dest->size;
 
-ERR:
+ERROR:
 	perror("int jarrAddInt(jarr *dest, jarr *src): ");
 	return 0;
 }
