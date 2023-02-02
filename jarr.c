@@ -16,6 +16,7 @@
 	!(dest->item = realloc(dest->item, dest->typeSize * (GET_SIZE(dest->size))))
 #define LOOP_ASSIGN(TYPE, TYPE_TMP) \
 	do { \
+		argc *= sizeof(TYPE); \
 		for (int i=0; i<argc; i += sizeof(TYPE)) { \
 			TYPE argv = va_arg(ap, TYPE_TMP); \
 			((TYPE *)dest->item)[i] = argv; \
@@ -39,7 +40,14 @@ int _jarrCat(Jarr *dest, int argc, ...)
 			LOOP_ASSIGN(double, double);
 			break;
 		default:
-			LOOP_ASSIGN(int, int);
+			argc *= sizeof(int);
+			printf("size is %zu\n", dest->size);
+			for (int i=0; i<argc; i += sizeof(int)) {
+				int argv = va_arg(ap, int);
+				((int *)dest->item)[i] = argv;
+				printf("%d\n", ((int *)dest->item)[i]);
+			}
+			/* LOOP_ASSIGN(int, int); */
 	}
 	va_end(ap);
 	return dest->size;

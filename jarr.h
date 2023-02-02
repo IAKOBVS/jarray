@@ -27,14 +27,14 @@
 		 JARR.type = 'i'; \
 		JARR.typeSize = sizeof(int); \
 	}
-#define newJarr(JARR, JARR_TYPE, ...) \
+#define jarrNew(JARR, JARR_TYPE, ...) \
 	initJarr(JARR, JARR_TYPE) \
 	ALLOC_JARR(JARR, JARR_TYPE, __VA_ARGS__)
 #define freeJarr(JARR) \
 	if (JARR.size) free(JARR.item)
-#define jarrPr(JARR, INDEX) \
-	for (int i; i<JARR.len; ++i) \
-		printf("%d\n", JARR.item)
+#define jarrPr(JARR) \
+	for (int i=0; i<JARR.len; ++i) \
+		printf("%f\n", *(double *)JARR.item)
 
 typedef struct Jarr {
 	void *item;
@@ -45,7 +45,7 @@ typedef struct Jarr {
 } Jarr;
 
 int _jarrCat(Jarr *dest, int argc, ...);
-#define jarrCat(JARR, ...) _jarrCat(JARR, PP_NARG(__VA_ARGS__), ...)
+#define jarrCat(JARR, ...) _jarrCat(JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 int _jarrAddArr(Jarr *dest, void *arr, size_t arrLen);
 #define jarrAddArr(JARR, ADDED_ARR) jarrAddArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR)/sizeof(ADDED_ARR[0]))
 int _jarrAdd(Jarr *dest, void *src);
