@@ -7,7 +7,12 @@
 
 #define MIN_SIZE 8
 
-int jarr_cat_int(Jarr *dest, ...)
+#define GOTO_ERR_IF(STATE) \
+	if (STATE) { \
+		goto ERR; \
+	}
+
+int private_jarrJoinInt(Jarr *dest, ...)
 {
 	int argNum=0;
 	va_list ap;
@@ -21,12 +26,12 @@ int jarr_cat_int(Jarr *dest, ...)
 	va_end(ap);
 	dest->len+= argNum;
 	if (dest->size < 2 * dest->len) {
-		if (!(dest->itemInt = realloc(dest->itemInt,
+		GOTO_ERR_IF(!(dest->itemInt
+			= realloc(dest->itemInt,
 			sizeof(int)
-			* ((dest->size *= 2 > 2 * dest->len)
-			? dest->size
-			: 2 * dest->len))))
-			goto ERR;
+			* (dest->size
+				= (dest->size * 2 > 2 * dest->len)
+				? dest->size : 2 * dest->len))));
 	}
 	va_start(ap, dest);
 	do {
@@ -41,16 +46,16 @@ ERR:
 	return 0;
 }
 
-int jarraddint(Jarr *dest, int src)
+int private_jarrAddInt(Jarr *dest, int src)
 {
 	if (dest->size < 2 * (dest->len + 1)) {
 		dest->size *= 2;
-		if (!(dest->itemInt = realloc(dest->itemInt,
+		GOTO_ERR_IF(!(dest->itemInt
+			= realloc(dest->itemInt,
 			sizeof(int)
-			* ((dest->size *= 2 > 2 * dest->len)
-			? dest->size
-			: 2 * dest->len))))
-			goto ERR;
+			* (dest->size
+				= (dest->size *= 2 > 2 * dest->len)
+				? dest->size : 2 * dest->len))));
 	}
 	(dest->itemInt)[dest->len] = src;
 	dest->len += 1;
@@ -61,7 +66,7 @@ ERR:
 	return 0;
 }
 
-int isjarr(Jarr *structPtr)
+int isJarr(Jarr *structPtr)
 {
 	if (!*((unsigned char *)&*structPtr))
 		return 0;
