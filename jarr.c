@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "jarr.h"
 
@@ -12,42 +13,40 @@
 	(NUM1 > NUM2) ? NUM1 : NUM2
 #define GET_SIZE(VAR1) \
 	VAR1 = MAX(2 * dest->size, 2 * dest->len)
-#define REALLOC_FAILS \
-	!(dest->item = realloc(dest->item, dest->typeSize * (GET_SIZE(dest->size))))
-#define LOOP_ASSIGN(TYPE, TYPE_TMP) \
+#define REALLOC_FAILS(TYPE) \
+	!(dest->TYPE = realloc(dest->TYPE, dest->typeSize * (GET_SIZE(dest->size))))
+#define LOOP_ASSIGN(TYPE, TYPE_TMP, ITEM) \
 	do { \
-		argc *= sizeof(TYPE); \
-		for (int i=0; i<argc; i += sizeof(TYPE)) { \
+		for (int i=0; i<argc; i ++) { \
 			TYPE argv = va_arg(ap, TYPE_TMP); \
-			((TYPE *)dest->item)[i] = argv; \
+			((TYPE *)dest->ITEM)[i] = argv; \
 		} \
 	} while (0)
-#define ASSIGN(TYPE) \
-	((TYPE *)dest->item)[dest->len - sizeof(TYPE)] = *(TYPE *)src;
+#define ASSIGN(TYPE, ITEM) \
+	((TYPE *)dest->ITEM)[dest->len - sizeof(TYPE)] = *(TYPE *)src
 
 int _jarrCat(Jarr *dest, int argc, ...)
 {
-	dest->len+= argc;
-	if (dest->size < 2 * dest->len)
-		ERROR_IF(REALLOC_FAILS);
+	dest->len += argc;
 	va_list ap;
-	va_start(ap, argc);
 	switch (dest->type) {
 		case 'f':
-			LOOP_ASSIGN(float, double);
+			if (dest->size < 2 * dest->len)
+				ERROR_IF(REALLOC_FAILS(itemFl));
+			va_start(ap, argc);
+			LOOP_ASSIGN(float, double, itemFl);
 			break;
 		case 'd':
-			LOOP_ASSIGN(double, double);
+			if (dest->size < 2 * dest->len)
+				ERROR_IF(REALLOC_FAILS(itemDbl));
+			va_start(ap, argc);
+			LOOP_ASSIGN(double, double, itemDbl);
 			break;
 		default:
-			argc *= sizeof(int);
-			printf("size is %zu\n", dest->size);
-			for (int i=0; i<argc; i += sizeof(int)) {
-				int argv = va_arg(ap, int);
-				((int *)dest->item)[i] = argv;
-				printf("%d\n", ((int *)dest->item)[i]);
-			}
-			/* LOOP_ASSIGN(int, int); */
+			if (dest->size < 2 * dest->len)
+				ERROR_IF(REALLOC_FAILS(itemInt));
+			va_start(ap, argc);
+			LOOP_ASSIGN(int, int, itemInt);
 	}
 	va_end(ap);
 	return dest->size;
@@ -77,13 +76,13 @@ int _jarrAdd(Jarr *dest, void *src)
 		ERROR_IF(REALLOC_FAILS);
 	switch (dest->type) {
 	case 'f':
-		ASSIGN(float);
+		ASSIGN(float, itemFl);
 		break;
 	case 'd':
-		ASSIGN(double);
+		ASSIGN(double, itemDbl);
 		break;
 	default:
-		ASSIGN(int);
+		ASSIGN(int, itemInt);
 	}
 	return dest->size;
 

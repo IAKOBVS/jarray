@@ -9,35 +9,46 @@
 	(NUM1 > NUM2) ? NUM1 : NUM2
 #define ALLOC_JARR(JARR, JARR_TYPE, ...) \
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
-	if (!(JARR.item = malloc(JARR.size * JARR.typeSize))) { \
+	if (!(JARR.JARR_TYPE = malloc(JARR.size * JARR.typeSize))) { \
 		perror(""); exit(EXIT_FAILURE); } \
 	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-#define initJarr(JARR, JARR_TYPE) \
+#define jarrNew(JARR, JARR_TYPE, ...) \
 	Jarr JARR; \
+	do { \
 	switch (JARR_TYPE) { \
 	case 'f': \
 		JARR.type = 'f'; \
 		JARR.typeSize = sizeof(float); \
+		ALLOC_JARR(JARR, itemFl, __VA_ARGS__); \
 		break; \
 	case 'd': \
 		JARR.type = 'd'; \
 		JARR.typeSize = sizeof(double); \
+		ALLOC_JARR(JARR, itemDbl, __VA_ARGS__); \
 		break; \
 	default: \
 		 JARR.type = 'i'; \
 		JARR.typeSize = sizeof(int); \
-	}
-#define jarrNew(JARR, JARR_TYPE, ...) \
-	initJarr(JARR, JARR_TYPE) \
-	ALLOC_JARR(JARR, JARR_TYPE, __VA_ARGS__)
+		ALLOC_JARR(JARR, itemInt, __VA_ARGS__); \
+	} \
+	while (0)
 #define freeJarr(JARR) \
-	if (JARR.size) free(JARR.item)
+	if (JARR.size) \
+		if (JARR.type == 'i' \
+			free(JARR.itemInt); \
+		else if (JARR.type == 'd') \
+			free(JARR.itemDbl) \
+		else \
+			free(JARR.itemFl)
 #define jarrPr(JARR) \
 	for (int i=0; i<JARR.len; ++i) \
 		printf("%f\n", *(double *)JARR.item)
 
 typedef struct Jarr {
 	void *item;
+	int *itemInt;
+	float *itemFl;
+	double *itemDbl;
 	int type;
 	size_t len;
 	size_t size;
