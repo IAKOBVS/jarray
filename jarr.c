@@ -13,85 +13,146 @@
 	(NUM1 > NUM2) ? NUM1 : NUM2
 #define GET_SIZE(VAR1) \
 	VAR1 = MAX(2 * dest->size, 2 * dest->len)
-#define REALLOC_FAILS(TYPE) \
-	!(dest->TYPE = realloc(dest->TYPE, dest->typeSize * (GET_SIZE(dest->size))))
-#define LOOP_ASSIGN(TYPE, TYPE_TMP, ITEM) \
+#define REALLOC_FAILS \
+	!(dest->val = realloc(dest->val, dest->typeSize * (GET_SIZE(dest->size))))
+#define LOOP_ASSIGN(TYPE, TYPE_TMP) \
 	do { \
 		for (int i=0; i<argc; i ++) { \
 			TYPE argv = va_arg(ap, TYPE_TMP); \
-			((TYPE *)dest->ITEM)[i] = argv; \
+			((TYPE *)dest->val)[i] = argv; \
 		} \
 	} while (0)
-#define ASSIGN(TYPE, ITEM) \
-	((TYPE *)dest->ITEM)[dest->len - sizeof(TYPE)] = *(TYPE *)src
+#define ASSIGN(TYPE) \
+	((TYPE *)dest->val)[dest->len - sizeof(TYPE)] = src
+#define IF_NEED_MEM if (dest->size < 2 * dest->len)
 
-int _jarrCat(Jarr *dest, int argc, ...)
+int _jarrCat(JarrInt *dest, int argc, ...)
 {
 	dest->len += argc;
 	va_list ap;
-	switch (dest->type) {
-		case 'f':
-			if (dest->size < 2 * dest->len)
-				ERROR_IF(REALLOC_FAILS(itemFl));
-			va_start(ap, argc);
-			LOOP_ASSIGN(float, double, itemFl);
-			break;
-		case 'd':
-			if (dest->size < 2 * dest->len)
-				ERROR_IF(REALLOC_FAILS(itemDbl));
-			va_start(ap, argc);
-			LOOP_ASSIGN(double, double, itemDbl);
-			break;
-		default:
-			if (dest->size < 2 * dest->len)
-				ERROR_IF(REALLOC_FAILS(itemInt));
-			va_start(ap, argc);
-			LOOP_ASSIGN(int, int, itemInt);
-	}
+	IF_NEED_MEM
+		ERROR_IF(REALLOC_FAILS);
+	va_start(ap, argc);
+	LOOP_ASSIGN(int, int);
 	va_end(ap);
 	return dest->size;
 
 ERROR:
-	perror("int jarrCat(Jarr *dest, int argc, ...): ");
+	perror("");
 	return 0;
 }
 
-int _jarrAddArr(Jarr *dest, void *arr, size_t arrLen)
+int _jarrCatDb(JarrDb *dest, int argc, ...)
+{
+	dest->len += argc;
+	va_list ap;
+	IF_NEED_MEM
+		ERROR_IF(REALLOC_FAILS);
+	va_start(ap, argc);
+	LOOP_ASSIGN(double, double);
+	va_end(ap);
+	return dest->size;
+
+ERROR:
+	perror("");
+	return 0;
+}
+
+int _jarrCatFl(JarrFl *dest, int argc, ...)
+{
+	dest->len += argc;
+	va_list ap;
+	IF_NEED_MEM
+		ERROR_IF(REALLOC_FAILS);
+	va_start(ap, argc);
+	LOOP_ASSIGN(float, double);
+	va_end(ap);
+	return dest->size;
+
+ERROR:
+	perror("");
+	return 0;
+}
+
+int _jarrAddArr(JarrInt *dest, int *arr, size_t arrLen)
 {
 	dest->len+= arrLen;
-	if (dest->size < 2 * dest->len)
+	IF_NEED_MEM
 		ERROR_IF(REALLOC_FAILS);
-	memcpy(dest->item, arr, arrLen * dest->typeSize);
+	memcpy(dest->val, arr, arrLen * dest->typeSize);
 	return dest->size;
 
 ERROR:
-	perror("int jarrAddArr(Jarr *dest, void *arr, size_t arrLen): ");
+	perror("");
 	return 0;
 }
 
-int _jarrAdd(Jarr *dest, void *src)
+int _jarrAddArrDb(JarrDb *dest, double *arr, size_t arrLen)
+{
+	dest->len+= arrLen;
+	IF_NEED_MEM
+		ERROR_IF(REALLOC_FAILS);
+	memcpy(dest->val, arr, arrLen * dest->typeSize);
+	return dest->size;
+
+ERROR:
+	perror("");
+	return 0;
+}
+
+int _jarrAddArrFl(JarrFl *dest, float *arr, size_t arrLen)
+{
+	dest->len+= arrLen;
+	IF_NEED_MEM
+		ERROR_IF(REALLOC_FAILS);
+	memcpy(dest->val, arr, arrLen * dest->typeSize);
+	return dest->size;
+
+ERROR:
+	perror("");
+	return 0;
+}
+
+int _jarrAdd(JarrInt *dest, int src)
 {
 	dest->len += 1;
-	if (dest->size < 2 * (dest->len))
+	IF_NEED_MEM
 		ERROR_IF(REALLOC_FAILS);
-	switch (dest->type) {
-	case 'f':
-		ASSIGN(float, itemFl);
-		break;
-	case 'd':
-		ASSIGN(double, itemDbl);
-		break;
-	default:
-		ASSIGN(int, itemInt);
-	}
+	ASSIGN(int);
 	return dest->size;
 
 ERROR:
-	perror("int jarrAdd(jarr *dest, void *src): ");
+	perror("");
 	return 0;
 }
 
-int isJarr(Jarr *structPtr)
+int _jarrAddDb(JarrDb *dest, double src)
+{
+	dest->len += 1;
+	IF_NEED_MEM
+		ERROR_IF(REALLOC_FAILS);
+	ASSIGN(double);
+	return dest->size;
+
+ERROR:
+	perror("");
+	return 0;
+}
+
+int _jarrAddFl(JarrFl *dest, float src)
+{
+	dest->len += 1;
+	IF_NEED_MEM
+		ERROR_IF(REALLOC_FAILS);
+	ASSIGN(float);
+	return dest->size;
+
+ERROR:
+	perror("");
+	return 0;
+}
+
+int isJarrInt(JarrInt *structPtr)
 {
 	if (!*((unsigned char *)&*structPtr))
 		return 0;
