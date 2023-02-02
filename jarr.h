@@ -45,16 +45,36 @@
 		perror(""); exit(EXIT_FAILURE); } \
 	_jarrJoin(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #define newJarr(JARR, JARR_TYPE, ...) \
-	Jarr JARR = {.type = JARR_TYPE}; \
+	switch (JARR_TYPE) { \
+	case 'f': \
+		JARR.typeSize = sizeof(float); \
+		break; \
+	case 'd': \
+		JARR.typeSize = sizeof(double); \
+		break; \
+	default: \
+		JARR.typeSize = sizeof(int); \
+	} \
+	Jarr JARR = {.typeSize = JARR_TYPE}; \
 	ALLOC_JARR(JARR, JARR_TYPE, __VA_ARGS__)
 #define freeJarr(JARR) \
-	if (JARR.size) free(JARR.itemInt)
-#define jstrPr(JARR, INDEX) printf("arr is %d: \nsize is %zu\nlen is %zu\n", JARR.itemInt[INDEX], JARR.size, JARR.len)
+	switch (JARR_TYPE) { \
+	case 'f': \
+		JARR.typeSize = sizeof(float); \
+		break; \
+	case 'd': \
+		JARR.typeSize = sizeof(double); \
+		break; \
+	default: \
+		JARR.typeSize = sizeof(int); \
+	}
+#define jstrPr(JARR, INDEX) \
+	printf("arr is %d: \nsize is %zu\nlen is %zu\n", JARR.itemInt[INDEX], JARR.size, JARR.len)
 
 typedef struct Jarr {
 	size_t size;
 	size_t len;
-	int type;
+	int typeSize;
 	int *itemInt;
 	float *itemFl;
 	double *itemDbl;

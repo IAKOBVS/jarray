@@ -11,16 +11,16 @@
 
 int _jarrJoin(Jarr *dest, int argc, ...)
 {
-	va_list ap;
 	dest->len+= argc;
 	if (dest->size < 2 * dest->len) {
 		ERROR_IF( !(dest->itemInt
 			= realloc(dest->itemInt,
-			sizeof(int)
+			dest->typeSize
 			* (dest->size
-				= (dest->size * 2 > 2 * dest->len)
-				? dest->size : 2 * dest->len))));
+				= (2 * dest->size > 2 * dest->len)
+				? 2 * dest->size : 2 * dest->len))));
 	}
+	va_list ap;
 	va_start(ap, argc);
 	for (int i=0; i<argc; ++i) {
 		int argvStr = va_arg(ap, int);
