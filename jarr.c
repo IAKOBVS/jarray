@@ -26,7 +26,7 @@ int private_jarrJoinInt(Jarr *dest, ...)
 	va_end(ap);
 	dest->len+= argNum;
 	if (dest->size < 2 * dest->len) {
-		ERROR_IF(!(dest->itemInt
+		ERROR_IF( !(dest->itemInt
 			= realloc(dest->itemInt,
 			sizeof(int)
 			* (dest->size
@@ -50,7 +50,7 @@ int private_jarrAddInt(Jarr *dest, int src)
 {
 	if (dest->size < 2 * (dest->len + 1)) {
 		dest->size *= 2;
-		ERROR_IF(!(dest->itemInt
+		ERROR_IF( !(dest->itemInt
 			= realloc(dest->itemInt,
 			sizeof(int)
 			* (dest->size
