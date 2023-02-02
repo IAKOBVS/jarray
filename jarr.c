@@ -13,7 +13,16 @@
 #define GET_SIZE(VAR1) \
 	VAR1 = MAX(2 * dest->size, 2 * dest->len)
 #define REALLOC_FAILS \
-	!(dest->itemInt = realloc(dest->itemInt, dest->typeSize * (GET_SIZE(dest->size))))
+	!(dest->item = realloc(dest->item, dest->typeSize * (GET_SIZE(dest->size))))
+#define LOOP_ASSIGN(TYPE, TYPE_TMP) \
+	do { \
+		for (int i=0; i<argc; i += sizeof(TYPE)) { \
+			TYPE argv = va_arg(ap, TYPE_TMP); \
+			((TYPE *)dest->item)[i] = argv; \
+		} \
+	} while (0)
+#define ASSIGN(TYPE) \
+	((TYPE *)dest->item)[dest->len - sizeof(TYPE)] = *(TYPE *)src;
 
 int _jarrCat(Jarr *dest, int argc, ...)
 {
@@ -22,41 +31,56 @@ int _jarrCat(Jarr *dest, int argc, ...)
 		ERROR_IF(REALLOC_FAILS);
 	va_list ap;
 	va_start(ap, argc);
-	for (int i=0; i<argc; ++i) {
-		int argv = va_arg(ap, int);
-		(dest->itemInt)[i] = argv;
+	switch (dest->type) {
+		case 'f':
+			LOOP_ASSIGN(float, double);
+			break;
+		case 'd':
+			LOOP_ASSIGN(double, double);
+			break;
+		default:
+			LOOP_ASSIGN(int, int);
 	}
 	va_end(ap);
 	return dest->size;
 
 ERROR:
-	perror("int jarr_cat_int(jarr *dest, jarr *src): ");
+	perror("int jarrCat(Jarr *dest, int argc, ...): ");
 	return 0;
 }
 
-int _jarrAddArr(Jarr *dest, int *arr, size_t arrSize)
+int _jarrAddArr(Jarr *dest, void *arr, size_t arrLen)
 {
-	dest->len+= arrSize;
+	dest->len+= arrLen;
 	if (dest->size < 2 * dest->len)
 		ERROR_IF(REALLOC_FAILS);
-	memcpy(dest->itemInt, arr, arrSize);
+	memcpy(dest->item, arr, arrLen * dest->typeSize);
 	return dest->size;
 
 ERROR:
-	perror("int jarr_cat_int(jarr *dest, jarr *src): ");
+	perror("int jarrAddArr(Jarr *dest, void *arr, size_t arrLen): ");
 	return 0;
 }
 
-int _jarrAdd(Jarr *dest, int src)
+int _jarrAdd(Jarr *dest, void *src)
 {
 	dest->len += 1;
 	if (dest->size < 2 * (dest->len))
 		ERROR_IF(REALLOC_FAILS);
-	(dest->itemInt)[dest->len - 1] = src;
+	switch (dest->type) {
+	case 'f':
+		ASSIGN(float);
+		break;
+	case 'd':
+		ASSIGN(double);
+		break;
+	default:
+		ASSIGN(int);
+	}
 	return dest->size;
 
 ERROR:
-	perror("int jarrAddInt(jarr *dest, jarr *src): ");
+	perror("int jarrAdd(jarr *dest, void *src): ");
 	return 0;
 }
 
