@@ -12,7 +12,7 @@
 	if (!(JARR.itemInt = malloc(JARR.size * sizeof (int)))) { \
 		perror(""); exit(EXIT_FAILURE); } \
 	_jarrJoin(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-#define newJarr(JARR, JARR_TYPE, ...) \
+#define initJarr(JARR, JARR_TYPE) \
 	Jarr JARR; \
 	switch (JARR_TYPE) { \
 	case 'f': \
@@ -23,21 +23,12 @@
 		break; \
 	default: \
 		JARR.typeSize = sizeof(int); \
-	} \
+	}
+#define newJarr(JARR, JARR_TYPE, ...) \
+	initJarr(JARR_JARR_TYPE) \
 	ALLOC_JARR(JARR, JARR_TYPE, __VA_ARGS__)
 #define freeJarr(JARR) \
 	if (JARR.size) free(JARR.itemInt)
-#define initJarr(JARR) \
-	switch (JARR_TYPE) { \
-	case 'f': \
-		JARR.typeSize = sizeof(float); \
-		break; \
-	case 'd': \
-		JARR.typeSize = sizeof(double); \
-		break; \
-	default: \
-		JARR.typeSize = sizeof(int); \
-	}
 #define jarrPr(JARR, INDEX) \
 	printf("arr is %d: \n	size is %zu\n		len is %zu\n", (JARR.itemInt)[INDEX], JARR.size, JARR.len)
 
@@ -50,12 +41,12 @@ typedef struct Jarr {
 	double *itemDbl;
 } Jarr;
 
-int _jarrJoinInt(Jarr *dest, int argc, ...);
-#define jarrJoinInt(JARR, ...) _jarrJoinInt(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-int _jarrJoin(Jarr *dest, int argc, ...);
-#define jarrJoin(JARR, ...) _jarrJoin(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+int _jarrCat(Jarr *dest, int argc, ...);
+#define jarrCat(JARR, ...) _jarrCat(JARR, PP_NARG(__VA_ARGS__), ...)
+int _jarrAddArr(Jarr *dest, int *arr, size_t arrSize);
+#define jarrAddArr(JARR, ADDED_ARR) jarrAddArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR)/sizeof(ADDED_ARR[0]))
 int _jarrAdd(Jarr *dest, int src);
 #define jarrAdd(JARR, JARR_NUM) _jarrAdd(&JARR, JARR_NUM)
-int is_Jarr(Jarr *structPtr);
+int isJarr(Jarr *structPtr);
 
 #endif

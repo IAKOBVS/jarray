@@ -15,7 +15,7 @@
 #define REALLOC_FAILS \
 	!(dest->itemInt = realloc(dest->itemInt, dest->typeSize * (GET_SIZE(dest->size))))
 
-int _jarrJoin(Jarr *dest, int argc, ...)
+int _jarrCat(Jarr *dest, int argc, ...)
 {
 	dest->len+= argc;
 	if (dest->size < 2 * dest->len)
@@ -27,6 +27,19 @@ int _jarrJoin(Jarr *dest, int argc, ...)
 		(dest->itemInt)[i] = argv;
 	}
 	va_end(ap);
+	return dest->size;
+
+ERROR:
+	perror("int jarr_cat_int(jarr *dest, jarr *src): ");
+	return 0;
+}
+
+int _jarrAddArr(Jarr *dest, int *arr, size_t arrSize)
+{
+	dest->len+= arrSize;
+	if (dest->size < 2 * dest->len)
+		ERROR_IF(REALLOC_FAILS);
+	memcpy(dest->itemInt, arr, arrSize);
 	return dest->size;
 
 ERROR:
