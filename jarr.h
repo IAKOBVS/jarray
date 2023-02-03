@@ -60,9 +60,11 @@ JARR_STRUCT(JarrFl, float);
 _jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 int _jarrCat(void *thisJarr, int type, int argc, ...);
 
-#define jarrAddArr(JARR, ADDED_ARR) \
-_jarrAddArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR)/sizeof(ADDED_ARR[0]), JARR.type)
-int _jarrAddArr(void *thisJarr, void* arr, size_t arrLen, int type);
+#define jarrAddJarr(JARR, ADDED_ARR) \
+_jarrAddArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
+#define jarrAddarr(JARR, ADDED_ARR) \
+_jarrAddarr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
+int _jarrAddJarr(void *thisJarr, void* arr, size_t arrLen, int type);
 
 #define jarrAdd(JARR, JARR_NUM) \
 _jarrAdd(&JARR, JARR_NUM, JARR.type)
