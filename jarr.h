@@ -16,23 +16,20 @@
 		perror(""); exit(EXIT_FAILURE); } \
 	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarrNew(JARR, ...) \
+#define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
 	Jarr JARR; \
-	Jarr.type = 'i' \
-	JARR.typeSize = sizeof(int); \
+	Jarr.type = TYPE_NAME \
+	JARR.typeSize = sizeof(TYPE); \
 	ALLOC_JARR(JARR, __VA_ARGS__)
+
+#define jarrNew(JARR, ...) \
+	JARR_NEW(JARR, int, 'i')
 
 #define jarrNewDb(JARR, ...) \
-	Jarr JARR; \
-	Jarr.type = 'd' \
-	JARR.typeSize = sizeof(double); \
-	ALLOC_JARR(JARR, __VA_ARGS__)
+	JARR_NEW(JARR, double, 'd')
 
 #define jarrNewFl(JARR, ...) \
-	Jarr JARR; \
-	Jarr.type = 'f' \
-	JARR.typeSize = sizeof(float); \
-	ALLOC_JARR(JARR, __VA_ARGS__)
+	JARR_NEW(JARR, float, 'f')
 
 #define freeJarr(JARR) \
 	do { \
@@ -47,28 +44,28 @@
 	for (int i=0; i<JARR.len; ++i) \
 		printf("%f\n", *(double *)JARR.val)
 
-typedef struct Jarr {
-	int type;
-	union {
-		float *f;
-		int *i;
-		double *d;
-	} value;
-	size_t len;
-	size_t size;
-	size_t typeSize;
-} Jarr;
+#define JARR_STRUCT(JARR_NAME, TYPE) \
+typedef struct JARR_NAME { \
+	TYPE *val; \
+	size_t len; \
+	size_t size; \
+	size_t typeSize; \
+} JARR_NAME
+
+JARR_STRUCT(Jarr, int);
+JARR_STRUCT(JarrDb, double);
+JARR_STRUCT(JarrFl, float);
 
 #define jarrCat(JARR, ...) \
-_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-int _jarrCat(struct Jarr *thisJarr, int argc, ...);
+_jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+int _jarrCat(void *thisJarr, int type, int argc, ...);
 
 #define jarrAddArr(JARR, ADDED_ARR) \
-_jarrAddArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR)/sizeof(ADDED_ARR[0]))
-int _jarrAddArr(Jarr *thisJarr, void* arr, size_t arrLen);
+_jarrAddArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR)/sizeof(ADDED_ARR[0]), JARR.type)
+int _jarrAddArr(void *thisJarr, void* arr, size_t arrLen, int type);
 
 #define jarrAdd(JARR, JARR_NUM) \
-_jarrAdd(&JARR, JARR_NUM)
-int _jarrAdd(Jarr *thisJarr, void *src);
+_jarrAdd(&JARR, JARR_NUM, JARR.type)
+int _jarrAdd(void *thisJarr, void *src, int type);
 
 #endif
