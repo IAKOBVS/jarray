@@ -20,6 +20,7 @@
 	Jarr JARR = { \
 	.type = TYPE_NAME, \
 	.typeSize = sizeof(TYPE), \
+	.len = 0 \
 	}; \
 	ALLOC_JARR(JARR, __VA_ARGS__)
 

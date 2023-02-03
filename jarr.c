@@ -35,7 +35,7 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 {
 #define LOOP_ASSIGN(TYPE, TYPE_TMP, FUNC_NAME) \
 	do { \
-		for (int i=0; i<argc; ++i) { \
+		for (int i=(FUNC_NAME(thisJarr)->len), j = i + argc; i<j; ++i) { \
 			TYPE argv = va_arg(ap, TYPE_TMP); \
 			FUNC_NAME(thisJarr)->val[i] = argv; \
 		} \
@@ -44,21 +44,21 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 	va_start(ap, argc);
 	switch (type) {
 	case 'i':
-		INT(thisJarr)->len += argc;
 		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT));
 		LOOP_ASSIGN(int, int, INT);
+		INT(thisJarr)->len += argc;
 		va_end(ap);
 		return INT(thisJarr)->size;
 	case 'f':
-		FLOAT(thisJarr)->len += argc;
 		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT));
 		LOOP_ASSIGN(float, double, FLOAT);
+		FLOAT(thisJarr)->len += argc;
 		va_end(ap);
 		return FLOAT(thisJarr)->size;
 	case 'd':
-		DOUBLE(thisJarr)->len += argc;
 		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE));
 		LOOP_ASSIGN(double, double, DOUBLE);
+		DOUBLE(thisJarr)->len += argc;
 		va_end(ap);
 		return DOUBLE(thisJarr)->size;
 	}
