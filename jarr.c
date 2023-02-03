@@ -9,7 +9,7 @@
 	(NUM1 > NUM2) ? NUM1 : NUM2
 
 #define GET_ALLOC_SIZE(VAR, FUNC_NAME) \
-	VAR = MAX(2 * FUNC_NAME(thisJarr)->size, 2 * FUNC_NAME(thisJarr)->len)
+	(VAR = MAX(2 * FUNC_NAME(thisJarr)->size, 2 * FUNC_NAME(thisJarr)->len))
 
 #define IF_NEED_MEM(FUNC_NAME) \
 	if (FUNC_NAME(thisJarr)->size < 2 * FUNC_NAME(thisJarr)->len)
@@ -31,7 +31,7 @@
 	CAST_TO(VOID, struct JarrDb *)
 
 #define REALLOC_FAILS(FUNC_NAME) \
-	!(FUNC_NAME(thisJarr)->val = realloc(FUNC_NAME(thisJarr)->val, FUNC_NAME(thisJarr)->typeSize * (GET_ALLOC_SIZE(FUNC_NAME(thisJarr)->size, FUNC_NAME))))
+	!(FUNC_NAME(thisJarr)->val = realloc(FUNC_NAME(thisJarr)->val, FUNC_NAME(thisJarr)->typeSize * GET_ALLOC_SIZE(FUNC_NAME(thisJarr)->size, FUNC_NAME)))
 
 
 int _jarrCat(void *thisJarr, int type, int argc, ...)
