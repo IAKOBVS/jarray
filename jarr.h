@@ -31,7 +31,7 @@
 #define jarrNewFl(JARR, ...) \
 	JARR_NEW(JARR, float, 'f')
 
-#define freeJarr(JARR) \
+#define jarrFree(JARR) \
 	do { \
 		if (JARR.size) \
 			if (JARR.type == 'i' \
