@@ -10,29 +10,26 @@
 #define MAX(NUM1, NUM2) \
 	((NUM1 > NUM2) ? (NUM1) : (NUM2))
 
-#define ALLOC_JARR(JARR, TYPE, ...) \
+#define newJarr(JARR, TYPE, TYPE_NAME, ...) \
+	do { \
+	JARR.len = 0 \
+	JARR.type = TYPE_NAME \
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
 	if (!(JARR.val = malloc(sizeof(TYPE) * JARR.typeSize))) { \
 		perror(""); exit(EXIT_FAILURE); } \
-	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-
-#define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
-	Jarr JARR = { \
-	.type = TYPE_NAME, \
-	.len = 0 \
-	}; \
-	ALLOC_JARR(JARR, TYPE, __VA_ARGS__)
+	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+	} while (0)
 
 #define jarrNew(JARR, ...) \
-	JARR_NEW(JARR, int, 'i', __VA_ARGS__)
+	newJarr(JARR, int, 'i', __VA_ARGS__)
 
 #define jarrNewDb(JARR, ...) \
-	JARR_NEW(JARR, double, 'd', __VA_ARGS__)
+	newJarr(JARR, double, 'd', __VA_ARGS__)
 
 #define jarrNewFl(JARR, ...) \
-	JARR_NEW(JARR, float, 'f', __VA_ARGS__)
+	newJarr(JARR, float, 'f', __VA_ARGS__)
 
-#define jarrFree(JARR) \
+#define jarrDelete(JARR) \
 	do { \
 		if (JARR.size) \
 			if (JARR.type == 'i' \
