@@ -98,6 +98,7 @@ int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
 		MEMCPY(DOUBLE);
 		return DOUBLE(thisJarr)->size;
 	}
+
 ERROR:
 	perror("");
 	return 0;
@@ -127,6 +128,7 @@ int _jarrAdd(void *thisJarr, void *src, int type)
 		ASSIGN_TO_TYPE(double, DOUBLE);
 		return DOUBLE(thisJarr)->size;
 	}
+
 ERROR:
 	perror("");
 	return 0;
