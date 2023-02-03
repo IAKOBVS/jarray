@@ -82,6 +82,7 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 		return DOUBLE(thisJarr)->size;
 	}
 ERROR:
+	va_end(ap);
 	perror("");
 	return 0;
 }
