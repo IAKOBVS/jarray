@@ -8,7 +8,7 @@
 #define MIN_SIZE 8
 
 #define MAX(NUM1, NUM2) \
-	(NUM1 > NUM2) ? NUM1 : NUM2
+	((NUM1 > NUM2) ? (NUM1) : (NUM2))
 
 #define ALLOC_JARR(JARR, ...) \
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
