@@ -70,23 +70,23 @@ ERROR:
 
 int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
 {
-#define MEMCPY(FUNC_NAME) \
-		memcpy(FUNC_NAME(thisJarr)->val, arr, arrLen * FUNC_NAME(thisJarr)->typeSize)
+#define MEMCPY(FUNC_NAME, TYPE) \
+		memcpy(FUNC_NAME(thisJarr)->val, arr, arrLen * sizeof(TYPE))
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len+= arrLen;
 		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int));
-		MEMCPY(INT);
+		MEMCPY(INT, int);
 		return INT(thisJarr)->size;
 	case 'f':
 		FLOAT(thisJarr)->len+= arrLen;
 		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT, float));
-		MEMCPY(FLOAT);
+		MEMCPY(FLOAT, float);
 		return FLOAT(thisJarr)->size;
 	case 'd':
 		DOUBLE(thisJarr)->len+= arrLen;
 		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE, double));
-		MEMCPY(DOUBLE);
+		MEMCPY(DOUBLE, double);
 		return DOUBLE(thisJarr)->size;
 	}
 

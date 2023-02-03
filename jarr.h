@@ -51,7 +51,6 @@ typedef struct JARR_NAME { \
 	TYPE *val; \
 	size_t len; \
 	size_t size; \
-	size_t typeSize; \
 } JARR_NAME
 
 JARR_STRUCT(Jarr, int);
