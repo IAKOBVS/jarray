@@ -17,9 +17,10 @@
 	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
-	Jarr JARR; \
-	JARR.type = TYPE_NAME; \
-	JARR.typeSize = sizeof(TYPE); \
+	Jarr JARR = { \
+	.type = TYPE_NAME, \
+	.typeSize = sizeof(TYPE), \
+	}; \
 	ALLOC_JARR(JARR, __VA_ARGS__)
 
 #define jarrNew(JARR, ...) \
