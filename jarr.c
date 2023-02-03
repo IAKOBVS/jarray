@@ -27,8 +27,8 @@
 #define DOUBLE(VOID) \
 	CAST_TO(VOID, struct JarrDb *)
 
-#define REALLOC_FAILS(FUNC_NAME) \
-	(!(FUNC_NAME(thisJarr)->val = realloc(FUNC_NAME(thisJarr)->val, FUNC_NAME(thisJarr)->typeSize * GET_ALLOC_SIZE(FUNC_NAME(thisJarr)->size, FUNC_NAME))))
+#define REALLOC_FAILS(FUNC_NAME, TYPE) \
+	(!(FUNC_NAME(thisJarr)->val = realloc(FUNC_NAME(thisJarr)->val, sizeof(TYPE) * GET_ALLOC_SIZE(FUNC_NAME(thisJarr)->size, FUNC_NAME))))
 
 
 int _jarrCat(void *thisJarr, int type, int argc, ...)
@@ -44,19 +44,19 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 	va_start(ap, argc);
 	switch (type) {
 	case 'i':
-		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT));
+		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int));
 		LOOP_ASSIGN(int, int, INT);
 		INT(thisJarr)->len += argc;
 		va_end(ap);
 		return INT(thisJarr)->size;
 	case 'f':
-		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT));
+		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT, float));
 		LOOP_ASSIGN(float, double, FLOAT);
 		FLOAT(thisJarr)->len += argc;
 		va_end(ap);
 		return FLOAT(thisJarr)->size;
 	case 'd':
-		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE));
+		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE, double));
 		LOOP_ASSIGN(double, double, DOUBLE);
 		DOUBLE(thisJarr)->len += argc;
 		va_end(ap);
@@ -75,17 +75,17 @@ int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len+= arrLen;
-		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT));
+		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int));
 		MEMCPY(INT);
 		return INT(thisJarr)->size;
 	case 'f':
 		FLOAT(thisJarr)->len+= arrLen;
-		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT));
+		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT, float));
 		MEMCPY(FLOAT);
 		return FLOAT(thisJarr)->size;
 	case 'd':
 		DOUBLE(thisJarr)->len+= arrLen;
-		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE));
+		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE, double));
 		MEMCPY(DOUBLE);
 		return DOUBLE(thisJarr)->size;
 	}
@@ -102,17 +102,17 @@ int _jarrAdd(void *thisJarr, void *src, int type)
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len += 1;
-		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT));
+		ERROR_IF(NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int));
 		ASSIGN_TO_TYPE(int, INT);
 		return INT(thisJarr)->size;
 	case 'f':
 		FLOAT(thisJarr)->len += 1;
-		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT));
+		ERROR_IF(NEED_MEM_TYPE(FLOAT) && REALLOC_FAILS(FLOAT, float));
 		ASSIGN_TO_TYPE(float, FLOAT);
 		return FLOAT(thisJarr)->size;
 	case 'd':
 		DOUBLE(thisJarr)->len += 1;
-		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE));
+		ERROR_IF(NEED_MEM_TYPE(DOUBLE) && REALLOC_FAILS(DOUBLE, double));
 		ASSIGN_TO_TYPE(double, DOUBLE);
 		return DOUBLE(thisJarr)->size;
 	}

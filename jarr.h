@@ -10,19 +10,18 @@
 #define MAX(NUM1, NUM2) \
 	((NUM1 > NUM2) ? (NUM1) : (NUM2))
 
-#define ALLOC_JARR(JARR, ...) \
+#define ALLOC_JARR(JARR, TYPE, ...) \
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
-	if (!(JARR.val = malloc(JARR.size * JARR.typeSize))) { \
+	if (!(JARR.val = malloc(sizeof(TYPE) * JARR.typeSize))) { \
 		perror(""); exit(EXIT_FAILURE); } \
 	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
 	Jarr JARR = { \
 	.type = TYPE_NAME, \
-	.typeSize = sizeof(TYPE), \
 	.len = 0 \
 	}; \
-	ALLOC_JARR(JARR, __VA_ARGS__)
+	ALLOC_JARR(JARR, TYPE, __VA_ARGS__)
 
 #define jarrNew(JARR, ...) \
 	JARR_NEW(JARR, int, 'i', __VA_ARGS__)
