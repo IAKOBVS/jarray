@@ -23,13 +23,13 @@
 	ALLOC_JARR(JARR, __VA_ARGS__)
 
 #define jarrNew(JARR, ...) \
-	JARR_NEW(JARR, int, 'i')
+	JARR_NEW(JARR, int, 'i', __VA_ARGS__)
 
 #define jarrNewDb(JARR, ...) \
-	JARR_NEW(JARR, double, 'd')
+	JARR_NEW(JARR, double, 'd', __VA_ARGS__)
 
 #define jarrNewFl(JARR, ...) \
-	JARR_NEW(JARR, float, 'f')
+	JARR_NEW(JARR, float, 'f', __VA_ARGS__)
 
 #define jarrFree(JARR) \
 	do { \
