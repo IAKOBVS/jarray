@@ -46,6 +46,7 @@
 
 #define JARR_STRUCT(JARR_NAME, TYPE) \
 typedef struct JARR_NAME { \
+	int type; \
 	TYPE *val; \
 	size_t len; \
 	size_t size; \
