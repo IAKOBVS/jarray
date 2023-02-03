@@ -5,18 +5,6 @@
 
 #include "jarr.h"
 
-#define SWITCH(FUNC_INT, INT, FUNC_FLOAT, FLOAT, FUNC_DOUBLE, DOUBLE) \
-	do { \
-	switch (type) { \
-	case INT: \
-		FUNC_INT; \
-	case FLOAT: \
-		FUNC_FLOAT; \
-	case DOUBLE: \
-		FUNC_DOUBLE; \
-	} \
-	} while (0)
-
 #define MAX(NUM1, NUM2) \
 	(NUM1 > NUM2) ? NUM1 : NUM2
 
