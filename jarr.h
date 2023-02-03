@@ -18,7 +18,7 @@
 
 #define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
 	Jarr JARR; \
-	Jarr.type = TYPE_NAME \
+	JARR.type = TYPE_NAME \
 	JARR.typeSize = sizeof(TYPE); \
 	ALLOC_JARR(JARR, __VA_ARGS__)
 
