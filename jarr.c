@@ -5,7 +5,6 @@
 
 #include "jarr.h"
 
-
 #define SWITCH(FUNC_INT, INT, FUNC_FLOAT, FLOAT, FUNC_DOUBLE, DOUBLE) \
 	do { \
 	switch (type) { \
