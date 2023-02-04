@@ -33,18 +33,19 @@
 #define MALLOC_FAILS(CAST, TYPE) \
 	(!(CAST(thisJarr)->val = malloc(sizeof(TYPE) * ASSIGN_OR_MIN_TO(CAST(thisJarr)->size, CAST))))
 
-int _jarrCat(void *thisJarr, int type, int argc, ...)
-{
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
 	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(STRUCT(thisJarr)->size, STRUCT)))))); \
-	for (int i=STRUCT(thisJarr)->len - argc, j = i + argc; i<j; ++i) { \
+	for (size_t i=STRUCT(thisJarr)->len - argc, j = i + argc; i<j; ++i) { \
 		TYPE argv = va_arg(ap, TYPE_TMP); \
 		STRUCT(thisJarr)->val[i] = argv; \
 	} \
 	va_end(ap); \
 	STRUCT(thisJarr)->len += argc; \
 	return STRUCT(thisJarr)->size
+
+int _jarrCat(void *thisJarr, int type, int argc, ...)
+{
 	va_list ap;
 	va_start(ap, argc);
 	switch (type) {
@@ -69,14 +70,15 @@ ERROR:
 	return 0;
 }
 
-int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
-{
 #define JARR_ADD_ARR(STRUCT, TYPE) \
 	STRUCT(thisJarr)->len+= arrLen; \
 	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))); \
 	memcpy(STRUCT(thisJarr)->val, arr, arrLen * sizeof(TYPE)); \
 	return STRUCT(thisJarr)->size;
+
+int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
+{
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len+= arrLen;
@@ -95,13 +97,14 @@ ERROR:
 	return 0;
 }
 
-int _jarrAdd(void *thisJarr, void *src, int type)
-{
 #define JARR_ADD(STRUCT, TYPE) \
 	STRUCT(thisJarr)->len += 1; \
 	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))); \
 	STRUCT(thisJarr)->val[STRUCT(thisJarr)->len - 1] = *(TYPE *)src
+
+int _jarrAdd(void *thisJarr, void *src, int type)
+{
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len += 1;
