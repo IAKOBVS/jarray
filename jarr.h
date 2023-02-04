@@ -22,12 +22,23 @@
 
 #define jarrNew(JARR, ...) \
 	newJarr(JARR, int, 'i', __VA_ARGS__)
-
 #define jarrNewDb(JARR, ...) \
 	newJarr(JARR, double, 'd', __VA_ARGS__)
-
 #define jarrNewFl(JARR, ...) \
 	newJarr(JARR, float, 'f', __VA_ARGS__)
+
+#define INIT_JARR(JARR, JARR_STRUCT, TYPE_NAME) \
+	JARR_STRUCT JARR = { \
+		.size = 0, \
+		.len = 0, \
+		.type = TYPE_NAME \
+	}
+#define initJarr(JARR) \
+	INIT_JARR(JARR, Jarr, 'i')
+#define initJarrFl(JARR) \
+	INIT_JARR(JARR, JarrFl, 'f')
+#define initJarrDb(JARR) \
+	INIT_JARR(JARR, JarrDb, 'd')
 
 #define jarrDelete(JARR) \
 	do { \
