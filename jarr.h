@@ -48,6 +48,14 @@
 			else if (JARR.type == 'd') \
 				free(JARR.iDbl) \
 	} while (0)
+#define jarrDeletePtr(JARR) \
+	do { \
+		if (JARR->size) \
+			if (JARR->type == 'i' \
+				free(JARR->val); \
+			else if (JARR->type == 'd') \
+				free(JARR->iDbl) \
+	} while (0)
 
 #define jarrPr(JARR) \
 	for (int i=0; i<JARR.len; ++i) \
