@@ -22,7 +22,7 @@
 
 #define ASSIGN_MAX_TO(VAR, CAST) \
 	(VAR = MAX(2 * CAST(thisJarr)->size, 2 * CAST(thisJarr)->len))
-#define ASSIGN_OR_MIN(VAR, CAST) \
+#define ASSIGN_OR_MIN_TO(VAR, CAST) \
 	(VAR = MAX(8, 2 * CAST(thisJarr)->len))
 
 #define NEED_MEM_TYPE(CAST) \
@@ -31,38 +31,37 @@
 #define REALLOC_FAILS(CAST, TYPE) \
 	(!(CAST(thisJarr)->val = realloc(CAST(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(CAST(thisJarr)->size, CAST))))
 #define MALLOC_FAILS(CAST, TYPE) \
-	(!(CAST(thisJarr)->val = malloc(sizeof(TYPE) * ASSIGN_OR_MIN(CAST(thisJarr)->size, CAST))))
+	(!(CAST(thisJarr)->val = malloc(sizeof(TYPE) * ASSIGN_OR_MIN_TO(CAST(thisJarr)->size, CAST))))
 
 int _jarrCat(void *thisJarr, int type, int argc, ...)
 {
-#define LOOP_ASSIGN(TYPE, TYPE_TMP, CAST) \
-	do { \
-		for (int i=CAST(thisJarr)->len - argc, j = i + argc; i<j; ++i) { \
-			TYPE argv = va_arg(ap, TYPE_TMP); \
-			CAST(thisJarr)->val[i] = argv; \
-		} \
-	} while (0)
+#define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
+	STRUCT(thisJarr)->len += argc; \
+	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
+	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(STRUCT(thisJarr)->size, STRUCT)))))); \
+	for (int i=STRUCT(thisJarr)->len - argc, j = i + argc; i<j; ++i) { \
+		TYPE argv = va_arg(ap, TYPE_TMP); \
+		STRUCT(thisJarr)->val[i] = argv; \
+	} \
+	va_end(ap); \
+	return STRUCT(thisJarr)->size
 	va_list ap;
 	va_start(ap, argc);
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len += argc;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		LOOP_ASSIGN(int, int, INT);
+		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len + argc)))))
+		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * ASSIGN_MAX_TO(INT(thisJarr)->size, INT))))));
+		for (int i=INT(thisJarr)->len - argc, j = i + argc; i<j; ++i) {
+			int argv = va_arg(ap, int);
+			INT(thisJarr)->val[i] = argv;
+		}
 		va_end(ap);
 		return INT(thisJarr)->size;
 	case 'f':
-		FLOAT(thisJarr)->len += argc;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		LOOP_ASSIGN(float, double, FLOAT);
-		va_end(ap);
-		return FLOAT(thisJarr)->size;
+		JARR_CAT(FLOAT, float, double);
 	case 'd':
-		DOUBLE(thisJarr)->len += argc;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		LOOP_ASSIGN(double, double, DOUBLE);
-		va_end(ap);
-		return DOUBLE(thisJarr)->size;
+		JARR_CAT(DOUBLE, double, double);
 	}
 ERROR:
 	va_end(ap);
