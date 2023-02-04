@@ -36,7 +36,6 @@
 int _jarrCat(void *thisJarr, int type, int argc, ...)
 {
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
-	STRUCT(thisJarr)->len += argc; \
 	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(STRUCT(thisJarr)->size, STRUCT)))))); \
 	for (int i=STRUCT(thisJarr)->len - argc, j = i + argc; i<j; ++i) { \
@@ -44,19 +43,20 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 		STRUCT(thisJarr)->val[i] = argv; \
 	} \
 	va_end(ap); \
+	STRUCT(thisJarr)->len += argc; \
 	return STRUCT(thisJarr)->size
 	va_list ap;
 	va_start(ap, argc);
 	switch (type) {
 	case 'i':
-		INT(thisJarr)->len += argc;
-		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len + argc)))))
-		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * ASSIGN_MAX_TO(INT(thisJarr)->size, INT))))));
+		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * (INT(thisJarr)->len + argc))))))
+		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len + argc))))))));
 		for (int i=INT(thisJarr)->len - argc, j = i + argc; i<j; ++i) {
 			int argv = va_arg(ap, int);
 			INT(thisJarr)->val[i] = argv;
 		}
 		va_end(ap);
+		INT(thisJarr)->len += argc;
 		return INT(thisJarr)->size;
 	case 'f':
 		JARR_CAT(FLOAT, float, double);
@@ -71,24 +71,23 @@ ERROR:
 
 int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
 {
-#define MEMCPY(TYPE, CAST) \
-		memcpy(CAST(thisJarr)->val, arr, arrLen * sizeof(TYPE))
+#define JARR_ADD_ARR(STRUCT, TYPE) \
+	STRUCT(thisJarr)->len+= arrLen; \
+	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
+	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))); \
+	memcpy(STRUCT(thisJarr)->val, arr, arrLen * sizeof(TYPE)); \
+	return STRUCT(thisJarr)->size;
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len+= arrLen;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		MEMCPY(int, INT);
+		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len)))))
+		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len))))))));
+		memcpy(INT(thisJarr)->val, arr, arrLen * sizeof(int));
 		return INT(thisJarr)->size;
 	case 'f':
-		FLOAT(thisJarr)->len+= arrLen;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		MEMCPY(float, FLOAT);
-		return FLOAT(thisJarr)->size;
+		JARR_ADD_ARR(FLOAT, float);
 	case 'd':
-		DOUBLE(thisJarr)->len+= arrLen;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		MEMCPY(double, DOUBLE);
-		return DOUBLE(thisJarr)->size;
+		JARR_ADD_ARR(DOUBLE, double);
 	}
 
 ERROR:
@@ -98,24 +97,22 @@ ERROR:
 
 int _jarrAdd(void *thisJarr, void *src, int type)
 {
-#define ASSIGN_TO_TYPE(TYPE, CAST) \
-	CAST(thisJarr)->val[CAST(thisJarr)->len - 1] = *(TYPE *)src
+#define JARR_ADD(STRUCT, TYPE) \
+	STRUCT(thisJarr)->len += 1; \
+	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
+	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))); \
+	STRUCT(thisJarr)->val[STRUCT(thisJarr)->len - 1] = *(TYPE *)src
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len += 1;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		ASSIGN_TO_TYPE(int, INT);
+		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len)))))
+		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len))))))));
+		INT(thisJarr)->val[INT(thisJarr)->len - 1] = *(int *)src;
 		return INT(thisJarr)->size;
 	case 'f':
-		FLOAT(thisJarr)->len += 1;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		ASSIGN_TO_TYPE(float, FLOAT);
-		return FLOAT(thisJarr)->size;
+		JARR_ADD(FLOAT, float);
 	case 'd':
-		DOUBLE(thisJarr)->len += 1;
-		ERROR_IF((!INT(thisJarr)->size && MALLOC_FAILS(INT, int)) || (NEED_MEM_TYPE(INT) && REALLOC_FAILS(INT, int)));
-		ASSIGN_TO_TYPE(double, DOUBLE);
-		return DOUBLE(thisJarr)->size;
+		JARR_ADD(DOUBLE, double);
 	}
 
 ERROR:
