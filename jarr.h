@@ -17,7 +17,7 @@
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
 	if (!(JARR.val = malloc(sizeof(TYPE) * JARR.typeSize))) { \
 		perror(""); exit(EXIT_FAILURE); } \
-	_jarrCat(&JARR, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+	_jarrCat(&JARR, TYPE_NAME, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
 	} while (0)
 
 #define jarrNew(JARR, ...) \
