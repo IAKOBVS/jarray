@@ -25,13 +25,13 @@
 #define ASSIGN_OR_MIN_TO(VAR, CAST) \
 	(VAR = MAX(8, 2 * CAST(thisJarr)->len))
 
-#define NEED_MEM_TYPE(CAST) \
-	(CAST(thisJarr)->size < 2 * (CAST(thisJarr)->len))
+/* #define NEED_MEM_TYPE(CAST) \ */
+/* 	(CAST(thisJarr)->size < 2 * (CAST(thisJarr)->len)) */
 
-#define REALLOC_FAILS(CAST, TYPE) \
-	(!(CAST(thisJarr)->val = realloc(CAST(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(CAST(thisJarr)->size, CAST))))
-#define MALLOC_FAILS(CAST, TYPE) \
-	(!(CAST(thisJarr)->val = malloc(sizeof(TYPE) * ASSIGN_OR_MIN_TO(CAST(thisJarr)->size, CAST))))
+/* #define REALLOC_FAILS(CAST, TYPE) \ */
+/* 	(!(CAST(thisJarr)->val = realloc(CAST(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(CAST(thisJarr)->size, CAST)))) */
+/* #define MALLOC_FAILS(CAST, TYPE) \ */
+/* 	(!(CAST(thisJarr)->val = malloc(sizeof(TYPE) * ASSIGN_OR_MIN_TO(CAST(thisJarr)->size, CAST)))) */
 
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
 	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
