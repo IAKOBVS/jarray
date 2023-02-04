@@ -10,7 +10,7 @@
 #define MAX(NUM1, NUM2) \
 	((NUM1 > NUM2) ? (NUM1) : (NUM2))
 
-#define newJarr(JARR, TYPE, TYPE_NAME, ...) \
+#define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
 	do { \
 	JARR.len = 0 \
 	JARR.type = TYPE_NAME \
@@ -21,24 +21,24 @@
 	} while (0)
 
 #define jarrNew(JARR, ...) \
-	newJarr(JARR, int, 'i', __VA_ARGS__)
+	JARR_NEW(JARR, int, 'i', __VA_ARGS__)
 #define jarrNewDb(JARR, ...) \
-	newJarr(JARR, double, 'd', __VA_ARGS__)
+	JARR_NEW(JARR, double, 'd', __VA_ARGS__)
 #define jarrNewFl(JARR, ...) \
-	newJarr(JARR, float, 'f', __VA_ARGS__)
+	JARR_NEW(JARR, float, 'f', __VA_ARGS__)
 
-#define INIT_JARR(JARR, JARR_STRUCT, TYPE_NAME) \
+#define JARR_INIT(JARR, JARR_STRUCT, TYPE_NAME) \
 	JARR_STRUCT JARR = { \
 		.size = 0, \
 		.len = 0, \
 		.type = TYPE_NAME \
 	}
-#define initJarr(JARR) \
-	INIT_JARR(JARR, Jarr, 'i')
-#define initJarrFl(JARR) \
-	INIT_JARR(JARR, JarrFl, 'f')
-#define initJarrDb(JARR) \
-	INIT_JARR(JARR, JarrDb, 'd')
+#define jarrInit(JARR) \
+	JARR_INIT(JARR, Jarr, 'i')
+#define jarrInitFl(JARR) \
+	JARR_INIT(JARR, JarrFl, 'f')
+#define jarrInitDb(JARR) \
+	JARR_INIT(JARR, JarrDb, 'd')
 
 #define jarrDelete(JARR) \
 	do { \
@@ -68,7 +68,6 @@ typedef struct JARR_NAME { \
 	size_t len; \
 	size_t size; \
 } JARR_NAME
-
 
 #define jarrCat(JARR, ...) \
 	_jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
