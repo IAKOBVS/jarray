@@ -29,7 +29,7 @@
 	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
 	|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len + argc)))))))) \
 		goto ERROR; \
-	for (size_t i=STRUCT(thisJarr)->len - argc, j = i + argc; i<j; ++i) { \
+	for (size_t i=STRUCT(thisJarr)->len, j = i + argc; i<j; ++i) { \
 		TYPE argv = va_arg(ap, TYPE_TMP); \
 		STRUCT(thisJarr)->val[i] = argv; \
 	} \
@@ -46,7 +46,7 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 		if ((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(MIN_SIZE, 2 * (INT(thisJarr)->len + argc))))))
 		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len + argc))))))))
 			goto ERROR;
-		for (int i=INT(thisJarr)->len - argc, j = i + argc; i<j; ++i) {
+		for (int i=INT(thisJarr)->len, j = i + argc; i<j; ++i) {
 			int argv = va_arg(ap, int);
 			INT(thisJarr)->val[i] = argv;
 		}
