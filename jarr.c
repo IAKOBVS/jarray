@@ -98,7 +98,8 @@ ERROR:
 	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * STRUCT(thisJarr)->len))))) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))) \
 		goto ERROR; \
-	STRUCT(thisJarr)->val[STRUCT(thisJarr)->len - 1] = *(TYPE *)src
+	STRUCT(thisJarr)->val[STRUCT(thisJarr)->len - 1] = *(TYPE *)src; \
+	return STRUCT(thisJarr)->size
 
 int _jarrAdd(void *thisJarr, void *src, int type)
 {
