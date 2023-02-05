@@ -27,15 +27,15 @@
 
 /* #define NEED_MEM_TYPE(CAST) \ */
 /* 	(CAST(thisJarr)->size < 2 * (CAST(thisJarr)->len)) */
-
 /* #define REALLOC_FAILS(CAST, TYPE) \ */
 /* 	(!(CAST(thisJarr)->val = realloc(CAST(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(CAST(thisJarr)->size, CAST)))) */
 /* #define MALLOC_FAILS(CAST, TYPE) \ */
 /* 	(!(CAST(thisJarr)->val = malloc(sizeof(TYPE) * ASSIGN_OR_MIN_TO(CAST(thisJarr)->size, CAST)))) */
 
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
-	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
-	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * ASSIGN_MAX_TO(STRUCT(thisJarr)->size, STRUCT)))))); \
+	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
+	|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len + argc)))))))) \
+		goto ERROR; \
 	for (size_t i=STRUCT(thisJarr)->len - argc, j = i + argc; i<j; ++i) { \
 		TYPE argv = va_arg(ap, TYPE_TMP); \
 		STRUCT(thisJarr)->val[i] = argv; \
@@ -50,8 +50,9 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 	va_start(ap, argc);
 	switch (type) {
 	case 'i':
-		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * (INT(thisJarr)->len + argc))))))
-		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len + argc))))))));
+		if ((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * (INT(thisJarr)->len + argc))))))
+		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len + argc))))))))
+			goto ERROR;
 		for (int i=INT(thisJarr)->len - argc, j = i + argc; i<j; ++i) {
 			int argv = va_arg(ap, int);
 			INT(thisJarr)->val[i] = argv;
@@ -72,8 +73,9 @@ ERROR:
 
 #define JARR_ADD_ARR(STRUCT, TYPE) \
 	STRUCT(thisJarr)->len+= arrLen; \
-	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
-	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))); \
+	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
+	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))) \
+		goto ERROR; \
 	memcpy(STRUCT(thisJarr)->val, arr, arrLen * sizeof(TYPE)); \
 	return STRUCT(thisJarr)->size;
 
@@ -82,8 +84,9 @@ int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len+= arrLen;
-		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len)))))
-		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len))))))));
+		if ((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len)))))
+		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len))))))))
+			goto ERROR;
 		memcpy(INT(thisJarr)->val, arr, arrLen * sizeof(int));
 		return INT(thisJarr)->size;
 	case 'f':
@@ -99,8 +102,9 @@ ERROR:
 
 #define JARR_ADD(STRUCT, TYPE) \
 	STRUCT(thisJarr)->len += 1; \
-	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
-	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))); \
+	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len))))) \
+	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))) \
+		goto ERROR; \
 	STRUCT(thisJarr)->val[STRUCT(thisJarr)->len - 1] = *(TYPE *)src
 
 int _jarrAdd(void *thisJarr, void *src, int type)
@@ -108,8 +112,9 @@ int _jarrAdd(void *thisJarr, void *src, int type)
 	switch (type) {
 	case 'i':
 		INT(thisJarr)->len += 1;
-		ERROR_IF((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len)))))
-		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len))))))));
+		if ((!INT(thisJarr)->size && !(INT(thisJarr)->val = malloc(sizeof(int) * (INT(thisJarr)->size = MAX(8, 2 * INT(thisJarr)->len)))))
+		|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len))))))))
+			goto ERROR;
 		INT(thisJarr)->val[INT(thisJarr)->len - 1] = *(int *)src;
 		return INT(thisJarr)->size;
 	case 'f':
