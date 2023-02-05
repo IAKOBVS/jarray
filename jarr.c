@@ -20,13 +20,8 @@
 #define DOUBLE(VOID) \
 	CAST_TO(VOID, struct JarrDb *)
 
-#define ASSIGN_MAX_TO(VAR, CAST) \
-	(VAR = MAX(2 * CAST(thisJarr)->size, 2 * CAST(thisJarr)->len))
-#define ASSIGN_OR_MIN_TO(VAR, CAST) \
-	(VAR = MAX(8, 2 * CAST(thisJarr)->len))
-
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
-	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(8, 2 * STRUCT(thisJarr)->len + argc))))) \
+	ERROR_IF((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * STRUCT(thisJarr)->len + argc))))) \
 	|| (INT(thisJarr)->size < 2 * (INT(thisJarr)->len) && (!(INT(thisJarr)->val = realloc(INT(thisJarr)->val, sizeof(int) * (INT(thisJarr)->size = MAX(2 * INT(thisJarr)->size, 2 * (INT(thisJarr)->len + argc)))))))); \
 	for (size_t i=STRUCT(thisJarr)->len, j = i + argc; i<j; ++i) { \
 		TYPE argv = va_arg(ap, TYPE_TMP); \
