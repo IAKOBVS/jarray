@@ -80,6 +80,9 @@ typedef struct JARR_NAME { \
 #define jarrAdd(JARR, JARR_NUM) \
 	_jarrAdd(&JARR, JARR_NUM, JARR.type)
 
+#define jarrMinimize(JARR) \
+	JARR.str = realloc(JARR.str, JARR.len)
+
 JARR_STRUCT(Jarr, int);
 JARR_STRUCT(JarrDb, double);
 JARR_STRUCT(JarrFl, float);
