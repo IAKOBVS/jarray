@@ -44,6 +44,7 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 	case 'd':
 		JARR_CAT(DOUBLE, double, double);
 	}
+
 ERROR:
 	va_end(ap);
 	perror("");
