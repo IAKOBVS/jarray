@@ -7,10 +7,6 @@
 
 #define MIN_SIZE 8
 
-#define ERROR_IF(STATE) \
-	if (STATE) \
-		goto ERROR
-
 #define CAST_TO(VOID, TYPE) \
 	((TYPE)VOID)
 #define INT(VOID) \
@@ -97,6 +93,36 @@ int _jarrAdd(void *thisJarr, void *src, int type)
 ERROR:
 	perror("");
 	return 0;
+}
+
+int qsortAscend(const void *x, const void *y)
+{
+	return *(int *)x  - *(int *)y;
+}
+
+float qsortAscendFl(const void *x, const void *y)
+{
+	return *(float *)x  - *(float *)y;
+}
+
+double qsortAscendDb(const void *x, const void *y)
+{
+	return *(double *)x  - *(double *)y;
+}
+
+int qsortDescend(const void *x, const void *y)
+{
+	return *(int *)y  - *(int *)x;
+}
+
+float qsortDescendFl(const void *x, const void *y)
+{
+	return *(float *)y  - *(float *)x;
+}
+
+double qsortDescendDb(const void *x, const void *y)
+{
+	return *(double *)y  - *(double *)x;
 }
 
 int isJarr(Jarr *thisJarr)

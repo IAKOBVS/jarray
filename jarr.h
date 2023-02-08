@@ -90,4 +90,11 @@ JARR_STRUCT(JarrFl, float);
 int _jarrCat(void *thisJarr, int type, int argc, ...);
 int _jarrAddJarr(void *thisJarr, void* arr, size_t arrLen, int type);
 int _jarrAdd(void *thisJarr, void *src, int type);
+int qsortDescend(const void *x, const void *y);
+int qsortAscend(const void *y, const void *x);
+float qsortDescendFl(const void *x, const void *y);
+float qsortAscendFl(const void *y, const void *x);
+double qsortDescendDb(const void *x, const void *y);
+double qsortAscendDb(const void *y, const void *x);
+
 #endif
