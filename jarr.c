@@ -17,7 +17,7 @@
 	CAST_TO(VOID, struct JarrDb *)
 
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
-	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * (STRUCT(thisJarr)->len + argc)))))) \
+	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * (STRUCT(thisJarr)->len + argc))))) && (STRUCT(thisJarr)->size = 0, 1)) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len + argc)))))))) \
 		goto ERROR; \
 	for (int i=STRUCT(thisJarr)->len, j = i + argc; i<j; ++i) { \
@@ -49,7 +49,7 @@ ERROR:
 
 #define JARR_ADD_ARR(STRUCT, TYPE) \
 	STRUCT(thisJarr)->len+= arrLen; \
-	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * STRUCT(thisJarr)->len))))) \
+	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * STRUCT(thisJarr)->len)))) && (STRUCT(thisJarr)->size = 0, 1)) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))) \
 		goto ERROR; \
 	memcpy(STRUCT(thisJarr)->val, arr, arrLen * sizeof(TYPE)); \
