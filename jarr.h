@@ -27,6 +27,8 @@
 	JARR_NEW(JARR, double, 'd', __VA_ARGS__)
 #define jarrNewFl(JARR, ...) \
 	JARR_NEW(JARR, float, 'f', __VA_ARGS__)
+#define jarrNewJstr(JARR, ...) \
+	JARR_NEW(JARR, Jstr, 's', __VA_ARGS__)
 
 #define JARR_INIT(JARR, JARR_STRUCT, TYPE_NAME) \
 	JARR_STRUCT JARR = { \
