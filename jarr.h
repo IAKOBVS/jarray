@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "/home/james/c/vargc.h"
+#include "/home/james/c/jString/jstr.h"
 
 #define MIN_SIZE 8
 
@@ -86,6 +87,7 @@ typedef struct JARR_NAME { \
 JARR_STRUCT(Jarr, int);
 JARR_STRUCT(JarrDb, double);
 JARR_STRUCT(JarrFl, float);
+JARR_STRUCT(JarrJstr, Jstr);
 
 int _jarrCat(void *thisJarr, int type, int argc, ...);
 int _jarrAddJarr(void *thisJarr, void* arr, size_t arrLen, int type);

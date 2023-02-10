@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "jarr.h"
+#include "/home/james/c/jString/jstr.h"
 
 #define MIN_SIZE 8
 
@@ -15,12 +16,14 @@
 	CAST_TO(VOID, struct JarrFl *)
 #define DOUBLE(VOID) \
 	CAST_TO(VOID, struct JarrDb *)
+#define JSTR(VOID) \
+	CAST_TO(VOID, struct JarrJstr *)
 
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
 	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * (STRUCT(thisJarr)->len + argc))))) && (STRUCT(thisJarr)->size = 0, 1)) \
 	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len + argc)))))))) \
 		goto ERROR; \
-	for (int i=STRUCT(thisJarr)->len, j = i + argc; i<j; ++i) { \
+	for (int i = STRUCT(thisJarr)->len, j = i + argc; i<j; ++i) { \
 		TYPE argv = va_arg(ap, TYPE_TMP); \
 		STRUCT(thisJarr)->val[i] = argv; \
 	} \
@@ -39,6 +42,19 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 		JARR_CAT(FLOAT, float, double);
 	case 'd':
 		JARR_CAT(DOUBLE, double, double);
+	case 's':
+		if ((!JSTR(thisJarr)->size && !(JSTR(thisJarr)->val = malloc(sizeof(Jstr) * (JSTR(thisJarr)->size = MAX(MIN_SIZE, 2 * (JSTR(thisJarr)->len + argc))))) && (JSTR(thisJarr)->size = 0, 1))
+		|| (JSTR(thisJarr)->size < 2 * (JSTR(thisJarr)->len) && (!(JSTR(thisJarr)->val = realloc(JSTR(thisJarr)->val, sizeof(Jstr) * (JSTR(thisJarr)->size = MAX(2 * JSTR(thisJarr)->size, 2 * (JSTR(thisJarr)->len + argc))))))))
+			goto ERROR;
+		for (int i = JSTR(thisJarr)->len, j = i + argc; i<j; ++i) {
+			Jstr argv = va_arg(ap, Jstr);
+			JSTR(thisJarr)->val[i] = argv;
+			JSTR(thisJarr)->val[i].len = argv.len;
+			JSTR(thisJarr)->val[i].size = argv.size;
+		}
+		va_end(ap);
+		JSTR(thisJarr)->len += argc;
+		return JSTR(thisJarr)->size;
 	}
 
 ERROR:
