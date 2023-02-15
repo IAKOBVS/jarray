@@ -22,10 +22,12 @@
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
 	{ \
 		if (!STRUCT(thisJarr)->size) { \
-			if (!(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * (STRUCT(thisJarr)->len + argc))))) && (STRUCT(thisJarr)->size = 0, 1))  \
+			size_t tmpSize = MAX(MIN_SIZE, 2 * (STRUCT(thisJarr)->len + argc)); \
+			if (!(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * tmpSize))) \
 				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
 		} else if (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len)) { \
-			size_t tmpSize = MAX(MIN_SIZE, 2 * (JSTR(thisJarr)->len + argc)); \
+			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len + argc)); \
 			if (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * tmpSize))) \
 				goto ERROR; \
 			STRUCT(thisJarr)->size = tmpSize; \
@@ -33,10 +35,10 @@
 		int i = STRUCT(thisJarr)->len; \
 		for (void *argv = va_arg(ap, void *); argv != NULL; argv = va_arg(ap, void *), ++i) \
 			STRUCT(thisJarr)->val[i] = *(TYPE_TMP *)argv; \
-		va_end(ap); \
-		STRUCT(thisJarr)->len += argc; \
-		return STRUCT(thisJarr)->size; \
-	}
+	va_end(ap); \
+	STRUCT(thisJarr)->len += argc; \
+	} \
+	return 1
 
 int _jarrCat(void *thisJarr, int type, int argc, ...)
 {
@@ -51,17 +53,17 @@ int _jarrCat(void *thisJarr, int type, int argc, ...)
 		JARR_CAT(DOUBLE, double, double);
 	case 's':
 		{
-		if (JSTR(thisJarr)->size < 2 * (JSTR(thisJarr)->len)) {
-			size_t tmpSize = MAX(MIN_SIZE, 2 * (JSTR(thisJarr)->len + argc));
-			if (!(JSTR(thisJarr)->val = realloc(JSTR(thisJarr)->val, sizeof(Jstr) * tmpSize))) goto ERROR;
-			JSTR(thisJarr)->size = tmpSize;
-		}
-		int i = JSTR(thisJarr)->len;
-		for (char *argv = va_arg(ap, char *); argv != NULL; argv = va_arg(ap, void *), ++i) {
-			JSTR(thisJarr)->val[i] = *(Jstr *)argv;
-			JSTR(thisJarr)->val[i].len = (*(Jstr *)argv).len;
-			JSTR(thisJarr)->val[i].size = (*(Jstr *)argv).size;
-		}
+			if (JSTR(thisJarr)->size < 2 * (JSTR(thisJarr)->len)) {
+				size_t tmpSize = MAX(MIN_SIZE, 2 * (JSTR(thisJarr)->len + argc));
+				if (!(JSTR(thisJarr)->val = realloc(JSTR(thisJarr)->val, sizeof(Jstr) * tmpSize))) goto ERROR;
+				JSTR(thisJarr)->size = tmpSize;
+			}
+			int i = JSTR(thisJarr)->len;
+			for (char *argv = va_arg(ap, char *); argv != NULL; argv = va_arg(ap, void *), ++i) {
+				JSTR(thisJarr)->val[i] = *(Jstr *)argv;
+				JSTR(thisJarr)->val[i].len = (*(Jstr *)argv).len;
+				JSTR(thisJarr)->val[i].size = (*(Jstr *)argv).size;
+			}
 		}
 		va_end(ap);
 		JSTR(thisJarr)->len += argc;
@@ -75,12 +77,22 @@ ERROR:
 }
 
 #define JARR_ADD_ARR(STRUCT, TYPE) \
-	STRUCT(thisJarr)->len+= arrLen; \
-	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * STRUCT(thisJarr)->len)))) && (STRUCT(thisJarr)->size = 0, 1)) \
-	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))) \
-		goto ERROR; \
-	memcpy(STRUCT(thisJarr)->val, arr, arrLen * sizeof(TYPE)); \
-	return STRUCT(thisJarr)->size
+	{ \
+		STRUCT(thisJarr)->len+= arrLen; \
+		if (!STRUCT(thisJarr)->size) { \
+			size_t tmpSize = MAX(MIN_SIZE, 2 * (STRUCT(thisJarr)->len)); \
+			if (!(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * tmpSize))) \
+				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
+		} else if (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len)) { \
+			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)); \
+			if (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * tmpSize))) \
+				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
+		} \
+		memcpy(STRUCT(thisJarr)->val, arr, arrLen * sizeof(TYPE)); \
+	} \
+	return 1
 
 int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
 {
@@ -99,11 +111,21 @@ ERROR:
 }
 
 #define JARR_ADD(STRUCT, TYPE) \
-	STRUCT(thisJarr)->len += 1; \
-	if ((!STRUCT(thisJarr)->size && !(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(MIN_SIZE, 2 * STRUCT(thisJarr)->len))))) \
-	|| (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len) && (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * (STRUCT(thisJarr)->size = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)))))))) \
-		goto ERROR; \
-	STRUCT(thisJarr)->val[STRUCT(thisJarr)->len - 1] = *(TYPE *)src; \
+	{ \
+		STRUCT(thisJarr)->len += 1; \
+		if (!STRUCT(thisJarr)->size) { \
+			size_t tmpSize = MAX(MIN_SIZE, 2 * (STRUCT(thisJarr)->len)); \
+			if (!(STRUCT(thisJarr)->val = malloc(sizeof(TYPE) * tmpSize))) \
+				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
+		} else if (STRUCT(thisJarr)->size < 2 * (STRUCT(thisJarr)->len)) { \
+			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * (STRUCT(thisJarr)->len)); \
+			if (!(STRUCT(thisJarr)->val = realloc(STRUCT(thisJarr)->val, sizeof(TYPE) * tmpSize))) \
+				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
+		} \
+		STRUCT(thisJarr)->val[STRUCT(thisJarr)->len - 1] = *(TYPE *)src; \
+	} \
 	return STRUCT(thisJarr)->size
 
 int _jarrAdd(void *thisJarr, void *src, int type)
