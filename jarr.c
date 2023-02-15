@@ -94,7 +94,7 @@ ERROR:
 	} \
 	return 1
 
-int private_jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
+int private_jarrPushArr(void *thisJarr, void *arr, size_t arrLen, int type)
 {
 	switch (type) {
 	case 'i':
@@ -128,7 +128,7 @@ ERROR:
 	} \
 	return STRUCT(thisJarr)->size
 
-int private_jarrAdd(void *thisJarr, void *src, int type)
+int private_jarrPush(void *thisJarr, void *src, int type)
 {
 	switch (type) {
 	case 'i':

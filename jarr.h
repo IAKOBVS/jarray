@@ -75,13 +75,13 @@ typedef struct JARR_NAME { \
 #define jarrCat(JARR, ...) \
 	private_jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarrAddJarr(JARR, ADDED_ARR) \
-	private_jarrAddArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
-#define jarrAddarr(JARR, ADDED_ARR) \
-	private_jarrAddarr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
+#define jarrPushJarr(JARR, ADDED_ARR) \
+	private_jarrPushArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
+#define jarrPushArr(JARR, ADDED_ARR) \
+	private_jarrPushArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
 
-#define jarrAdd(JARR, JARR_NUM) \
-	private_jarrAdd(&JARR, JARR_NUM, JARR.type)
+#define jarrPush(JARR, JARR_NUM) \
+	private_jarrPush(&JARR, JARR_NUM, JARR.type)
 
 #define jarrMinimize(JARR) \
 	JARR.str = realloc(JARR.str, JARR.len)
