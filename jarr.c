@@ -40,7 +40,7 @@
 	} \
 	return 1
 
-int _jarrCat(void *thisJarr, int type, int argc, ...)
+int private_jarrCat(void *thisJarr, int type, int argc, ...)
 {
 	va_list ap;
 	va_start(ap, argc);
@@ -94,7 +94,7 @@ ERROR:
 	} \
 	return 1
 
-int _jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
+int private_jarrAddArr(void *thisJarr, void *arr, size_t arrLen, int type)
 {
 	switch (type) {
 	case 'i':
@@ -128,7 +128,7 @@ ERROR:
 	} \
 	return STRUCT(thisJarr)->size
 
-int _jarrAdd(void *thisJarr, void *src, int type)
+int private_jarrAdd(void *thisJarr, void *src, int type)
 {
 	switch (type) {
 	case 'i':

@@ -18,7 +18,7 @@
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
 	if (!(JARR.val = malloc(sizeof(TYPE) * JARR.typeSize))) { \
 		perror(""); exit(EXIT_FAILURE); } \
-	_jarrCat(&JARR, TYPE_NAME, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+	private_jarrCat(&JARR, TYPE_NAME, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
 	} while (0)
 
 #define jarrNew(JARR, ...) \
@@ -73,15 +73,15 @@ typedef struct JARR_NAME { \
 } JARR_NAME
 
 #define jarrCat(JARR, ...) \
-	_jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	private_jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define jarrAddJarr(JARR, ADDED_ARR) \
-	_jarrAddArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
+	private_jarrAddArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
 #define jarrAddarr(JARR, ADDED_ARR) \
-	_jarrAddarr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
+	private_jarrAddarr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
 
 #define jarrAdd(JARR, JARR_NUM) \
-	_jarrAdd(&JARR, JARR_NUM, JARR.type)
+	private_jarrAdd(&JARR, JARR_NUM, JARR.type)
 
 #define jarrMinimize(JARR) \
 	JARR.str = realloc(JARR.str, JARR.len)
@@ -91,9 +91,9 @@ JARR_STRUCT(JarrDb, double);
 JARR_STRUCT(JarrFl, float);
 JARR_STRUCT(JarrJstr, Jstr);
 
-int _jarrCat(void *thisJarr, int type, int argc, ...);
-int _jarrAddJarr(void *thisJarr, void* arr, size_t arrLen, int type);
-int _jarrAdd(void *thisJarr, void *src, int type);
+int private_jarrCat(void *thisJarr, int type, int argc, ...);
+int private_jarrAddJarr(void *thisJarr, void* arr, size_t arrLen, int type);
+int private_jarrAdd(void *thisJarr, void *src, int type);
 int qsortDescend(const void *x, const void *y);
 int qsortAscend(const void *y, const void *x);
 float qsortDescendFl(const void *x, const void *y);
