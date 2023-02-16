@@ -7,16 +7,14 @@
 #include "/home/james/c/jString/jstr.h"
 
 #define MIN_SIZE 8
-
-#define MAX(NUM1, NUM2) \
-	((NUM1 > NUM2) ? (NUM1) : (NUM2))
+#define MAX(a,b) ((a)>(b)?(a):(b))
 
 #define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
 	do { \
 	JARR.len = 0 \
 	JARR.type = TYPE_NAME \
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
-	if (!(JARR.val = malloc(sizeof(TYPE) * JARR.typeSize))) { \
+	if (!(JARR.data = malloc(sizeof(TYPE) * JARR.typeSize))) { \
 		perror(""); exit(EXIT_FAILURE); } \
 	private_jarrCat(&JARR, TYPE_NAME, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
 	} while (0)
@@ -47,7 +45,7 @@
 	do { \
 		if (JARR.size) \
 			if (JARR.type == 'i' \
-				free(JARR.val); \
+				free(JARR.data); \
 			else if (JARR.type == 'd') \
 				free(JARR.iDbl) \
 	} while (0)
@@ -55,19 +53,19 @@
 	do { \
 		if (JARR->size) \
 			if (JARR->type == 'i' \
-				free(JARR->val); \
+				free(JARR->data); \
 			else if (JARR->type == 'd') \
 				free(JARR->iDbl) \
 	} while (0)
 
 #define jarrPr(JARR) \
 	for (int i=0; i<JARR.len; ++i) \
-		printf("%f\n", *(double *)JARR.val)
+		printf("%f\n", *(double *)JARR.data)
 
 #define JARR_STRUCT(JARR_NAME, TYPE) \
 typedef struct JARR_NAME { \
 	int type; \
-	TYPE *val; \
+	TYPE *data; \
 	size_t len; \
 	size_t size; \
 } JARR_NAME
@@ -100,5 +98,8 @@ float qsortDescendFl(const void *x, const void *y);
 float qsortAscendFl(const void *y, const void *x);
 double qsortDescendDb(const void *x, const void *y);
 double qsortAscendDb(const void *y, const void *x);
+
+#undef MIN_SIZE
+#undef MAX
 
 #endif
