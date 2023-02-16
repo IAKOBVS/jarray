@@ -6,14 +6,14 @@
 #include "/home/james/c/vargc.h"
 #include "/home/james/c/jString/jstr.h"
 
-#define MIN_SIZE 8
+#define JARR_MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
 #define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
 	do { \
 	JARR.len = 0 \
 	JARR.type = TYPE_NAME \
-	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), MIN_SIZE); \
+	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE); \
 	if (!(JARR.data = malloc(sizeof(TYPE) * JARR.typeSize))) { \
 		perror(""); exit(EXIT_FAILURE); } \
 	private_jarrCat(&JARR, TYPE_NAME, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
@@ -99,7 +99,6 @@ float qsortAscendFl(const void *y, const void *x);
 double qsortDescendDb(const void *x, const void *y);
 double qsortAscendDb(const void *y, const void *x);
 
-#undef MIN_SIZE
 #undef MAX
 
 #endif
