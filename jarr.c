@@ -25,16 +25,20 @@
 		size_t tmpLen = STRUCT(thisJarr)->len + argc; \
 		if (!STRUCT(thisJarr)->size) { \
 			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) goto ERROR; \
-			STRUCT(thisJarr)->size = tmpSize; \
+			if ((STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			else goto ERROR; \
 		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
 			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) goto ERROR; \
-			STRUCT(thisJarr)->size = tmpSize; \
+			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			else goto ERROR; \
 		} \
-		size_t i = STRUCT(thisJarr)->len; \
-		for (void *argv = va_arg(ap, void *); argv != NULL; argv = va_arg(ap, void *), ++i) \
-			STRUCT(thisJarr)->data[i] = *(TYPE_TMP *)argv; \
+		for (size_t i = STRUCT(thisJarr)->len;; ++i) { \
+			void *argv = va_arg(ap, void *); \
+			if (argv) \
+				STRUCT(thisJarr)->data[i] = *(TYPE_TMP *)argv; \
+			else \
+				break; \
+		} \
 	va_end(ap); \
 	STRUCT(thisJarr)->len = tmpLen; \
 	} \
@@ -56,14 +60,18 @@ int private_jarrCat(void *thisJarr, int type, int argc, ...)
 			size_t tmpLen = JSTR(thisJarr)->len + argc;
 			if (JSTR(thisJarr)->size < 2 * tmpLen) {
 				size_t tmpSize = MAX(MIN_SIZE, tmpLen);
-				if (!(JSTR(thisJarr)->data = realloc(JSTR(thisJarr)->data, sizeof(Jstr) * tmpSize))) goto ERROR;
-				JSTR(thisJarr)->size = tmpSize;
+				if ((JSTR(thisJarr)->data = realloc(JSTR(thisJarr)->data, sizeof(Jstr) * tmpSize))) JSTR(thisJarr)->size = tmpSize;
+				else goto ERROR;
 			}
-			size_t i = JSTR(thisJarr)->len;
-			for (char *argv = va_arg(ap, char *); argv != NULL; argv = va_arg(ap, void *), ++i) {
-				JSTR(thisJarr)->data[i] = *(Jstr *)argv;
-				JSTR(thisJarr)->data[i].len = (*(Jstr *)argv).len;
-				JSTR(thisJarr)->data[i].size = (*(Jstr *)argv).size;
+			for (size_t i = JSTR(thisJarr)->len;; ++i) {
+				char *argv = va_arg(ap, char *);
+				if (argv) {
+					JSTR(thisJarr)->data[i] = *(Jstr *)argv;
+					JSTR(thisJarr)->data[i].len = (*(Jstr *)argv).len;
+					JSTR(thisJarr)->data[i].size = (*(Jstr *)argv).size;
+				} else {
+					break;
+				}
 			}
 		}
 		va_end(ap);
@@ -82,12 +90,12 @@ ERROR:
 		size_t tmpLen = STRUCT(thisJarr)->len + arrLen; \
 		if (!STRUCT(thisJarr)->size) { \
 			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) goto ERROR; \
-			STRUCT(thisJarr)->size = tmpSize; \
+			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			else goto ERROR; \
 		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
 			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) goto ERROR; \
-			STRUCT(thisJarr)->size = tmpSize; \
+			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			else goto ERROR; \
 		} \
 		memcpy(STRUCT(thisJarr)->data + STRUCT(thisJarr)->len, arr, arrLen * sizeof(TYPE)); \
 		STRUCT(thisJarr)->len = tmpLen; \
@@ -115,12 +123,12 @@ ERROR:
 		size_t tmpLen = STRUCT(thisJarr)->len + 1; \
 		if (!STRUCT(thisJarr)->size) { \
 			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) goto ERROR; \
-			STRUCT(thisJarr)->size = tmpSize; \
+			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			else goto ERROR; \
 		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
 			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) goto ERROR; \
-			STRUCT(thisJarr)->size = tmpSize; \
+			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			else goto ERROR; \
 		} \
 		STRUCT(thisJarr)->data[STRUCT(thisJarr)->len - 1] = *(TYPE *)src; \
 		STRUCT(thisJarr)->len = tmpLen; \
