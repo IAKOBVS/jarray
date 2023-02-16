@@ -7,6 +7,7 @@
 #include "/home/james/c/jString/jstr.h"
 
 #define MIN_SIZE 8
+#define MAX(a,b) ((a)>(b)?(a):(b))
 
 #define CAST_TO(VOID, TYPE) \
 	((TYPE)VOID)
