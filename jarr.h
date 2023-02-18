@@ -6,6 +6,14 @@
 #include "/home/james/c/vargc.h"
 #include "/home/james/c/jString/jstr.h"
 
+#if (defined(__GNUC__) && (__GNUC__ >= 3)) || (defined(__clang__) && __has_builtin(__builtin_expect))
+  #define likely(x) __builtin_expect(!!(x), 1)
+  #define unlikely(x) __builtin_expect(!!(x), 0)
+#else
+  #define likely(x) (x)
+  #define unlikely(x) (x)
+#endif
+
 #define JARR_MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
@@ -14,8 +22,8 @@
 	JARR.len = 0 \
 	JARR.type = TYPE_NAME \
 	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE); \
-	if (!(JARR.data = malloc(sizeof(TYPE) * JARR.typeSize))) { \
-		perror(""); exit(EXIT_FAILURE); } \
+	if (unlikely(!(JARR.data = malloc(sizeof(TYPE) * JARR.typeSize)))) \
+		{ perror(""); exit(EXIT_FAILURE); } \
 	private_jarrCat(&JARR, TYPE_NAME, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
 	} while (0)
 
@@ -82,7 +90,8 @@ typedef struct JARR_NAME { \
 	private_jarrPush(&JARR, JARR_NUM, JARR.type)
 
 #define jarrMinimize(JARR) \
-	JARR.str = realloc(JARR.str, JARR.len)
+	if (unlikely(!(JARR.str = realloc(JARR.str, JARR.len)))) \
+		{ perror(""); return EXIT_FAILURE; }
 
 JARR_STRUCT(Jarr, int);
 JARR_STRUCT(JarrDb, double);
