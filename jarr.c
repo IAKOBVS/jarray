@@ -6,6 +6,16 @@
 #include "jarr.h"
 #include "/home/james/c/jString/jstr.h"
 
+#if defined(__PRETTY_FUNCTION__)
+	#define CURR_FUNC __PRETTY_FUNCTION__
+#elif defined(__FUNCTION__)
+	#define CURR_FUNC __FUNCTION__
+#elif defined(__func__)
+	#define CURR_FUNC __func__
+#else
+	#define CURR_FUNC ""
+#endif
+
 #if (defined(__GNUC__) && (__GNUC__ >= 3)) || (defined(__clang__) && __has_builtin(__builtin_expect))
   #define likely(x) __builtin_expect(!!(x), 1)
   #define unlikely(x) __builtin_expect(!!(x), 0)
@@ -54,7 +64,7 @@
 	} \
 	return 1
 
-int private_jarrCat(void *thisJarr, int type, int argc, ...)
+int jarrCat_(void *thisJarr, int type, int argc, ...)
 {
 	va_list ap;
 	va_start(ap, argc);
@@ -113,7 +123,7 @@ ERROR:
 	} \
 	return 1
 
-int private_jarrPushArr(void *thisJarr, void *arr, size_t arrLen, int type)
+int jarrPushArr_(void *thisJarr, void *arr, size_t arrLen, int type)
 {
 	switch (type) {
 	case 'i':
@@ -146,7 +156,7 @@ ERROR:
 	} \
 	return 1
 
-int private_jarrPush(void *thisJarr, void *src, int type)
+int jarrPush_(void *thisJarr, void *src, int type)
 {
 	switch (type) {
 	case 'i':
