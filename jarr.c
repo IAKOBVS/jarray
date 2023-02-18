@@ -6,6 +6,14 @@
 #include "jarr.h"
 #include "/home/james/c/jString/jstr.h"
 
+#if (defined(__GNUC__) && (__GNUC__ >= 3)) || (defined(__clang__) && __has_builtin(__builtin_expect))
+  #define likely(x) __builtin_expect(!!(x), 1)
+  #define unlikely(x) __builtin_expect(!!(x), 0)
+#else
+  #define likely(x) (x)
+  #define unlikely(x) (x)
+#endif
+
 #define MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
@@ -25,12 +33,14 @@
 		size_t tmpLen = STRUCT(thisJarr)->len + argc; \
 		if (!STRUCT(thisJarr)->size) { \
 			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
-			if ((STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
-			else goto ERROR; \
+			if (unlikely(!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize)))) \
+				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
 		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
 			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
-			else goto ERROR; \
+			if (unlikely(!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize)))) \
+				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
 		} \
 		for (size_t i = STRUCT(thisJarr)->len;; ++i) { \
 			void *argv = va_arg(ap, void *); \
@@ -60,8 +70,9 @@ int private_jarrCat(void *thisJarr, int type, int argc, ...)
 			size_t tmpLen = JSTR(thisJarr)->len + argc;
 			if (JSTR(thisJarr)->size < 2 * tmpLen) {
 				size_t tmpSize = MAX(MIN_SIZE, tmpLen);
-				if ((JSTR(thisJarr)->data = realloc(JSTR(thisJarr)->data, sizeof(Jstr) * tmpSize))) JSTR(thisJarr)->size = tmpSize;
-				else goto ERROR;
+				if (unlikely(!(JSTR(thisJarr)->data = realloc(JSTR(thisJarr)->data, sizeof(Jstr) * tmpSize))))
+					goto ERROR;
+				JSTR(thisJarr)->size = tmpSize;
 			}
 			for (size_t i = JSTR(thisJarr)->len;; ++i) {
 				char *argv = va_arg(ap, char *);
@@ -91,11 +102,11 @@ ERROR:
 		if (!STRUCT(thisJarr)->size) { \
 			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
 			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
-			else goto ERROR; \
+				goto ERROR; \
 		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
 			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
 			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
-			else goto ERROR; \
+				goto ERROR; \
 		} \
 		memcpy(STRUCT(thisJarr)->data + STRUCT(thisJarr)->len, arr, arrLen * sizeof(TYPE)); \
 		STRUCT(thisJarr)->len = tmpLen; \
@@ -124,11 +135,11 @@ ERROR:
 		if (!STRUCT(thisJarr)->size) { \
 			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
 			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
-			else goto ERROR; \
+				goto ERROR; \
 		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
 			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
 			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
-			else goto ERROR; \
+				goto ERROR; \
 		} \
 		STRUCT(thisJarr)->data[STRUCT(thisJarr)->len - 1] = *(TYPE *)src; \
 		STRUCT(thisJarr)->len = tmpLen; \
