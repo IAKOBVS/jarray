@@ -79,12 +79,12 @@ typedef struct JARR_NAME { \
 } JARR_NAME
 
 #define jarrCat(JARR, ...) \
-	jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	private_jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define jarrPushJarr(JARR, ADDED_ARR) \
-	jarrPushArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
+	private_jarrPushArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
 #define jarrPushArr(JARR, ADDED_ARR) \
-	jarrPushArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
+	private_jarrPushArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
 
 #define jarrPush(JARR, JARR_NUM) \
 	jarrPush(&JARR, JARR_NUM, JARR.type)
@@ -98,9 +98,9 @@ JARR_STRUCT(JarrDb, double);
 JARR_STRUCT(JarrFl, float);
 JARR_STRUCT(JarrJstr, Jstr);
 
-int jarrCat_(void *thisJarr, int type, int argc, ...);
-int jarrAddJarr_(void *thisJarr, void* arr, size_t arrLen, int type);
-int jarrAdd_(void *thisJarr, void *src, int type);
+int private_jarrCat(void *thisJarr, int type, int argc, ...);
+int private_jarrAddJarr(void *thisJarr, void* arr, size_t arrLen, int type);
+int private_jarrAdd(void *thisJarr, void *src, int type);
 int qsortDescend(const void *x, const void *y);
 int qsortAscend(const void *y, const void *x);
 float qsortDescendFl(const void *x, const void *y);

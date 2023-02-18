@@ -64,7 +64,7 @@
 	} \
 	return 1
 
-int jarrCat_(void *thisJarr, int type, int argc, ...)
+int private_jarrCat(void *thisJarr, int type, int argc, ...)
 {
 	va_list ap;
 	va_start(ap, argc);
@@ -123,7 +123,7 @@ ERROR:
 	} \
 	return 1
 
-int jarrPushArr_(void *thisJarr, void *arr, size_t arrLen, int type)
+int private_jarrPushArr(void *thisJarr, void *arr, size_t arrLen, int type)
 {
 	switch (type) {
 	case 'i':
@@ -156,7 +156,7 @@ ERROR:
 	} \
 	return 1
 
-int jarrPush_(void *thisJarr, void *src, int type)
+int private_jarrPush(void *thisJarr, void *src, int type)
 {
 	switch (type) {
 	case 'i':
