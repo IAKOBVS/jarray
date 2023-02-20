@@ -40,14 +40,17 @@
 
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
 	{ \
-		size_t tmpLen = STRUCT(thisJarr)->len + argc; \
+		size_t newLen = STRUCT(thisJarr)->len + argc; \
 		if (!STRUCT(thisJarr)->size) { \
-			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
+			size_t tmpSize = MAX(MIN_SIZE, 2 * newLen); \
 			if (unlikely(!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize)))) \
 				goto ERROR; \
 			STRUCT(thisJarr)->size = tmpSize; \
-		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
-			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
+		} else if (STRUCT(thisJarr)->size < newLen) { \
+			size_t tmpSize = STRUCT(thisJarr)->size; \
+			do { \
+				tmpSize *= 2; \
+			} while (STRUCT(thisJarr)->size < newLen); \
 			if (unlikely(!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize)))) \
 				goto ERROR; \
 			STRUCT(thisJarr)->size = tmpSize; \
@@ -60,7 +63,7 @@
 				break; \
 		} \
 	va_end(ap); \
-	STRUCT(thisJarr)->len = tmpLen; \
+	STRUCT(thisJarr)->len = newLen; \
 	} \
 	return 1
 
@@ -75,26 +78,6 @@ int private_jarrCat(void *thisJarr, int type, int argc, ...)
 		JARR_CAT(FLOAT, float, double);
 	case 'd':
 		JARR_CAT(DOUBLE, double, double);
-	case 's':
-		{
-			size_t tmpLen = JSTR(thisJarr)->len + argc;
-			if (JSTR(thisJarr)->size < 2 * tmpLen) {
-				size_t tmpSize = MAX(MIN_SIZE, tmpLen);
-				if (unlikely(!(JSTR(thisJarr)->data = realloc(JSTR(thisJarr)->data, sizeof(Jstr) * tmpSize))))
-					goto ERROR;
-				JSTR(thisJarr)->size = tmpSize;
-			}
-			for (size_t i = JSTR(thisJarr)->len;; ++i) {
-				char *argv = va_arg(ap, char *);
-				if (argv) {
-					JSTR(thisJarr)->data[i] = *(Jstr *)argv;
-					JSTR(thisJarr)->data[i].len = (*(Jstr *)argv).len;
-					JSTR(thisJarr)->data[i].size = (*(Jstr *)argv).size;
-				} else {
-					break;
-				}
-			}
-		}
 		va_end(ap);
 		JSTR(thisJarr)->len += argc;
 		return JSTR(thisJarr)->size;
@@ -105,21 +88,46 @@ ERROR:
 	perror("");
 	return 0;
 }
+/* case 's': */
+/* 	{ */
+/* 		size_t tmpLen = JSTR(thisJarr)->len + argc; */
+/* 		if (JSTR(thisJarr)->size < 2 * tmpLen) { */
+/* 			size_t tmpSize = MAX(MIN_SIZE, tmpLen); */
+/* 			if (unlikely(!(JSTR(thisJarr)->data = realloc(JSTR(thisJarr)->data, sizeof(Jstr) * tmpSize)))) */
+/* 				goto ERROR; */
+/* 			JSTR(thisJarr)->size = tmpSize; */
+/* 		} */
+/* 		for (size_t i = JSTR(thisJarr)->len;; ++i) { */
+/* 			char *argv = va_arg(ap, char *); */
+/* 			if (argv) { */
+/* 				JSTR(thisJarr)->data[i] = *(Jstr *)argv; */
+/* 				JSTR(thisJarr)->data[i].len = (*(Jstr *)argv).len; */
+/* 				JSTR(thisJarr)->data[i].size = (*(Jstr *)argv).size; */
+/* 			} else { */
+/* 				break; */
+/* 			} */
+/* 		} */
+/* 	} */
 
 #define JARR_ADD_ARR(STRUCT, TYPE) \
 	{ \
-		size_t tmpLen = STRUCT(thisJarr)->len + arrLen; \
+		size_t newLen = STRUCT(thisJarr)->len + arrLen; \
 		if (!STRUCT(thisJarr)->size) { \
-			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			size_t tmpSize = MAX(MIN_SIZE, 2 * newLen); \
+			if (unlikely(!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize)))) \
 				goto ERROR; \
-		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
-			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
-			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
+			STRUCT(thisJarr)->size = tmpSize; \
+		} else if (STRUCT(thisJarr)->size < newLen) { \
+			size_t tmpSize = STRUCT(thisJarr)->size; \
+			do { \
+				tmpSize *= 2; \
+			} while (STRUCT(thisJarr)->size < newLen); \
+			if (unlikely(!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize)))) \
 				goto ERROR; \
+			STRUCT(thisJarr)->size = tmpSize; \
 		} \
 		memcpy(STRUCT(thisJarr)->data + STRUCT(thisJarr)->len, arr, arrLen * sizeof(TYPE)); \
-		STRUCT(thisJarr)->len = tmpLen; \
+		STRUCT(thisJarr)->len = newLen; \
 	} \
 	return 1
 
