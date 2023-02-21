@@ -1,8 +1,6 @@
 #ifndef JARR_H_DEF
 #define JARR_H_DEF
 
-#include <stdlib.h>
-#include <stdarg.h>
 #include "/home/james/c/vargc.h"
 #include "/home/james/c/jString/jstr.h"
 
