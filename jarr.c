@@ -210,10 +210,3 @@ double qsortDescendDb(const void *x, const void *y)
 {
 	return *(double *)y  - *(double *)x;
 }
-
-int isJarr(Jarr *thisJarr)
-{
-	if (!*((unsigned char *)&*thisJarr))
-		return 0;
-	return 1;
-}
