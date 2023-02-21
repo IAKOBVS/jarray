@@ -76,9 +76,6 @@ int private_jarrCat(void *thisJarr, int type, int argc, ...)
 		JARR_CAT(FLOAT, float, double);
 	case 'd':
 		JARR_CAT(DOUBLE, double, double);
-		va_end(ap);
-		JSTR(thisJarr)->len += argc;
-		return JSTR(thisJarr)->size;
 	}
 	va_end(ap);
 	return 1;
