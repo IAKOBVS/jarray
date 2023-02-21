@@ -39,7 +39,7 @@
 	CAST_TO(VOID, struct JarrJstr *)
 
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
-	{ \
+	do { \
 		size_t newLen = STRUCT(thisJarr)->len + argc; \
 		if (!STRUCT(thisJarr)->size) { \
 			size_t tmpSize = MAX(MIN_SIZE, 2 * newLen); \
@@ -62,10 +62,8 @@
 			else \
 				break; \
 		} \
-	va_end(ap); \
-	STRUCT(thisJarr)->len = newLen; \
-	} \
-	return 1
+		STRUCT(thisJarr)->len = newLen; \
+	} while (0)
 
 int private_jarrCat(void *thisJarr, int type, int argc, ...)
 {
@@ -82,12 +80,15 @@ int private_jarrCat(void *thisJarr, int type, int argc, ...)
 		JSTR(thisJarr)->len += argc;
 		return JSTR(thisJarr)->size;
 	}
+	va_end(ap);
+	return 1;
 
 ERROR:
 	va_end(ap);
 	perror("");
 	return 0;
 }
+
 /* case 's': */
 /* 	{ */
 /* 		size_t tmpLen = JSTR(thisJarr)->len + argc; */
