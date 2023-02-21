@@ -65,16 +65,15 @@
 		STRUCT(thisJarr)->len = newLen; \
 	} while (0)
 
-#define STRUCT_TYPE() \
-	_Generic(0, \
-			int: DECLARE_JARR(jarrPtr), \
-			double: DECLARE_JARRDB(jarrPtr), \
-			float: DECLARE_JARRFL(jarrPtr); \
-			)
+#define STRUCT_TYPE(TYPE) _Generic((TYPE), \
+	int: DECLARE_JARR(jarrPtr), \
+	double: DECLARE_JARRDB(jarrPtr), \
+	float: DECLARE_JARRFL(jarrPtr); \
+	)
 
-#define DECLARE_JARR(PTR_NAME) Jarr PTR_NAME;
-#define DECLARE_JARRDB(PTR_NAME) JarrDb PTR_NAME;
-#define DECLARE_JARRFL(PTR_NAME) JarrFl PTR_NAME;
+#define DECLARE_JARR(PTR_NAME) Jarr PTR_NAME
+#define DECLARE_JARRDB(PTR_NAME) JarrDb PTR_NAME
+#define DECLARE_JARRFL(PTR_NAME) JarrFl PTR_NAME
 
 int private_jarrCat(void *thisJarr, int type, int argc, ...)
 {
