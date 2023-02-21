@@ -65,6 +65,17 @@
 		STRUCT(thisJarr)->len = newLen; \
 	} while (0)
 
+#define STRUCT_TYPE() \
+	_Generic(0, \
+			int: DECLARE_JARR(jarrPtr), \
+			double: DECLARE_JARRDB(jarrPtr), \
+			float: DECLARE_JARRFL(jarrPtr); \
+			)
+
+#define DECLARE_JARR(PTR_NAME) Jarr PTR_NAME;
+#define DECLARE_JARRDB(PTR_NAME) JarrDb PTR_NAME;
+#define DECLARE_JARRFL(PTR_NAME) JarrFl PTR_NAME;
+
 int private_jarrCat(void *thisJarr, int type, int argc, ...)
 {
 	va_list ap;
@@ -72,8 +83,10 @@ int private_jarrCat(void *thisJarr, int type, int argc, ...)
 	switch (type) {
 	case 'i':
 		JARR_CAT(INT, int, int);
+		break;
 	case 'f':
 		JARR_CAT(FLOAT, float, double);
+		break;
 	case 'd':
 		JARR_CAT(DOUBLE, double, double);
 	}
