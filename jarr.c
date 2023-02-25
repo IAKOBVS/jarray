@@ -76,5 +76,7 @@ ALWAYS_INLINE double qsortDescendDb(const void *x, const void *y)
 int main()
 {
 	JarrInt hello;
-	jarrNew(&hello, 1);
+	jarrInit(hello);
+	jarrNew(hello, 2, 3, 3 ,4);
+	printf("%d\n", hello.data[1]);
 }

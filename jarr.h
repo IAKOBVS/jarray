@@ -50,26 +50,30 @@ JARR_STRUCT(JarrFloat, float);
 		JARR->data = NULL; \
 	} while (0)
 
-#define jarrNew(thisJarr, ...)                                                               \
-	do {                                                                                 \
-		thisJarr.len = PP_NARG(__VA_ARGS__);                                         \
-		const size_t tmpSize = MAX(2 * thisJarr.len, JARR_MIN_SIZE);             \
-		if (unlikely(!(thisJarr.data = malloc(sizeof(thisJarr.data[0]) * tmpSize)))) \
-			{ perror("jarrNew malloc failed"); return -1; }                      \
-		thisJarr.size = tmpSize;                                                     \
-		typeof(thisJarr.data) = { __VA_ARGS__ };                                     \
-		memcpy(thisJarr.data, tmp, thisJarr.len);                                    \
+#define jarrNew(thisJarr, ...)                                                                       \
+	do {                                                                                         \
+		typeof(thisJarr.data[0]) tmp[] = { __VA_ARGS__ };                                    \
+		thisJarr.size = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE);                        \
+		if (unlikely(!(thisJarr.data = malloc(sizeof(thisJarr.data[0]) * thisJarr.size)))) { \
+			thisJarr.size = 0;                                                           \
+			perror("jarrNew malloc failed");                                             \
+			return -1;                                                                   \
+		}                                                                                    \
+		thisJarr.len = PP_NARG(__VA_ARGS__);                                                 \
+		memcpy(thisJarr.data, tmp, thisJarr.len);                                            \
 	} while (0)
 
-#define jarrNewPtr(thisJarr, ...)                                                              \
-	do {                                                                                   \
-		thisJarr->len = PP_NARG(__VA_ARGS__);                                          \
-		const size_t tmpSize = MAX(2 * thisJarr->len, JARR_MIN_SIZE);              \
-		if (unlikely(!(thisJarr->data = malloc(sizeof(thisJarr->data[0]) * tmpSize)))) \
-			{ perror("jarrNew malloc failed"); return -1; }                        \
-		thisJarr->size = tmpSize;                                                      \
-		typeof(thisJarr->data) = { __VA_ARGS__ };                                      \
-		memcpy(thisJarr->data, tmp, thisJarr->len);                                    \
+#define jarrNewPtr(thisJarr, ...)                                                                       \
+	do {                                                                                            \
+		typeof(thisJarr->data[0]) tmp[] = { __VA_ARGS__ };                                      \
+		thisJarr->size = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE);                          \
+		if (unlikely(!(thisJarr->data = malloc(sizeof(thisJarr->data[0]) * thisJarr->size)))) { \
+			thisJarr.size = 0;                                                              \
+			perror("jarrNew malloc failed");                                                \
+			return -1;                                                                      \
+		}                                                                                       \
+		thisJarr->len = PP_NARG(__VA_ARGS__);                                                   \
+		memcpy(thisJarr->data, tmp, thisJarr->len);                                             \
 	} while (0)
 
 #define jarrDeleteFast(thisJarr)     \
