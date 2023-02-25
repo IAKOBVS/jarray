@@ -1,8 +1,8 @@
 #ifndef JARR_H_DEF
 #define JARR_H_DEF
 
-#include "/home/james/c/vargc.h"
 #include <stddef.h>
+#include "/home/james/c/vargc.h"
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 # define RESTRICT_KEYWORD restrict
@@ -32,9 +32,9 @@
 		size_t size;    \
 	} NAME
 
-JARR_STRUCT(JarrayInt, int);
-JARR_STRUCT(JarrayDouble, double);
-JARR_STRUCT(JarrayFloat, float);
+JARR_STRUCT(JarrInt, int);
+JARR_STRUCT(JarrDouble, double);
+JARR_STRUCT(JarrFloat, float);
 
 #define jarrInit(JARR)            \
 	do {                      \
@@ -59,6 +59,17 @@ JARR_STRUCT(JarrayFloat, float);
 		thisJarr.size = tmpSize;                                                     \
 		typeof(thisJarr.data) = { __VA_ARGS__ };                                     \
 		memcpy(thisJarr.data, tmp, thisJarr.len);                                    \
+	} while (0)
+
+#define jarrNewPtr(thisJarr, ...)                                                              \
+	do {                                                                                   \
+		thisJarr->len = PP_NARG(__VA_ARGS__);                                          \
+		const size_t tmpSize = MAX(2 * thisJarr->len, thisJarr_MIN_SIZE);              \
+		if (unlikely(!(thisJarr->data = malloc(sizeof(thisJarr->data[0]) * tmpSize)))) \
+			{ perror("jarrNew malloc failed"); return -1; }                        \
+		thisJarr->size = tmpSize;                                                      \
+		typeof(thisJarr->data) = { __VA_ARGS__ };                                      \
+		memcpy(thisJarr->data, tmp, thisJarr->len);                                    \
 	} while (0)
 
 #define jarrDeleteFast(thisJarr)     \

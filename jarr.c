@@ -42,7 +42,6 @@
 #endif
 
 #define MIN_SIZE 8
-#define MAX(a,b) ((a)>(b)?(a):(b))
 
 ALWAYS_INLINE int qsortAscend(const void *x, const void *y)
 {
@@ -72,4 +71,10 @@ ALWAYS_INLINE float qsortDescendFl(const void *x, const void *y)
 ALWAYS_INLINE double qsortDescendDb(const void *x, const void *y)
 {
 	return *(double *)y  - *(double *)x;
+}
+
+int main()
+{
+	JarrInt hello;
+	jarrNew(&hello, 1);
 }
