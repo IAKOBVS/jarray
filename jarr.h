@@ -25,42 +25,35 @@
 #define JARR_MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
-#define JARR_NEW(JARR, TYPE, ...)                                                    \
-	do {                                                                         \
-		JARR.len = PP_NARG(__VA_ARGS__);                                     \
-		const size_t tmpSize = MAX(2 * JARR.len, JARR_MIN_SIZE);             \
-		if (unlikely(!(JARR.data = malloc(sizeof(JARR.data[0]) * tmpSize)))) \
-			{ perror("jarrNew malloc failed"); return -1; }              \
-		JARR.size = tmpSize;                                                 \
-		typeof(JARR.data) = { __VA_ARGS__ };                                 \
-		memcpy(jarr.data, tmp, JARR.len);                                    \
+#define jarrNew(thisJarr, ...)                                                               \
+	do {                                                                                 \
+		thisJarr.len = PP_NARG(__VA_ARGS__);                                         \
+		const size_t tmpSize = MAX(2 * thisJarr.len, thisJarr_MIN_SIZE);             \
+		if (unlikely(!(thisJarr.data = malloc(sizeof(thisJarr.data[0]) * tmpSize)))) \
+			{ perror("jarrNew malloc failed"); return -1; }                      \
+		thisJarr.size = tmpSize;                                                     \
+		typeof(thisJarr.data) = { __VA_ARGS__ };                                     \
+		memcpy(thisJarr.data, tmp, thisJarr.len);                                    \
 	} while (0)
 
-#define jarrNew(JARR, ...) JARR_NEW(JARR, int, __VA_ARGS__)
-#define jarrNewDb(JARR, ...) JARR_NEW(JARR, double, __VA_ARGS__)
-#define jarrNewFl(JARR, ...) JARR_NEW(JARR, float, __VA_ARGS__)
-
-#define JARR_INIT(JARR, JARR_STRUCT, TYPE_NAME) \
-	JARR_STRUCT JARR = {                    \
-		.size = 0,                      \
-		.len = 0                        \
-	}
-
-#define jarrInit(JARR) JARR_INIT(JARR, Jarr, int)
-#define jarrInitFl(JARR) JARR_INIT(JARR, JarrFl, float)
-#define jarrInitDb(JARR) JARR_INIT(JARR, JarrDb, double)
+#define jarrInit(JARR)           \
+	do {                     \
+		JARR.size = 0,   \
+		JARR.len = 0,    \
+		JARR.data = NULL \
+	} while (0)
 
 #define JARR_STRUCT(JARR_NAME, TYPE) \
-typedef struct JARR_NAME {           \
-	int type;                    \
-	TYPE *data;                  \
-	size_t len;                  \
-	size_t size;                 \
-} JARR_NAME
+	typedef struct JARR_NAME {   \
+		int type;            \
+		TYPE *data;          \
+		size_t len;          \
+		size_t size;         \
+	} JARR_NAME
 
-JARR_STRUCT(Jarr, int);
-JARR_STRUCT(JarrDb, double);
-JARR_STRUCT(JarrFl, float);
+JARR_STRUCT(JarrayInt, int);
+JARR_STRUCT(JarrayDouble, double);
+JARR_STRUCT(JarrayFloat, float);
 
 #define jarrDelete(thisJarr) free(thisJarr.data)
 #define jarrDeletePtr(thisJarr) free(thisJarr->data)
