@@ -53,7 +53,7 @@ JARR_STRUCT(JarrFloat, float);
 #define jarrNew(thisJarr, ...)                                                               \
 	do {                                                                                 \
 		thisJarr.len = PP_NARG(__VA_ARGS__);                                         \
-		const size_t tmpSize = MAX(2 * thisJarr.len, thisJarr_MIN_SIZE);             \
+		const size_t tmpSize = MAX(2 * thisJarr.len, JARR_MIN_SIZE);             \
 		if (unlikely(!(thisJarr.data = malloc(sizeof(thisJarr.data[0]) * tmpSize)))) \
 			{ perror("jarrNew malloc failed"); return -1; }                      \
 		thisJarr.size = tmpSize;                                                     \
@@ -64,7 +64,7 @@ JARR_STRUCT(JarrFloat, float);
 #define jarrNewPtr(thisJarr, ...)                                                              \
 	do {                                                                                   \
 		thisJarr->len = PP_NARG(__VA_ARGS__);                                          \
-		const size_t tmpSize = MAX(2 * thisJarr->len, thisJarr_MIN_SIZE);              \
+		const size_t tmpSize = MAX(2 * thisJarr->len, JARR_MIN_SIZE);              \
 		if (unlikely(!(thisJarr->data = malloc(sizeof(thisJarr->data[0]) * tmpSize)))) \
 			{ perror("jarrNew malloc failed"); return -1; }                        \
 		thisJarr->size = tmpSize;                                                      \
