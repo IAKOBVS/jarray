@@ -37,18 +37,18 @@ JARR_STRUCT(JarrayInt, int);
 JARR_STRUCT(JarrayDouble, double);
 JARR_STRUCT(JarrayFloat, float);
 
-#define jarrInit(JARR)           \
-	do {                     \
-		JARR.size = 0,   \
-		JARR.len = 0,    \
-		JARR.data = NULL \
+#define jarrInit(JARR)            \
+	do {                      \
+		JARR.size = 0;    \
+		JARR.len = 0;     \
+		JARR.data = NULL; \
 	} while (0)
 
-#define jarrInitPtr(JARR)         \
-	do {                      \
-		JARR->size = 0,   \
-		JARR->len = 0,    \
-		JARR->data = NULL \
+#define jarrInitPtr(JARR)          \
+	do {                       \
+		JARR->size = 0;    \
+		JARR->len = 0;     \
+		JARR->data = NULL; \
 	} while (0)
 
 #define jarrNew(thisJarr, ...)                                                               \
