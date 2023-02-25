@@ -58,24 +58,6 @@
 #define jarrInitDb(JARR) \
 	JARR_INIT(JARR, JarrDb, double)
 
-#define jarrDelete(JARR) free(JARR.data)
-#define jarrDeleteSafe(JARR) \
-	do { \
-		free(JARR.data); \
-		JARR.len = 0; \
-		JARR.size = 0; \
-		JARR.data = NULL; \
-	} while (0)
-
-#define jarrDeletePtr(JARR) free(JARR->data)
-#define jarrDeletePtrSafe(JARR) \
-	do { \
-		free(JARR->data); \
-		JARR->len = 0; \
-		JARR->size = 0; \
-		JARR->data = NULL; \
-	} while (0)
-
 #define jarrPr(JARR) \
 	for (int i=0; i<JARR.len; ++i) \
 		printf("%f\n", *(double *)JARR.data)
@@ -91,22 +73,6 @@ typedef struct JARR_NAME { \
 JARR_STRUCT(Jarr, int);
 JARR_STRUCT(JarrDb, double);
 JARR_STRUCT(JarrFl, float);
-
-#define jarrShrink(JARR) \
-	do { \
-		if (((JARR.str = realloc(JARR.str, JARR.len)))) \
-			JARR.size = JARR.len; \
-		else \
-			{ perror(""); return -1; } \
-	} while (0)
-
-#define jarrShrinkPtr(JARR) \
-	do { \
-		if (((JARR->str = realloc(JARR->str, JARR->len)))) \
-			JARR->size = JARR->len; \
-		else \
-			{ perror(""); return -1; } \
-	} while (0)
 
 #define jarrAppend(thisJarr, srcArr) \
 	do { \
@@ -198,9 +164,6 @@ JARR_STRUCT(JarrFl, float);
 		thisJarr->size *= 2; \
 		++thisJarr->len; \
 	} while (0)
-
-#define jarrPopback(thisJarr) --thisJarr.len
-#define jarrPopbackPtr(thisJarr) --thisJarr->len
 
 int qsortDescend(const void *x, const void *y);
 int qsortAscend(const void *y, const void *x);
