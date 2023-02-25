@@ -73,10 +73,10 @@ ALWAYS_INLINE double qsortDescendDb(const void *x, const void *y)
 	return *(double *)y  - *(double *)x;
 }
 
-int main()
-{
-	JarrInt hello;
-	jarrInit(hello);
-	jarrNew(hello, 9, 3, 3 ,4);
-	printf("%d\n", hello.data[0]);
-}
+/* int main() */
+/* { */
+/* 	JarrInt hello; */
+/* 	jarrInit(hello); */
+/* 	jarrNew(hello, 9, 3, 3 ,4); */
+/* 	printf("%d\n", hello.data[0]); */
+/* } */
