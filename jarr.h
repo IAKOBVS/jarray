@@ -88,15 +88,15 @@ JARR_STRUCT(JarrayFloat, float);
 		}                                                                                          \
 	} while (0)
 
-#define jarrShrinkPtr(thisJarr)                                                                        \
-	do {                                                                                           \
-		if ((thisJarr.data = realloc(thisJarr.data, thisJarr.len * sizeof(thisJarr.data[0])))) \
-			thisJarr.size = thisJarr.len;                                                  \
-		else {                                                                                 \
-			free(thisJarr.data);                                                           \
-			perror("jarrShrink realloc failed");                                           \
-			return -1;                                                                     \
-		}                                                                                      \
+#define jarrShrinkPtr(thisJarr)                                                                            \
+	do {                                                                                               \
+		if ((thisJarr->data = realloc(thisJarr->data, thisJarr->len * sizeof(thisJarr->data[0])))) \
+			thisJarr->size = thisJarr->len;                                                    \
+		else {                                                                                     \
+			free(thisJarr->data);                                                              \
+			perror("jarrShrink realloc failed");                                               \
+			return -1;                                                                         \
+		}                                                                                          \
 	} while (0)
 
 #define jarrAppend(thisJarr, srcArr)                                                                     \
