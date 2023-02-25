@@ -6,6 +6,24 @@
 #include "jarr.h"
 #include "/home/james/c/jString/jstr.h"
 
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+# define RESTRICT restrict
+#elif defined(__GNUC__) || defined(__clang__)
+# define RESTRICT __restrict__
+#elif defined(_MSC_VER)
+# define RESTRICT __restrict
+#else
+# define RESTRICT
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+    #define ALWAYS_INLINE __attribute__((always_inline)) inline
+#elif defined(_MSC_VER)
+    #define ALWAYS_INLINE __forceinline inline
+#else
+    #define ALWAYS_INLINE inline
+#endif
+
 #if defined(__PRETTY_FUNCTION__)
 	#define CURR_FUNC __PRETTY_FUNCTION__
 #elif defined(__FUNCTION__)
@@ -40,9 +58,9 @@
 
 #define JARR_CAT(STRUCT, TYPE, TYPE_TMP) \
 	do { \
-		size_t newLen = STRUCT(thisJarr)->len + argc; \
+		const size_t newLen = STRUCT(thisJarr)->len + argc; \
 		if (!STRUCT(thisJarr)->size) { \
-			size_t tmpSize = MAX(MIN_SIZE, 2 * newLen); \
+			const size_t tmpSize = MAX(MIN_SIZE, 2 * newLen); \
 			if (unlikely(!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize)))) \
 				goto ERROR; \
 			STRUCT(thisJarr)->size = tmpSize; \
@@ -55,8 +73,9 @@
 				goto ERROR; \
 			STRUCT(thisJarr)->size = tmpSize; \
 		} \
+		void *RESTRICT argv; \
 		for (size_t i = STRUCT(thisJarr)->len;; ++i) { \
-			void *argv = va_arg(ap, void *); \
+			argv = va_arg(ap, void *); \
 			if (argv) \
 				STRUCT(thisJarr)->data[i] = *(TYPE_TMP *)argv; \
 			else \
@@ -75,28 +94,28 @@
 #define DECLARE_JARRDB(PTR_NAME) JarrDb PTR_NAME
 #define DECLARE_JARRFL(PTR_NAME) JarrFl PTR_NAME
 
-int private_jarrCat(void *thisJarr, int type, int argc, ...)
-{
-	va_list ap;
-	va_start(ap, argc);
-	switch (type) {
-	case 'i':
-		JARR_CAT(INT, int, int);
-		break;
-	case 'f':
-		JARR_CAT(FLOAT, float, double);
-		break;
-	case 'd':
-		JARR_CAT(DOUBLE, double, double);
-	}
-	va_end(ap);
-	return 1;
+/* int private_jarrCat(void *thisJarr, int type, int argc, ...) */
+/* { */
+/* 	va_list ap; */
+/* 	va_start(ap, argc); */
+/* 	switch (type) { */
+/* 	case 'i': */
+/* 		JARR_CAT(INT, int, int); */
+/* 		break; */
+/* 	case 'f': */
+/* 		JARR_CAT(FLOAT, float, double); */
+/* 		break; */
+/* 	case 'd': */
+/* 		JARR_CAT(DOUBLE, double, double); */
+/* 	} */
+/* 	va_end(ap); */
+/* 	return 1; */
 
-ERROR:
-	va_end(ap);
-	perror("");
-	return 0;
-}
+/* ERROR: */
+/* 	va_end(ap); */
+/* 	perror(""); */
+/* 	return 0; */
+/* } */
 
 /* case 's': */
 /* 	{ */
@@ -123,7 +142,7 @@ ERROR:
 	{ \
 		size_t newLen = STRUCT(thisJarr)->len + arrLen; \
 		if (!STRUCT(thisJarr)->size) { \
-			size_t tmpSize = MAX(MIN_SIZE, 2 * newLen); \
+			const size_t tmpSize = MAX(MIN_SIZE, 2 * newLen); \
 			if (unlikely(!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize)))) \
 				goto ERROR; \
 			STRUCT(thisJarr)->size = tmpSize; \
@@ -141,31 +160,31 @@ ERROR:
 	} \
 	return 1
 
-int private_jarrPushArr(void *thisJarr, void *arr, size_t arrLen, int type)
-{
-	switch (type) {
-	case 'i':
-		JARR_ADD_ARR(INT, int);
-	case 'f':
-		JARR_ADD_ARR(FLOAT, float);
-	case 'd':
-		JARR_ADD_ARR(DOUBLE, double);
-	}
+/* int private_jarrPushArr(void *thisJarr, void *arr, size_t arrLen, int type) */
+/* { */
+/* 	switch (type) { */
+/* 	case 'i': */
+/* 		JARR_ADD_ARR(INT, int); */
+/* 	case 'f': */
+/* 		JARR_ADD_ARR(FLOAT, float); */
+/* 	case 'd': */
+/* 		JARR_ADD_ARR(DOUBLE, double); */
+/* 	} */
 
-ERROR:
-	perror("");
-	return 0;
-}
+/* ERROR: */
+/* 	perror(""); */
+/* 	return 0; */
+/* } */
 
 #define JARR_ADD(STRUCT, TYPE) \
 	{ \
-		size_t tmpLen = STRUCT(thisJarr)->len + 1; \
+		const size_t tmpLen = STRUCT(thisJarr)->len + 1; \
 		if (!STRUCT(thisJarr)->size) { \
-			size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
+			const size_t tmpSize = MAX(MIN_SIZE, 2 * tmpLen); \
 			if (!(STRUCT(thisJarr)->data = malloc(sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
 				goto ERROR; \
 		} else if (STRUCT(thisJarr)->size < 2 * tmpLen) { \
-			size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
+			const size_t tmpSize = MAX(2 * STRUCT(thisJarr)->size, 2 * tmpLen); \
 			if (!(STRUCT(thisJarr)->data = realloc(STRUCT(thisJarr)->data, sizeof(TYPE) * tmpSize))) STRUCT(thisJarr)->size = tmpSize; \
 				goto ERROR; \
 		} \
@@ -174,21 +193,33 @@ ERROR:
 	} \
 	return 1
 
-int private_jarrPush(void *thisJarr, void *src, int type)
-{
-	switch (type) {
-	case 'i':
-		JARR_ADD(INT, int);
-	case 'f':
-		JARR_ADD(FLOAT, float);
-	case 'd':
-		JARR_ADD(DOUBLE, double);
-	}
+/* int private_jarrPush(void *thisJarr, void *src, int type) */
+/* { */
+/* 	switch (type) { */
+/* 	case 'i': */
+/* 		JARR_ADD(INT, int); */
+/* 	case 'f': */
+/* 		JARR_ADD(FLOAT, float); */
+/* 	case 'd': */
+/* 		JARR_ADD(DOUBLE, double); */
+/* 	} */
 
-ERROR:
-	perror("");
-	return 0;
-}
+/* ERROR: */
+/* 	perror(""); */
+/* 	return 0; */
+/* } */
+
+#define jarrPush(thisJarr, src) \
+	do { \
+		if (thisJarr.size + 1 != thisJarr.len); \
+		else { \
+			if ((thisJarr.data = realloc(thisJarr).data, sizeof(*thisJarr.data) * 2 * thisJarr.size)) \
+			else { perror("jarr realloc fails"); return -1; } \
+		} \
+		thisJarr.data[thisJarr.len] = src; \
+		thisJarr.size *= 2; \
+		++thisJarr.len; \
+	} while (0)
 
 int qsortAscend(const void *x, const void *y)
 {

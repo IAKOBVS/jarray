@@ -1,6 +1,16 @@
 #ifndef JARR_H_DEF
 #define JARR_H_DEF
 
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+# define RESTRICT_KEYWORD restrict
+#elif defined(__GNUC__) || defined(__clang__)
+# define RESTRICT_KEYWORD __restrict__
+#elif defined(_MSC_VER)
+# define RESTRICT_KEYWORD __restrict
+#else
+# define RESTRICT_KEYWORD
+#endif
+
 #include "/home/james/c/vargc.h"
 #include "/home/james/c/jString/jstr.h"
 
@@ -15,53 +25,55 @@
 #define JARR_MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
-#define JARR_NEW(JARR, TYPE, TYPE_NAME, ...) \
+#define JARR_NEW(JARR, TYPE, ...) \
 	do { \
-	JARR.len = 0 \
-	JARR.type = TYPE_NAME \
-	JARR.size = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE); \
-	if (unlikely(!(JARR.data = malloc(sizeof(TYPE) * JARR.typeSize)))) \
-		{ perror(""); exit(EXIT_FAILURE); } \
-	jarrCat(&JARR, TYPE_NAME, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+		JARR.len = PP_NARG(__VA_ARGS__); \
+		const size_t tmpSize = MAX(2 * JARR.len, JARR_MIN_SIZE); \
+		if (unlikely(!(JARR.data = malloc(sizeof(JARR.data[0]) * tmpSize)))) \
+			{ perror("jarrNew malloc failed"); return -1; } \
+		JARR.size = tmpSize; \
+		typeof(JARR.data) = { __VA_ARGS__ }; \
+		memcpy(jarr.data, tmp, JARR.len); \
 	} while (0)
 
 #define jarrNew(JARR, ...) \
-	JARR_NEW(JARR, int, 'i', __VA_ARGS__)
+	JARR_NEW(JARR, int, __VA_ARGS__)
 #define jarrNewDb(JARR, ...) \
-	JARR_NEW(JARR, double, 'd', __VA_ARGS__)
+	JARR_NEW(JARR, double, __VA_ARGS__)
 #define jarrNewFl(JARR, ...) \
-	JARR_NEW(JARR, float, 'f', __VA_ARGS__)
+	JARR_NEW(JARR, float, __VA_ARGS__)
 #define jarrNewJstr(JARR, ...) \
-	JARR_NEW(JARR, Jstr, 's', __VA_ARGS__)
+	JARR_NEW(JARR, Jstr, __VA_ARGS__)
 
 #define JARR_INIT(JARR, JARR_STRUCT, TYPE_NAME) \
 	JARR_STRUCT JARR = { \
 		.size = 0, \
-		.len = 0, \
-		.type = TYPE_NAME \
+		.len = 0 \
 	}
-#define jarrInit(JARR) \
-	JARR_INIT(JARR, Jarr, 'i')
-#define jarrInitFl(JARR) \
-	JARR_INIT(JARR, JarrFl, 'f')
-#define jarrInitDb(JARR) \
-	JARR_INIT(JARR, JarrDb, 'd')
 
-#define jarrDelete(JARR) \
+#define jarrInit(JARR) \
+	JARR_INIT(JARR, Jarr, int)
+#define jarrInitFl(JARR) \
+	JARR_INIT(JARR, JarrFl, float)
+#define jarrInitDb(JARR) \
+	JARR_INIT(JARR, JarrDb, double)
+
+#define jarrDelete(JARR) free(JARR.data)
+#define jarrDeleteSafe(JARR) \
 	do { \
-		if (JARR.size) \
-			if (JARR.type == 'i' \
-				free(JARR.data); \
-			else if (JARR.type == 'd') \
-				free(JARR.iDbl) \
+		free(JARR.data); \
+		JARR.len = 0; \
+		JARR.size = 0; \
+		JARR.data = NULL; \
 	} while (0)
-#define jarrDeletePtr(JARR) \
+
+#define jarrDeletePtr(JARR) free(JARR->data)
+#define jarrDeletePtrSafe(JARR) \
 	do { \
-		if (JARR->size) \
-			if (JARR->type == 'i' \
-				free(JARR->data); \
-			else if (JARR->type == 'd') \
-				free(JARR->iDbl) \
+		free(JARR->data); \
+		JARR->len = 0; \
+		JARR->size = 0; \
+		JARR->data = NULL; \
 	} while (0)
 
 #define jarrPr(JARR) \
@@ -76,25 +88,59 @@ typedef struct JARR_NAME { \
 	size_t size; \
 } JARR_NAME
 
-#define jarrCat(JARR, ...) \
-	private_jarrCat(&JARR, JARR.type, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-
-#define jarrPushJarr(JARR, ADDED_ARR) \
-	private_jarrPushArr(&JARR, &ADDED_ARR, ADDED_ARR.len, JARR.type)
-#define jarrPushArr(JARR, ADDED_ARR) \
-	private_jarrPushArr(&JARR, &ADDED_ARR, sizeof(ADDED_ARR) / sizeof(ADDED_ARR[0]), JARR.type)
-
-#define jarrPush(JARR, JARR_NUM) \
-	jarrPush(&JARR, JARR_NUM, JARR.type)
+JARR_STRUCT(Jarr, int);
+JARR_STRUCT(JarrDb, double);
+JARR_STRUCT(JarrFl, float);
+JARR_STRUCT(JarrJstr, Jstr);
 
 #define jarrMinimize(JARR) \
 	if (unlikely(!(JARR.str = realloc(JARR.str, JARR.len)))) \
 		{ perror(""); return EXIT_FAILURE; }
 
-JARR_STRUCT(Jarr, int);
-JARR_STRUCT(JarrDb, double);
-JARR_STRUCT(JarrFl, float);
-JARR_STRUCT(JarrJstr, Jstr);
+#define jarrAppend(thisJarr, srcArr) \
+	do { \
+		const int newLen = thisJarr.size + (sizeof(srcArr) / sizeof(srcArr[0])); \
+		if (newLen > thisJarr.size) { \
+			int tmpSize = dest.size; \
+			do { \
+				tmpSize *= 2; \
+			} while (newLen > tmpSize); \
+			if ((thisJarr.data = realloc(thisJarr).data, sizeof(*thisJarr.data) * tmpSize)); \
+			else { perror("jarrCat realloc fails"); return -1; } \
+			thisJarr.size = tmpSize; \
+		} \
+		memcpy(thisJarr.data + thisJarr.len, srcArr, sizeof(srcArr) / sizeof(srcArr[0])); \
+		thisJarr.len = newLen; \
+	} while (0)
+
+#define jarrCat(thisJarr, ...) \
+	do { \
+		const int newLen = thisJarr.len + PP_NARG(__VA_ARGS__); \
+		if (newLen > thisJarr.size) { \
+			int tmpSize = dest.size; \
+			do { \
+				tmpSize *= 2; \
+			} while (newLen > tmpSize); \
+			if ((thisJarr.data = realloc(thisJarr).data, sizeof(*thisJarr.data) * tmpSize)); \
+			else { perror("jarrCat realloc fails"); return -1; } \
+			thisJarr.size = tmpSize; \
+		} \
+		typeof(thisJarr) tmp[] = { __VA_ARGS__ }; \
+		memcpy(thisJarr.data + thisJarr.len, tmp, PP_NARG(__VA_ARGS__)); \
+		thisJarr.len = newLen; \
+	} while (0)
+
+#define jarrPush(thisJarr, src) \
+	do { \
+		if (thisJarr.size - thisJarr.len); \
+		else { \
+			if ((thisJarr.data = realloc(thisJarr).data, sizeof(*thisJarr.data) * 2 * thisJarr.size)); \
+			else { perror("jarrPushk realloc fails"); return -1; } \
+		} \
+		thisJarr.data[thisJarr.len] = src; \
+		thisJarr.size *= 2; \
+		++thisJarr.len; \
+	} while (0)
 
 int private_jarrCat(void *thisJarr, int type, int argc, ...);
 int private_jarrAddJarr(void *thisJarr, void* arr, size_t arrLen, int type);
@@ -105,7 +151,5 @@ float qsortDescendFl(const void *x, const void *y);
 float qsortAscendFl(const void *y, const void *x);
 double qsortDescendDb(const void *x, const void *y);
 double qsortAscendDb(const void *y, const void *x);
-
-#undef MAX
 
 #endif
