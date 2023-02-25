@@ -25,13 +25,12 @@
 #define JARR_MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
-#define JARR_STRUCT(JARR_NAME, TYPE) \
-	typedef struct JARR_NAME {   \
-		int type;            \
-		TYPE *data;          \
-		size_t len;          \
-		size_t size;         \
-	} JARR_NAME
+#define JARR_STRUCT(NAME, TYPE) \
+	typedef struct NAME {   \
+		TYPE *data;     \
+		size_t len;     \
+		size_t size;    \
+	} NAME
 
 JARR_STRUCT(JarrayInt, int);
 JARR_STRUCT(JarrayDouble, double);
