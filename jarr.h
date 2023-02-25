@@ -26,10 +26,10 @@
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
 #define JARR_STRUCT(NAME, TYPE) \
-	typedef struct NAME {   \
-		TYPE *data;     \
-		size_t len;     \
-		size_t size;    \
+	typedef struct NAME { \
+		TYPE *data;   \
+		size_t len;   \
+		size_t size;  \
 	} NAME
 
 JARR_STRUCT(JarrInt, int);

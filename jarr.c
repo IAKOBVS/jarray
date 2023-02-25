@@ -77,6 +77,6 @@ int main()
 {
 	JarrInt hello;
 	jarrInit(hello);
-	jarrNew(hello, 2, 3, 3 ,4);
-	printf("%d\n", hello.data[1]);
+	jarrNew(hello, 9, 3, 3 ,4);
+	printf("%d\n", hello.data[0]);
 }
