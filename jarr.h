@@ -72,6 +72,50 @@ JARR_STRUCT(Jarr, int);
 JARR_STRUCT(JarrDb, double);
 JARR_STRUCT(JarrFl, float);
 
+#define jarrDelete(thisJarr) free(thisJarr.data)
+#define jarrDeletePtr(thisJarr) free(thisJarr->data)
+
+#define jarrDeleteClean(thisJarr) \
+	do { \
+		free(thisJarr.data); \
+		thisJarr.data = NULL; \
+		thisJarr.len = 0; \
+		thisJarr.size = 0; \
+	} while (0)
+
+#define jarrDeleteCleanPtr(thisJarr) \
+	do { \
+		free(thisJarr->data); \
+		thisJarr->data = NULL; \
+		thisJarr->len = 0; \
+		thisJarr->size = 0; \
+	} while (0)
+
+#define jarrPopback(thisJarr) --thisJarr.len
+#define jarrPopbackPtr(thisJarr) --thisJarr->len
+
+#define jarrShrink(thisJarr) \
+	do { \
+		if ((thisJarr->data = realloc(thisJarr->data, thisJarr->len * sizeof(thisJarr->data[0])))) \
+			thisJarr->size = thisJarr->len; \
+		else { \
+			free(thisJarr->data); \
+			perror("jarrShrink realloc failed"); \
+			return -1; \
+		} \
+	} while (0)
+
+#define jarrShrinkPtr(thisJarr) \
+	do { \
+		if ((thisJarr.data = realloc(thisJarr.data, thisJarr.len * sizeof(thisJarr.data[0])))) \
+			thisJarr.size = thisJarr.len; \
+		else { \
+			free(thisJarr.data); \
+			perror("jarrShrink realloc failed"); \
+			return -1; \
+		} \
+	} while (0)
+
 #define jarrAppend(thisJarr, srcArr) \
 	do { \
 		const int newLen = thisJarr.size + (sizeof(srcArr) / sizeof(srcArr[0])); \

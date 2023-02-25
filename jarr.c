@@ -44,34 +44,6 @@
 #define MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
-ALWAYS_INLINE void jarrDelete(Jarr *thisJarr)
-{
-	free(thisJarr->data);
-}
-
-ALWAYS_INLINE void jarrDeleteClean(Jarr *thisJarr)
-{
-	free(thisJarr->data);
-	thisJarr->data = NULL;
-	thisJarr->len = 0;
-	thisJarr->size = 0;
-}
-
-ALWAYS_INLINE int jarrShrink(Jarr *thisJarr)
-{
-	if ((thisJarr->data = realloc(thisJarr->data, thisJarr->len * sizeof(thisJarr->data[0])))) {
-		thisJarr->size = thisJarr->len;
-		return 1;
-	}
-	perror("jarrShrink realloc failed");
-	return 0;
-}
-
-ALWAYS_INLINE void jarrPopback(Jarr *thisJarr)
-{
-	--thisJarr->len;
-}
-
 int qsortAscend(const void *x, const void *y)
 {
 	return *(int *)x  - *(int *)y;
