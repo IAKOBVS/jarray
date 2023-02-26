@@ -151,7 +151,7 @@ JARR_STRUCT(jarray_float_t, float);
 		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                                                     \
 		if (jarr->capacity >= jarr->size);                                                                   \
 		else {                                                                                               \
-			if ((jarr->data = (int *)realloc(jarr->data, JARR_SIZEOF_T(jarr) * (jarr->capacity *= 2)))); \
+			if ((jarr->data = realloc(jarr->data, JARR_SIZEOF_T(jarr) * (jarr->capacity *= 2)))); \
 			else {                                                                                       \
 				jarr_delete_fast_ptr(jarr);                                                          \
 				perror("jarr_push realloc failed");                                                  \
