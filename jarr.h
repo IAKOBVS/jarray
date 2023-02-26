@@ -44,8 +44,8 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 
 #define jarr_delete_fast_ptr(jarr)   \
-	do {                     \
-		free(jarr->data); \
+	do {                         \
+		free(jarr->data);    \
 		jarr_init_ptr(jarr); \
 	} while (0)
 
