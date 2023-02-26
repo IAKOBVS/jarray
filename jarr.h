@@ -127,7 +127,7 @@ JARR_STRUCT(jarray_float, float);
 		jarr->size = new_size;                                                             \
 	} while (0)
 
-#define jarr_push_back(jarr, src)                                                                                 \
+#define jarr_push_back(jarr, src)                                                                                \
 	do {                                                                                                     \
 		if (jarr->capacity >= jarr->size;                                                                \
 		else {                                                                                           \
