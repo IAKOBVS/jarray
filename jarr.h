@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include "/home/james/c/vargc.h"
+#include "macros.h"
 
 #define JARR_MIN_CAP (8)
 #define MAX(a,b) ((a)>(b)?(a):(b))
