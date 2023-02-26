@@ -12,6 +12,13 @@
 #define JARR_T_SIZE(var) (sizeof(*var->data))
 #define JARR_ARR_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
 
+int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
+int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
+float qsort_descend_fl(const void *RESTRICT x, const void *RESTRICT y);
+float qsort_ascend_fl(const void *RESTRICT y, const void *RESTRICT x);
+double qsort_descend_db(const void *RESTRICT x, const void *RESTRICT y);
+double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
+
 #define JARR_STRUCT(NAME, T)     \
 	typedef struct NAME {    \
 		T *data;         \
@@ -55,7 +62,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 		}                             \
 	} while (0)
 
-/* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t *thisJarr) { */
+/* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t *jarr) { */
 
 #define jarr_new(jarr, ...)                                                              \
 	do {                                                                             \
@@ -73,7 +80,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 /* } */
 
-/* static ALWAYS_INLINE int dummy_arr_shrink(jarray_int_t *thisJarr) { */
+/* static ALWAYS_INLINE int dummy_arr_shrink(jarray_int_t *jarr) { */
 
 #define jarr_shrink(jarr)                                                                  \
 	do {                                                                               \
@@ -118,9 +125,9 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 #define jarr_append_jarr(jarr, src_jarr) impl_jarr_append(jarr, ((tmpSrc)->data), ((tmpSrc)->size))
 
-/* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *thisJarr, ...) { */
+/* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *jarr, ...) { */
 
-#define jarr_cat(thisJarr, ...)                                                             \
+#define jarr_cat(jarr, ...)                                                             \
 	do {                                                                                \
 		const int new_size = ((jarr)->size) + PP_NARG(__VA_ARGS__);                 \
 		if (new_size > ((jarr)->capacity)) {                                        \
@@ -144,9 +151,9 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 /* } */
 
-/* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t *thisJarr, int src) { */
+/* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t *jarr, int src) { */
 
-#define jarr_push_back(thisJarr, src)                                                                      \
+#define jarr_push_back(jarr, src)                                                                      \
 	do {                                                                                               \
 		if (((jarr)->capacity) >= ((jarr)->size));                                                 \
 		else {                                                                                     \
@@ -166,7 +173,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 #define jarr_pop_back(jarr) --((jarr)->size);
 
-#define jarr_reserve(thisJarr, size)                                                     \
+#define jarr_reserve(jarr, size)                                                     \
 	do {                                                                             \
 		if (((jarr)->capacity) < size) {                                         \
 			typeof(((jarr)->data)) tmp;                                      \
@@ -181,7 +188,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 	} while (0)
 
 
-#define jarr_reserve_fast(thisJarr, size)                                        \
+#define jarr_reserve_fast(jarr, size)                                        \
 	do {                                                                     \
 		typeof(((jarr)->data)) tmp;                                      \
 		if ((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * size))) { \
@@ -192,13 +199,5 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 			return -1;                                               \
 		}                                                                \
 	} while (0)
-
-
-int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
-int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
-float qsort_descend_fl(const void *RESTRICT x, const void *RESTRICT y);
-float qsort_ascend_fl(const void *RESTRICT y, const void *RESTRICT x);
-double qsort_descend_db(const void *RESTRICT x, const void *RESTRICT y);
-double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
 
 #endif
