@@ -73,19 +73,19 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 
 /* static ALWAYS_INLINE void dummy_arr_new(jarray_int_t *thisJarr) { */
-#define jarr_new(thisJarr, ...)                                                          \
-	do {                                                                             \
-		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                         \
-		jarr->capacity = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_CAP);            \
-		if ((jarr->data = malloc(jarr->capacity * JARR_SIZEOF_T(jarr))));        \
-		else {                                                                   \
-			jarr->capacity = 0;                                              \
-			perror("jarr_new malloc failed");                                \
-			return -1;                                                       \
-		}                                                                        \
-		jarr->size = PP_NARG(__VA_ARGS__);                                       \
-		typeof(*jarr->data) tmp[] = { __VA_ARGS__ };                             \
-		memcpy(jarr->data, tmp, PP_NARG(__VA_ARGS__) * sizeof(tmp[0])); \
+#define jarr_new(thisJarr, ...)                                                   \
+	do {                                                                      \
+		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                  \
+		jarr->capacity = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_CAP);     \
+		if ((jarr->data = malloc(jarr->capacity * JARR_SIZEOF_T(jarr)))); \
+		else {                                                            \
+			jarr->capacity = 0;                                       \
+			perror("jarr_new malloc failed");                         \
+			return -1;                                                \
+		}                                                                 \
+		jarr->size = PP_NARG(__VA_ARGS__);                                \
+		typeof(*jarr->data) tmp[] = { __VA_ARGS__ };                      \
+		memcpy(jarr->data, tmp, PP_NARG(__VA_ARGS__) * sizeof(tmp[0]));   \
 	} while (0)
 /* } */
 
