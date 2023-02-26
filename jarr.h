@@ -65,7 +65,7 @@ JARR_STRUCT(jarray_float_t, float);
 		}                            \
 	} while (0)
 
-/* static inline void dummy_arr_new(jarray_int_t *thisJarr) { */
+/* static ALWAYS_INLINE void dummy_arr_new(jarray_int_t *thisJarr) { */
 #define jarr_new(thisJarr, ...)                                                          \
 	do {                                                                             \
 		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                         \
