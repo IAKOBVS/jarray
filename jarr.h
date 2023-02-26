@@ -22,7 +22,7 @@
   #define unlikely(x) (x)
 #endif
 
-#define JARR_MIN_SIZE (8)
+#define JARR_MIN_CAP (8)
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
 #define JARR_SIZEOF_TYPE(jarr) (sizeof(*jarr->data)
@@ -35,38 +35,38 @@
 		size_t size;     \
 	} NAME
 
-JARR_STRUCT(JarrayInt, int);
-JARR_STRUCT(JarrayDouble, double);
-JARR_STRUCT(JarrayFloat, float);
+JARR_STRUCT(jarray_int, int);
+JARR_STRUCT(jarray_double, double);
+JARR_STRUCT(jarray_float, float);
 
-#define jarrInit(jarr)              \
+#define jarr_init(jarr)             \
 	do {                        \
 		jarr->capacity = 0; \
 		jarr->size = 0;     \
 		jarr->data = NULL;  \
 	} while (0)
 
-#define jarrNew(jarr, ...)                                                          \
+#define jarr_new(jarr, ...)                                                         \
 	do {                                                                        \
-		jarr->capacity = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE);      \
+		jarr->capacity = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_CAP);      \
 		if ((jarr->data = malloc(JARR_SIZEOF_TYPE(jarr) * jarr->capacity)); \
 		else {                                                              \
 			jarr->capacity = 0;                                         \
-			perror("jarrNew malloc failed");                            \
+			perror("jarr_new malloc failed");                           \
 			return -1;                                                  \
 		}                                                                   \
 		jarr->size = PP_NARG(__VA_ARGS__);                                  \
-		typeof(jarrAccess(jarr, data[0])) tmp[] = { ##__VA_ARGS__ };        \
+		typeof(jarr_access(jarr, data[0])) tmp[] = { ##__VA_ARGS__ };       \
 		memcpy(jarr->data, tmp, jarr, size);                                \
 	} while (0)
 
-#define jarrDeleteFast(jarr)     \
+#define jarr_delete_fast(jarr)   \
 	do {                     \
 		free(jarr->data; \
 		JARR_INIT(jarr); \
 	} while (0)
 
-#define jarrDelete(jarr)                 \
+#define jarr_delete(jarr)                \
 	do {                             \
 		if (jarr->data {         \
 			free(jarr->data; \
@@ -74,67 +74,67 @@ JARR_STRUCT(JarrayFloat, float);
 		}                        \
 	} while (0)
 
-#define jarrShrink(jarr)                                                                      \
+#define jarr_shrink(jarr)                                                                     \
 	do {                                                                                  \
 		if ((jarr->data = realloc(jarr->data, jarr->size * JARR_SIZEOF_TYPE(jarr)))); \
 		else {                                                                        \
-			jarrDeleteFast(jarr);                                                 \
-			perror("jarrShrink realloc failed");                                  \
+			jarr_delete_fast(jarr);                                               \
+			perror("jarr_shrink realloc failed");                                 \
 			return -1;                                                            \
 		}                                                                             \
 		jarr->capacity = jarr->size;                                                  \
 	} while (0)
 
-#define jarrAppend(jarr, srcArr, srcArrSize)                                                      \
-	do {                                                                                      \
-		const int newSize = jarr->capacity + srcArrSize;                                  \
-		if (newSize > jarr->capacity {                                                    \
-			size_t tmpCap = dest.capacity;                                            \
-			do {                                                                      \
-				tmpCap *= 2;                                                      \
-			} while (newSize > tmpCap);                                               \
-			if ((jarr->data = realloc(jarr->data, JARR_SIZEOF_TYPE(jarr) * tmpCap))); \
-			else {                                                                    \
-				perror("jarrCat realloc fails");                                  \
-				return -1;                                                        \
-			}                                                                         \
-			jarr->capacity = tmpCap;                                                  \
-		}                                                                                 \
-		memcpy(jarr->data + jarr->size, srcArr, srcArrSize);                              \
-		jarr->size = newSize;                                                             \
+#define jarr_append(jarr, src_arr, src_arr_size)                                                   \
+	do {                                                                                       \
+		const int new_size = jarr->capacity + src_arr_size;                                \
+		if (new_size > jarr->capacity {                                                    \
+			size_t tmp_cap = dest.capacity;                                            \
+			do {                                                                       \
+				tmp_cap *= 2;                                                      \
+			} while (new_size > tmp_cap);                                              \
+			if ((jarr->data = realloc(jarr->data, JARR_SIZEOF_TYPE(jarr) * tmp_cap))); \
+			else {                                                                     \
+				perror("jarr_cat realloc fails");                                  \
+				return -1;                                                         \
+			}                                                                          \
+			jarr->capacity = tmp_cap;                                                  \
+		}                                                                                  \
+		memcpy(jarr->data + jarr->size, src_arr, src_arr_size);                            \
+		jarr->size = new_size;                                                             \
 	} while (0)
 
-#define jarrAppendAuto(jarr, srcArr) jarrAppend(jarr, srcArr, JARR_SIZEOF_ARR(srcArr))
+#define jarr_append_auto(jarr, srcrrr) jarr_append(jarr, src_arr, JARR_SIZEOF_ARR(src_arr))
 
-#define jarrCat(jarr, ...)                                                                        \
-	do {                                                                                      \
-		const int newSize = jarr->size + PP_NARG(__VA_ARGS__);                            \
-		if (newSize > jarr->capacity {                                                    \
-			size_t tmpCap = dest.capacity;                                            \
-			do {                                                                      \
-				tmpCap *= 2;                                                      \
-			} while (newSize > tmpCap);                                               \
-			if ((jarr->data = realloc(jarr->data, JARR_SIZEOF_TYPE(jarr) * tmpCap))); \
-			else {                                                                    \
-				jarrDeleteFast(jarr);                                             \
-				perror("jarrCat realloc fails");                                  \
-				return -1;                                                        \
-			}                                                                         \
-			jarr->capacity = tmpCap;                                                  \
-		}                                                                                 \
-		typeof(jarr) tmp[] = { ##__VA_ARGS__ };                                           \
-		memcpy(jarr->data + jarr->size, tmp, PP_NARG(__VA_ARGS__));                       \
-		jarr->size = newSize;                                                             \
+#define jarr_cat(jarr, ...)                                                                        \
+	do {                                                                                       \
+		const int new_size = jarr->size + PP_NARG(__VA_ARGS__);                            \
+		if (new_size > jarr->capacity {                                                    \
+			size_t tmp_cap = dest.capacity;                                            \
+			do {                                                                       \
+				tmp_cap *= 2;                                                      \
+			} while (new_size > tmp_cap);                                              \
+			if ((jarr->data = realloc(jarr->data, JARR_SIZEOF_TYPE(jarr) * tmp_cap))); \
+			else {                                                                     \
+				jarr_delete_fast(jarr);                                            \
+				perror("jarr_cat realloc fails");                                  \
+				return -1;                                                         \
+			}                                                                          \
+			jarr->capacity = tmp_cap;                                                  \
+		}                                                                                  \
+		typeof(jarr) tmp[] = { ##__VA_ARGS__ };                                            \
+		memcpy(jarr->data + jarr->size, tmp, PP_NARG(__VA_ARGS__));                        \
+		jarr->size = new_size;                                                             \
 	} while (0)
 
-#define jarrPushback(jarr, src)                                                                                  \
+#define jarr_push_back(jarr, src)                                                                                 \
 	do {                                                                                                     \
 		if (jarr->capacity >= jarr->size;                                                                \
 		else {                                                                                           \
 			if ((jarr->data = realloc(jarr->data, JARR_SIZEOF_TYPE(jarr) * (jarr->capacity *= 2)))); \
 			else {                                                                                   \
-				jarrDeleteFast(jarr);                                                            \
-				perror("jarrPush realloc fails");                                                \
+				jarr_delete_fast(jarr);                                                          \
+				perror("jarr_push realloc fails");                                               \
 				return -1;                                                                       \
 			}                                                                                        \
 			jarr->capacity *= 2;                                                                     \
@@ -143,13 +143,13 @@ JARR_STRUCT(JarrayFloat, float);
 		jarr->data[jarr->size] = src;                                                                    \
 	} while (0)
 
-#define jarrPopback(jarr) --jarr->size
+#define jarr_pop_back(jarr) --jarr->size
 
-int qsortDescend(const void *x, const void *y);
-int qsortAscend(const void *y, const void *x);
-float qsortDescendFl(const void *x, const void *y);
-float qsortAscendFl(const void *y, const void *x);
-double qsortDescendDb(const void *x, const void *y);
-double qsortAscendDb(const void *y, const void *x);
+int qsort_descend(const void *x, const void *y);
+int qsort_ascend(const void *y, const void *x);
+float qsort_descend_fl(const void *x, const void *y);
+float qsort_ascend_fl(const void *y, const void *x);
+double qsort_descend_db(const void *x, const void *y);
+double qsort_ascend_db(const void *y, const void *x);
 
 #endif
