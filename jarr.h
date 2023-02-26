@@ -127,7 +127,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 /* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *jarr, ...) { */
 
-#define jarr_cat(jarr, ...)                                                             \
+#define jarr_cat(jarr, ...)                                                                 \
 	do {                                                                                \
 		const int new_size = ((jarr)->size) + PP_NARG(__VA_ARGS__);                 \
 		if (new_size > ((jarr)->capacity)) {                                        \
@@ -153,7 +153,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 /* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t *jarr, int src) { */
 
-#define jarr_push_back(jarr, src)                                                                      \
+#define jarr_push_back(jarr, src)                                                                          \
 	do {                                                                                               \
 		if (((jarr)->capacity) >= ((jarr)->size));                                                 \
 		else {                                                                                     \
@@ -173,7 +173,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 #define jarr_pop_back(jarr) --((jarr)->size);
 
-#define jarr_reserve(jarr, size)                                                     \
+#define jarr_reserve(jarr, size)                                                         \
 	do {                                                                             \
 		if (((jarr)->capacity) < size) {                                         \
 			typeof(((jarr)->data)) tmp;                                      \
@@ -188,7 +188,7 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 	} while (0)
 
 
-#define jarr_reserve_fast(jarr, size)                                        \
+#define jarr_reserve_fast(jarr, size)                                            \
 	do {                                                                     \
 		typeof(((jarr)->data)) tmp;                                      \
 		if ((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * size))) { \
