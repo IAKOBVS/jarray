@@ -33,23 +33,3 @@ ALWAYS_INLINE double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT
 {
 	return *(double *)y  - *(double *)x;
 }
-
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-int main()
-{
-	jarray_int_t t;
-	(&t)->capacity = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_CAP);   \
-	if (((&t)->data = malloc((&t)->capacity * JARR_T_SIZE((&t))))); \
-	else {                                                          \
-		(&t)->capacity = 0;                                     \
-		perror("(&t)_new malloc failed");                       \
-		return -1;                                              \
-	}                                                               \
-	(&t)->size = PP_NARG(__VA_ARGS__);                              \
-	typeof(*(&t)->data) tmp[] = { 1, 2 };                    \
-	memcpy((&t)->data, tmp, sizeof(tmp));                           \
-	printf("%d\n", t.data[0]);
-	printf("%d\n", t.data[1]);
-}
