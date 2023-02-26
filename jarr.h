@@ -87,60 +87,60 @@ JARR_STRUCT(JarrayFloat, float);
 		jarrAccess(jarr, capacity) = jarrAccess(jarr, size);                                                                         \
 	} while (0)
 
-#define jarrAppend(jarr, srcArr)                                                                                          \
-	do {                                                                                                              \
-		const int newLen = jarrAccess(jarr, capacity) + (sizeof(srcArr) / sizeof(srcArr[0]));                     \
-		if (newLen > jarrAccess(jarr, capacity)) {                                                                \
-			size_t tmpCap = dest.capacity;                                                                    \
-			do {                                                                                              \
-				tmpCap *= 2;                                                                              \
-			} while (newLen > tmpCap);                                                                        \
+#define jarrAppend(jarr, srcArr)                                                                                      \
+	do {                                                                                                          \
+		const int newLen = jarrAccess(jarr, capacity) + (sizeof(srcArr) / sizeof(srcArr[0]));                 \
+		if (newLen > jarrAccess(jarr, capacity)) {                                                            \
+			size_t tmpCap = dest.capacity;                                                                \
+			do {                                                                                          \
+				tmpCap *= 2;                                                                          \
+			} while (newLen > tmpCap);                                                                    \
 			if ((jarrAccess(jarr, data) = realloc(jarr).data, sizeof(*jarrAccess(jarr, data)) * tmpCap)); \
-			else {                                                                                            \
-				perror("jarrCat realloc fails");                                                          \
-				return -1;                                                                                \
-			}                                                                                                 \
-			jarrAccess(jarr, capacity) = tmpCap;                                                              \
-		}                                                                                                         \
+			else {                                                                                        \
+				perror("jarrCat realloc fails");                                                      \
+				return -1;                                                                            \
+			}                                                                                             \
+			jarrAccess(jarr, capacity) = tmpCap;                                                          \
+		}                                                                                                     \
 		memcpy(jarrAccess(jarr, data) + jarrAccess(jarr, size), srcArr, sizeof(srcArr) / sizeof(srcArr[0]));  \
-		jarrAccess(jarr, size) = newLen;                                                                          \
+		jarrAccess(jarr, size) = newLen;                                                                      \
 	} while (0)
 
-#define jarrCat(jarr, ...)                                                                                                \
-	do {                                                                                                              \
-		const int newLen = jarrAccess(jarr, size) + PP_NARG(__VA_ARGS__);                                         \
-		if (newLen > jarrAccess(jarr, capacity)) {                                                                \
-			size_t tmpCap = dest.capacity;                                                                    \
-			do {                                                                                              \
-				tmpCap *= 2;                                                                              \
-			} while (newLen > tmpCap);                                                                        \
+#define jarrCat(jarr, ...)                                                                                            \
+	do {                                                                                                          \
+		const int newLen = jarrAccess(jarr, size) + PP_NARG(__VA_ARGS__);                                     \
+		if (newLen > jarrAccess(jarr, capacity)) {                                                            \
+			size_t tmpCap = dest.capacity;                                                                \
+			do {                                                                                          \
+				tmpCap *= 2;                                                                          \
+			} while (newLen > tmpCap);                                                                    \
 			if ((jarrAccess(jarr, data) = realloc(jarr).data, sizeof(*jarrAccess(jarr, data)) * tmpCap)); \
-			else {                                                                                            \
-				jarrDeleteFast(jarr);                                                                     \
-				perror("jarrCat realloc fails");                                                          \
-				return -1;                                                                                \
-			}                                                                                                 \
-			jarrAccess(jarr, capacity) = tmpCap;                                                              \
-		}                                                                                                         \
-		typeof(jarr) tmp[] = { ##__VA_ARGS__ };                                                                   \
-		memcpy(jarrAccess(jarr, data) + jarrAccess(jarr, size), tmp, PP_NARG(__VA_ARGS__));                       \
-		jarrAccess(jarr, size) = newLen;                                                                          \
+			else {                                                                                        \
+				jarrDeleteFast(jarr);                                                                 \
+				perror("jarrCat realloc fails");                                                      \
+				return -1;                                                                            \
+			}                                                                                             \
+			jarrAccess(jarr, capacity) = tmpCap;                                                          \
+		}                                                                                                     \
+		typeof(jarr) tmp[] = { ##__VA_ARGS__ };                                                               \
+		memcpy(jarrAccess(jarr, data) + jarrAccess(jarr, size), tmp, PP_NARG(__VA_ARGS__));                   \
+		jarrAccess(jarr, size) = newLen;                                                                      \
 	} while (0)
 
-#define jarrPushback(jarr, src)                                                                                                                   \
-	do {                                                                                                                                      \
-		if (jarrAccess(jarr, capacity) - jarrAccess(jarr, size));                                                                         \
-		else {                                                                                                                            \
+#define jarrPushback(jarr, src)                                                                                                               \
+	do {                                                                                                                                  \
+		if (jarrAccess(jarr, capacity) - jarrAccess(jarr, size));                                                                     \
+		else {                                                                                                                        \
 			if ((jarrAccess(jarr, data) = realloc(jarr).data, sizeof(*jarrAccess(jarr, data)) * 2 * jarrAccess(jarr, capacity))); \
-			else {                                                                                                                    \
-				jarrDeleteFast(jarr);                                                                                             \
-				perror("jarrPush realloc fails");                                                                                 \
-				return -1;                                                                                                        \
-			}                                                                                                                         \
-			jarrAccess(jarr, data)[jarrAccess(jarr, size)] = src;                                                                     \
-			jarrAccess(jarr, capacity) *= 2;                                                                                          \
-			++jarrAccess(jarr, size);                                                                                                 \
-		}                                                                                                                                 \
+			else {                                                                                                                \
+				jarrDeleteFast(jarr);                                                                                         \
+				perror("jarrPush realloc fails");                                                                             \
+				return -1;                                                                                                    \
+			}                                                                                                                     \
+			jarrAccess(jarr, data)[jarrAccess(jarr, size)] = src;                                                                 \
+			jarrAccess(jarr, capacity) *= 2;                                                                                      \
+			++jarrAccess(jarr, size);                                                                                             \
+		}                                                                                                                             \
 	} while (0)
 
 #define jarrPopback(jarr) --jarrAccess(jarr, size)
