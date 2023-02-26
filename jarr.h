@@ -65,7 +65,7 @@ JARR_STRUCT(jarray_float_t, float);
 		}                        \
 	} while (0)
 
-/* static inline void impl_jarr_new(jarray_int_t *thisJarr) { */
+/* static inline void dummy_arr_new(jarray_int_t *thisJarr) { */
 #define jarr_new(thisJarr, ...)                                                          \
 	do {                                                                             \
 		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                         \
@@ -82,7 +82,7 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 /* } */
 
-/* static ALWAYS_INLINE int impl_jarr_shrink(jarray_int_t *jarr) { */
+/* static ALWAYS_INLINE int dummy_arr_shrink(jarray_int_t *jarr) { */
 #define jarr_shrink(thisJarr)                                                                \
 	do {                                                                                 \
 		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                             \
@@ -95,8 +95,8 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 /* } */
 
-/* static ALWAYS_INLINE int impl_jarr_append(jarray_int_t *dest, int *src_arr, size_t src_arr_size) { */
-#define impl_jarr_append(dest, src_arr, src_arr_size)                                              \
+/* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *dest, int *src_arr, size_t src_arr_size) { */
+#define dummy_arr_append(dest, src_arr, src_arr_size)                                              \
 	do {                                                                                       \
 		typeof(*(dest)) *RESTRICT jarr = (dest);                                           \
 		const int new_size = jarr->capacity + src_arr_size;                                \
@@ -118,10 +118,10 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 /* } */
 
-#define jarr_append(jarr, src_arr) impl_jarr_append(jarr, src_arr, JARR_SIZEOF_ARR(src_arr))
-#define jarr_append_jarr(jarr, src_jarr) impl_jarr_append(jarr, src_jarr, )
+#define jarr_append(jarr, src_arr) dummy_arr_append(jarr, src_arr, JARR_SIZEOF_ARR(src_arr))
+#define jarr_append_jarr(jarr, src_jarr) dummy_arr_append(jarr, src_jarr, )
 
-/* static ALWAYS_INLINE int impl_jarr_cat(jarray_int_t *thisJarr, ...) { */
+/* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *thisJarr, ...) { */
 #define jarr_cat(thisJarr, ...)                                                                 \
 	do {                                                                                    \
 		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                                \
@@ -145,7 +145,7 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 /* } */
 
-/* static ALWAYS_INLINE int impl_jarr_cat(jarray_int_t *thisJarr, int src) { */
+/* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *thisJarr, int src) { */
 #define jarr_push_back(thisJarr, src)                                                                                \
 	do {                                                                                                         \
 		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                                                     \
