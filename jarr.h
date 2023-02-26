@@ -29,6 +29,10 @@ JARR_STRUCT(jarray_size_t_t, size_t);
 JARR_STRUCT(jarray_double_t, double);
 JARR_STRUCT(jarray_long_double_t, long double);
 JARR_STRUCT(jarray_float_t, float);
+JARR_STRUCT(jarray_short_t, short);
+JARR_STRUCT(jarray_ushort_t, unsigned short);
+JARR_STRUCT(jarray_char_t, char);
+JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 #define jarr_init(jarr)                 \
 	do {                            \
