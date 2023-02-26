@@ -53,16 +53,16 @@ JARR_STRUCT(JarrayFloat, float);
 
 #define jarrNew(jarr, ...)                                                                                     \
 	do {                                                                                                   \
-		jarrAccess(jarr, capacity) = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE);                     \
-		if ((jarrAccess(jarr, data) = malloc(JARR_SIZEOF_TYPE(jarr) * jarrAccess(jarr, capacity)))); { \
-		else {                                                                                         \
-			jarrAccess(jarr, capacity) = 0;                                                        \
-			perror("jarrNew malloc failed");                                                       \
-			return -1;                                                                             \
-		}                                                                                              \
-		jarrAccess(jarr, size) = PP_NARG(__VA_ARGS__);                                                 \
-		typeof(jarrAccess(jarr, data[0])) tmp[] = { ##__VA_ARGS__ };                                   \
-		memcpy(jarrAccess(jarr, data), tmp, jarr, size);                                               \
+		jarrAccess(jarr, capacity) = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE);                   \
+		if ((jarrAccess(jarr, data) = malloc(JARR_SIZEOF_TYPE(jarr) * jarrAccess(jarr, capacity)))); \
+		else {                                                                                       \
+			jarrAccess(jarr, capacity) = 0;                                                      \
+			perror("jarrNew malloc failed");                                                     \
+			return -1;                                                                           \
+		}                                                                                            \
+		jarrAccess(jarr, size) = PP_NARG(__VA_ARGS__);                                               \
+		typeof(jarrAccess(jarr, data[0])) tmp[] = { ##__VA_ARGS__ };                                 \
+		memcpy(jarrAccess(jarr, data), tmp, jarr, size);                                             \
 	} while (0)
 
 #define jarrDeleteFast(jarr)                  \
