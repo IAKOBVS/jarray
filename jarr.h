@@ -166,11 +166,11 @@ JARR_STRUCT(jarray_float_t, float);
 
 #define jarr_pop_back(jarr) --jarr->size
 
-int qsort_descend(const void *x, const void *y);
-int qsort_ascend(const void *y, const void *x);
-float qsort_descend_fl(const void *x, const void *y);
-float qsort_ascend_fl(const void *y, const void *x);
-double qsort_descend_db(const void *x, const void *y);
-double qsort_ascend_db(const void *y, const void *x);
+int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
+int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
+float qsort_descend_fl(const void *RESTRICT x, const void *RESTRICT y);
+float qsort_ascend_fl(const void *RESTRICT y, const void *RESTRICT x);
+double qsort_descend_db(const void *RESTRICT x, const void *RESTRICT y);
+double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
 
 #endif
