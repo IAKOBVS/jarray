@@ -46,16 +46,3 @@ ALWAYS_INLINE double qsortDescendDb(const void *x, const void *y)
 /* 	printf("cap: %zu\n", x.capacity); */
 /* 	printf("size: %zu\n", x.size); */
 /* } */
-
-int main()
-{
-    jarray_int_t y;
-    jarr_new(&y, 1, 2, 3);
-    printf("%d\n", y.data[0]);
-    printf("%d\n", y.data[1]);
-    printf("%d\n", y.data[2]);
-    printf("cap: %zu\n", y.capacity);
-    printf("size: %zu\n", y.size);
-
-    return 0;
-}
