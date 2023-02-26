@@ -33,13 +33,3 @@ ALWAYS_INLINE double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT
 {
 	return *(double *)y  - *(double *)x;
 }
-
-/* int main() */
-/* { */
-/* 	jarray_int_t x; */
-/* 	jarr_new(&x, 1, 2); */
-/* 	printf("%d\n", x.data[0]); */
-/* 	printf("%d\n", x.data[1]); */
-/* 	printf("cap: %zu\n", x.capacity); */
-/* 	printf("size: %zu\n", x.size); */
-/* } */
