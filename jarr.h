@@ -78,7 +78,6 @@ JARR_STRUCT(jarray_float_t, float);
 		}                                                                        \
 		jarr->size = PP_NARG(__VA_ARGS__);                                       \
 		typeof(*jarr->data) tmp[] = { __VA_ARGS__ };                             \
-		for (size_t i = 0; i < 3; ++i) printf("%d\n", tmp[i]);                   \
 		memcpy(jarr->data, tmp, PP_NARG(__VA_ARGS__) * sizeof(tmp[0])); \
 	} while (0)
 /* } */
