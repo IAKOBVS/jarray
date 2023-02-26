@@ -27,6 +27,7 @@ JARR_STRUCT(jarray_ulong_t, unsigned long);
 JARR_STRUCT(jarray_ulong_long_t, unsigned long long);
 JARR_STRUCT(jarray_size_t_t, size_t);
 JARR_STRUCT(jarray_double_t, double);
+JARR_STRUCT(jarray_long_double_t, long double);
 JARR_STRUCT(jarray_float_t, float);
 
 #define jarr_init(jarr)            \
