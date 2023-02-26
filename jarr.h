@@ -25,11 +25,11 @@
 #define JARR_MIN_SIZE 8
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
-#define JARR_STRUCT(NAME, TYPE) \
-	typedef struct NAME {   \
-		TYPE *data;     \
-		size_t len;     \
-		size_t size;    \
+#define JARR_STRUCT(NAME, T)  \
+	typedef struct NAME { \
+		T *data;      \
+		size_t len;   \
+		size_t size;  \
 	} NAME
 
 JARR_STRUCT(JarrInt, int);
@@ -41,14 +41,14 @@ JARR_STRUCT(JarrFloat, float);
 	struct*: (jarr)->member                   \
 	)
 
-#define JARR_INIT(jarr, jarrAcces)             \
+#define jarrInit(jarr)                         \
 	do {                                   \
 		jarrAccess(jarr, size) = 0;    \
 		jarrAccess(jarr, len) = 0;     \
 		jarrAccess(jarr, data) = NULL; \
 	} while (0)
 
-#define JARR_NEW(jarr, jarrAccess, ...)                                                                                           \
+#define jarrNew(jarr, ...)                                                                                                        \
 	do {                                                                                                                      \
 		jarrAccess(jarr, size) = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_SIZE);                                            \
 		if (unlikely(!((jarrAccess(jarr, data) = malloc(sizeof(jarrAccess(jarr, data[0])) * jarrAccess(jarr, size)))))) { \
@@ -61,15 +61,15 @@ JARR_STRUCT(JarrFloat, float);
 		memcpy(jarrAccess(jarr, data), tmp, jarr, len);                                                                   \
 	} while (0)
 
-#define jarrDelete(jarr, jarrAcces)           \
+#define jarrDelete(jarr)           \
 	do {                                  \
 		free(jarrAccess(jarr, data)); \
-		JARR_INIT(jarr, jarrAcces);   \
+		JARR_INIT(jarr);   \
 	} while (0)
 
 #define jarrPopback(jarr) --jarrAccess(jarr, len)
 
-#define jarrShrink(jarr, jarrAcces)                                                                                                        \
+#define jarrShrink(jarr)                                                                                                                   \
 	do {                                                                                                                               \
 		if ((jarrAccess(jarr, data) = realloc(jarrAccess(jarr, data), jarrAccess(jarr, len) * sizeof(jarrAccess(jarr, data)[0])))) \
 			jarrAccess(jarr, size) = jarrAccess(jarr, len);                                                                    \
@@ -80,7 +80,7 @@ JARR_STRUCT(JarrFloat, float);
 		}                                                                                                                          \
 	} while (0)
 
-#define jarrAppend(jarr, jarrAccess, srcArr)                                                                           \
+#define jarrAppend(jarr, srcArr)                                                                                       \
 	do {                                                                                                           \
 		const int newLen = jarrAccess(jarr, size) + (sizeof(srcArr) / sizeof(srcArr[0]));                      \
 		if (newLen > jarrAccess(jarr, size)) {                                                                 \
@@ -96,7 +96,7 @@ JARR_STRUCT(JarrFloat, float);
 		jarrAccess(jarr, len) = newLen;                                                                        \
 	} while (0)
 
-#define jarrCat(jarr, jarrAccess, ...)                                                                                 \
+#define jarrCat(jarr, ...)                                                                                             \
 	do {                                                                                                           \
 		const int newLen = jarrAccess(jarr, len) + PP_NARG(__VA_ARGS__);                                       \
 		if (newLen > jarrAccess(jarr, size)) {                                                                 \
@@ -113,7 +113,7 @@ JARR_STRUCT(JarrFloat, float);
 		jarrAccess(jarr, len) = newLen;                                                                        \
 	} while (0)
 
-#define jarrPushback(jarr, jarrAccess, src)                                                                                               \
+#define jarrPushback(jarr, src)                                                                                                           \
 	do {                                                                                                                              \
 		if (jarrAccess(jarr, size) - jarrAccess(jarr, len));                                                                      \
 		else {                                                                                                                    \
