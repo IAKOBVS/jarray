@@ -2,6 +2,7 @@
 #define JARR_H_DEF
 
 #include <stddef.h>
+
 #include "/home/james/c/vargc.h"
 #include "macros.h"
 
@@ -145,7 +146,6 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 /* } */
 
-#include <stdlib.h>
 /* static ALWAYS_INLINE int impl_jarr_cat(jarray_int_t *thisJarr, int src) { */
 #define jarr_push_back(thisJarr, src)                                                                                \
 	do {                                                                                                         \
