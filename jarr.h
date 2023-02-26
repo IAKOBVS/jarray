@@ -112,7 +112,10 @@ JARR_STRUCT(JarrayFloat, float);
 				tmpSize *= 2;                                                                          \
 			} while (newLen > tmpSize);                                                                    \
 			if ((jarrAccess(jarr, data) = realloc(jarr).data, sizeof(*jarrAccess(jarr, data)) * tmpSize)); \
-			else { perror("jarrCat realloc fails"); return -1; }                                           \
+			else {                                                                                         \
+				perror("jarrCat realloc fails");                                                       \
+				return -1;                                                                             \
+			}                                                                                              \
 			jarrAccess(jarr, size) = tmpSize;                                                              \
 		}                                                                                                      \
 		typeof(jarr) tmp[] = { ##__VA_ARGS__ };                                                                \
@@ -128,11 +131,11 @@ JARR_STRUCT(JarrayFloat, float);
 			else {                                                                                                            \
 				perror("jarrPush realloc fails");                                                                         \
 				return -1;                                                                                                \
-			}                                                    \
-			jarrAccess(jarr, data)[jarrAccess(jarr, len)] = src; \
-			jarrAccess(jarr, size) *= 2;                         \
-			++jarrAccess(jarr, len);                             \
-		}                                                            \
+			}                                                                                                                 \
+			jarrAccess(jarr, data)[jarrAccess(jarr, len)] = src;                                                              \
+			jarrAccess(jarr, size) *= 2;                                                                                      \
+			++jarrAccess(jarr, len);                                                                                          \
+		}                                                                                                                         \
 	} while (0)
 
 #define jarrPopback(jarr) --jarrAccess(jarr, len)
