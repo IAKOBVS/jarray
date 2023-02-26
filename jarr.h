@@ -20,6 +20,12 @@
 	} NAME
 
 JARR_STRUCT(jarray_int_t, int);
+JARR_STRUCT(jarray_uint_t, unsigned int);
+JARR_STRUCT(jarray_long_t, long);
+JARR_STRUCT(jarray_long_long_t, long long);
+JARR_STRUCT(jarray_ulong_t, unsigned long);
+JARR_STRUCT(jarray_ulong_long_t, unsigned long long);
+JARR_STRUCT(jarray_size_t_t, size_t);
 JARR_STRUCT(jarray_double_t, double);
 JARR_STRUCT(jarray_float_t, float);
 
@@ -146,21 +152,21 @@ JARR_STRUCT(jarray_float_t, float);
 /* } */
 
 /* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *thisJarr, int src) { */
-#define jarr_push_back(thisJarr, src)                                                                                \
-	do {                                                                                                         \
-		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                                                     \
-		if (jarr->capacity >= jarr->size);                                                                   \
-		else {                                                                                               \
+#define jarr_push_back(thisJarr, src)                                                                         \
+	do {                                                                                                  \
+		typeof(*(thisJarr)) *RESTRICT jarr = (thisJarr);                                              \
+		if (jarr->capacity >= jarr->size);                                                            \
+		else {                                                                                        \
 			if ((jarr->data = realloc(jarr->data, JARR_SIZEOF_T(jarr) * (jarr->capacity *= 2)))); \
-			else {                                                                                       \
-				jarr_delete_fast_ptr(jarr);                                                          \
-				perror("jarr_push realloc failed");                                                  \
-				return -1;                                                                           \
-			}                                                                                            \
-			jarr->capacity *= 2;                                                                         \
-		}                                                                                                    \
-		++jarr->size;                                                                                        \
-		jarr->data[jarr->size] = src;                                                                        \
+			else {                                                                                \
+				jarr_delete_fast_ptr(jarr);                                                   \
+				perror("jarr_push realloc failed");                                           \
+				return -1;                                                                    \
+			}                                                                                     \
+			jarr->capacity *= 2;                                                                  \
+		}                                                                                             \
+		++jarr->size;                                                                                 \
+		jarr->data[jarr->size] = src;                                                                 \
 	} while (0)
 /* } */
 
