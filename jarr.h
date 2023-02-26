@@ -35,9 +35,9 @@
 		size_t size;     \
 	} NAME
 
-JARR_STRUCT(jarray_int, int);
-JARR_STRUCT(jarray_double, double);
-JARR_STRUCT(jarray_float, float);
+JARR_STRUCT(jarray_int_t, int);
+JARR_STRUCT(jarray_double_t, double);
+JARR_STRUCT(jarray_float_t, float);
 
 #define jarr_init(jarr)             \
 	do {                        \
