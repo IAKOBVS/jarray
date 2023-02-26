@@ -177,7 +177,7 @@ JARR_STRUCT(jarray_float_t, float);
 	} while (0)
 
 
-#define jarr_reserve_fast(thisJarr, size)                                             \
+#define jarr_reserve_fast(thisJarr, size)                                        \
 	do {                                                                     \
 		typeof(((jarr)->data)) tmp;                                      \
 		if ((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * size))) { \
