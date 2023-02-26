@@ -57,12 +57,12 @@ JARR_STRUCT(jarray_float_t, float);
 		}                        \
 	} while (0)
 
-#define jarr_delete_ptr(jarr)            \
-	do {                             \
-		if (jarr->data {         \
-			free(jarr->data); \
+#define jarr_delete_ptr(jarr)                \
+	do {                                 \
+		if (jarr->data {             \
+			free(jarr->data);    \
 			jarr_init_ptr(jarr); \
-		}                        \
+		}                            \
 	} while (0)
 
 /* static inline void dummy_arr_new(jarray_int_t *thisJarr) { */
