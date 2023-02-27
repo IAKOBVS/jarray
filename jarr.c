@@ -41,6 +41,10 @@ ALWAYS_INLINE double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT
 int main()
 {
 	jarray_int_t x;
+	jarr_init(&x);
 	jarr_new(&x, 100);
 	jarr_cat(&x, 1, 2, 3, 4, 5);
+	jarr_foreach_index(i, &x) {
+		printf("%d\n", x.data[i]);
+	}
 }
