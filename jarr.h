@@ -173,18 +173,18 @@ if_		}                          \
 
 /* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *jarr, int *src_arr, size_t src_arr_size) { */
 
-#define private_jarr_append(jarr, src_arr, src_arr_size, if_)                   \
-	do {                                                                    \
-		const size_t new_size = ((jarr)->size) + src_arr_size;          \
-		if (new_size > ((jarr)->capacity)) {                            \
-			size_t tmp_cap = ((jarr)->capacity);                    \
-			do {                                                    \
-				tmp_cap *= 2;                                   \
-			} while (new_size > tmp_cap);                           \
-			jarr_reserve_fast(jarr, tmp_cap);                       \
-		}                                                               \
-		memcpy(((jarr)->data) + ((jarr)->size), src_arr, src_arr_size); \
-		((jarr)->size) = new_size;                                      \
+#define private_jarr_append(jarr, src_arr, src_arr_size, if_)                                           \
+	do {                                                                                            \
+		const size_t new_size = ((jarr)->size) + (src_arr_size);                                \
+if_		if (new_size > ((jarr)->capacity)) {                                                    \
+if_			size_t tmp_cap = ((jarr)->capacity);                                            \
+if_			do {                                                                            \
+if_				tmp_cap *= 2;                                                           \
+if_			} while (new_size > tmp_cap);                                                   \
+if_			jarr_reserve_fast(jarr, tmp_cap);                                               \
+if_		}                                                                                       \
+		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)); \
+		((jarr)->size) = new_size;                                                              \
 	} while (0)
 
 /* } */
@@ -197,7 +197,7 @@ if_		}                          \
 		case JARR_IS_ARRAY:                                                                 \
 			(#src_arr_size == "NULL")                                                   \
 				? private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), if_) \
-				: private_jarr_append(jarr, (src_arr), src_arr_size);               \
+				: private_jarr_append(jarr, (src_arr), src_arr_size, if_);          \
 		case JARR_IS_JARRAY:                                                                \
 			private_jarr_append(jarr, ((src_arr)->data), ((src_arr).size), if_);        \
 		case JARR_IS_JARRAY_PTR:                                                            \
@@ -231,20 +231,13 @@ if_		}                                                           \
 
 /* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t *jarr, int src) { */
 
-#define private_jarr_push_back(jarr, src, if_)                                                             \
-	do {                                                                                               \
-if_		if (((jarr)->capacity) > ((jarr)->size));                                                  \
-if_		else {                                                                                     \
-			typeof(((jarr)->data)) tmp;                                                        \
-			if ((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * ((jarr)->capacity) * 2))) { \
-				((jarr)->data) = tmp;                                                      \
-				((jarr)->capacity) *= 2;                                                   \
-			} else {                                                                           \
-				perror("jarr_push realloc failed");                                        \
-				return -1;                                                                 \
-			}                                                                                  \
-if_		}                                                                                          \
-		((jarr)->data)[((jarr)->size)++] = src;                                                    \
+#define private_jarr_push_back(jarr, src, if_)                             \
+	do {                                                               \
+if_		if (((jarr)->capacity) > ((jarr)->size));                  \
+if_		else {                                                     \
+if_			jarr_reserve_fast(jarr, (((jarr)->capacity) * 2)); \
+if_		}                                                          \
+		((jarr)->data)[((jarr)->size)++] = src;                    \
 	} while (0)
 
 #define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src, , )
@@ -254,18 +247,18 @@ if_		}                                                                          
 
 #define jarr_pop_back(jarr) --((jarr)->size);
 
-#define private_jarr_reserve(jarr, cap, if_)                                       \
-	do {                                                                            \
-if_		if (cap > ((jarr)->capacity)) {                                         \
-			typeof(((jarr)->data)) tmp;                                     \
-			if ((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * cap))) { \
-				((jarr)->data) = tmp;                                   \
-				((jarr)->cap) = cap;                                    \
-			} else {                                                        \
-				perror("jarr_reserve realloc failed");                  \
-				return -1;                                              \
-			}                                                               \
-if_		}                                                                       \
+#define private_jarr_reserve(jarr, cap, if_)                                              \
+	do {                                                                              \
+if_		if ((cap) > ((jarr)->capacity)) {                                         \
+			typeof(((jarr)->data)) tmp;                                       \
+			if ((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * (cap)))) { \
+				((jarr)->data) = tmp;                                     \
+				((jarr)->capacity) = (cap);                               \
+			} else {                                                          \
+				perror("jarr_reserve realloc failed");                    \
+				return -1;                                                \
+			}                                                                 \
+if_		}                                                                         \
 	} while (0)
 
 #define jarr_reserve(jarr, cap) private_jarr_reserve(jarr, cap, )
