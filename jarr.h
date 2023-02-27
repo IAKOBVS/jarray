@@ -134,13 +134,10 @@ if_		}                          \
 
 /* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t *jarr) { */
 
-#define jarr_new(jarr, ...)                                                              \
+#define jarr_new(jarr, size)                                                             \
 	do {                                                                             \
-		((jarr)->capacity) = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_CAP);        \
+		((jarr)->capacity) = MAX(2 * size, JARR_MIN_CAP);                        \
 		if ((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr)))) { \
-			((jarr)->size) = PP_NARG(__VA_ARGS__);                           \
-			typeof(*((jarr)->data)) tmp[] = { __VA_ARGS__ };                 \
-			memcpy(((jarr)->data), tmp, sizeof(tmp));                        \
 		} else {                                                                 \
 			((jarr)->capacity) = 0;                                          \
 			perror("jarr_new malloc failed");                                \
