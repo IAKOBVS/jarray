@@ -20,8 +20,6 @@
 
 #define JARR_CMT //
 
-/* Further typechecking can be done with if (#param[0] == '&') */
-
 /*
    _Generic will determine whether a jarray is passed.
    If NULL is passed, it will expect a jarray or stack array.
@@ -240,7 +238,7 @@ if_		}                                                         \
 		((jarr).data)[((jarr).size)++] = src;                     \
 	} while (0)
 
-#define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src, , )
+#define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src, )
 #define jarr_push_back_fast(jarr, src) private_jarr_push_back(jarr, src, JARR_CMT)
 
 /* } */

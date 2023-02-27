@@ -1,32 +1,32 @@
 #include <stdio.h>
 #include "jarr.h"
 
-ALWAYS_INLINE int qsortAscend(const void *RESTRICT x, const void *RESTRICT y)
+int qsortAscend(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(int *)x  - *(int *)y;
 }
 
-ALWAYS_INLINE float qsortAscendFl(const void *RESTRICT x, const void *RESTRICT y)
+float qsortAscendFl(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(float *)x  - *(float *)y;
 }
 
-ALWAYS_INLINE double qsortAscendDb(const void *RESTRICT x, const void *RESTRICT y)
+double qsortAscendDb(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(double *)x  - *(double *)y;
 }
 
-ALWAYS_INLINE int qsortDescend(const void *RESTRICT x, const void *RESTRICT y)
+int qsortDescend(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(int *)y  - *(int *)x;
 }
 
-ALWAYS_INLINE float qsortDescendFl(const void *RESTRICT x, const void *RESTRICT y)
+float qsortDescendFl(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(float *)y  - *(float *)x;
 }
 
-ALWAYS_INLINE double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT y)
+double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(double *)y  - *(double *)x;
 }
@@ -39,11 +39,8 @@ int main()
 	jarray_int_t x;
 	jarr_init(x);
 	jarr_new(x, 100);
-	jarr_cat(x, 1, 2, 3, 4, 5);
-	jarray_int_t *y = &x;
+	jarr_cat(x, 3, 1, 3, 4, 5);
+	jarr_push_back(x, 99);
 	jarr_foreach_index(i, x)
 		printf("--%d\n", x.data[i]);
-	/* int end = jarr_end(x); */
-	int _e = jarr_end(*y);
-	printf("%d\n", _e);
 }
