@@ -1,8 +1,5 @@
 #include <stdio.h>
-
 #include "jarr.h"
-
-#define MIN_SIZE 8
 
 ALWAYS_INLINE int qsortAscend(const void *RESTRICT x, const void *RESTRICT y)
 {
@@ -36,7 +33,6 @@ ALWAYS_INLINE double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT
 
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 int main()
 {
