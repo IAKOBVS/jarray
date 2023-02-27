@@ -135,7 +135,7 @@ if_		}                          \
 #define jarr_new(jarr, size)                                                                      \
 	do {                                                                                      \
 		((jarr).capacity) = MAX(2 * size, JARR_MIN_CAP);                                  \
-		if ((unlikely(!((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr))))) { \
+		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) { \
 			((jarr).capacity) = 0;                                                    \
 			perror("jarr_new malloc failed");                                         \
 			return -1;                                                                \
