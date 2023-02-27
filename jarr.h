@@ -132,15 +132,14 @@ if_		}                          \
 
 /* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t *jarr) { */
 
-#define jarr_new(jarr, size)                                                                  \
-	do {                                                                                  \
-		((jarr).capacity) = MAX(2 * size, JARR_MIN_CAP);                              \
-		if ((likely(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr))))); \
-		else {                                                                        \
-			((jarr).capacity) = 0;                                                \
-			perror("jarr_new malloc failed");                                     \
-			return -1;                                                            \
-		}                                                                             \
+#define jarr_new(jarr, size)                                                                      \
+	do {                                                                                      \
+		((jarr).capacity) = MAX(2 * size, JARR_MIN_CAP);                                  \
+		if ((unlikely(!((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr))))) { \
+			((jarr).capacity) = 0;                                                    \
+			perror("jarr_new malloc failed");                                         \
+			return -1;                                                                \
+		}                                                                                 \
 	} while (0)
 
 /* } */
@@ -186,18 +185,18 @@ if_		}                                                                          
 
 /* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *jarr, int *src_arr, size_t src_arr_size) { */
 
-#define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, if_)                             \
-	do {                                                                                        \
-		switch (JARR_TYPE_CHECK(src_arr)) {                                                 \
-		case JARR_IS_ARRAY:                                                                 \
-			(#src_arr_size == "NULL")                                                   \
-				? private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), if_) \
-				: private_jarr_append(jarr, (src_arr), src_arr_size, if_);          \
-		case JARR_IS_JARRAY:                                                                \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), if_);         \
-		case JARR_IS_JARRAY_PTR:                                                            \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), if_);         \
-		}                                                                                   \
+#define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, if_)                           \
+	do {                                                                                      \
+		switch (JARR_TYPE_CHECK(src_arr)) {                                               \
+		case JARR_IS_ARRAY:                                                               \
+			if (#src_arr_size == "NULL")                                              \
+				private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), if_) \
+			private_jarr_append(jarr, (src_arr), src_arr_size, if_);                  \
+		case JARR_IS_JARRAY:                                                              \
+			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), if_);       \
+		case JARR_IS_JARRAY_PTR:                                                          \
+			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), if_);       \
+		}                                                                                 \
 	} while (0)
 
 /* } */
@@ -231,10 +230,8 @@ if_		}                                                          \
 
 #define private_jarr_push_back(jarr, src, if_)                            \
 	do {                                                              \
-if_		if (likely(((jarr).capacity) > ((jarr).size)));           \
-if_		else {                                                    \
+if_		if (unlikely(((jarr).capacity) == ((jarr).size)));        \
 if_			jarr_reserve_fast(jarr, (((jarr).capacity) * 2)); \
-if_		}                                                         \
 		((jarr).data)[((jarr).size)++] = src;                     \
 	} while (0)
 
