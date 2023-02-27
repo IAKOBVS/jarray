@@ -154,7 +154,7 @@ if_		}                          \
 
 #define private_jarr_shrink(jarr, if_)                                                             \
 	do {                                                                                       \
-		if (((jarr)->capacity) != ((jarr)->size)) {                                        \
+if_		if (((jarr)->capacity) != ((jarr)->size)) {                                        \
 			typeof(((jarr)->data)) tmp;                                                \
 			if ((tmp = realloc(((jarr)->data), ((jarr)->size) * JARR_T_SIZE(jarr)))) { \
 				((jarr)->data) = tmp;                                              \
@@ -163,7 +163,7 @@ if_		}                          \
 				perror("jarr_shrink realloc failed");                              \
 				return -1;                                                         \
 			}                                                                          \
-		}                                                                                  \
+if_		}                                                                                  \
 	} while (0)
 
 /* } */
