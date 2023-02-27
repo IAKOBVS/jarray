@@ -272,4 +272,12 @@ if_		}                                                                         \
 
 #define jarr_foreach(elem, jarr)                                                                                                  \
 	for (typeof(*((jarr)->data)) *elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
+
+/* #define jarr_end(jarr) (*(((jarr)->data) + ((jarr)->size) - 1)) */
+#define jarr_end(jarr) (*(((jarr).data) + ((jarr).size) - 1))
+
+#define jarr_auto_elem(jarr) typeof(*((jarr).data))
+
+#define jarr_auto(jarr) typeof((*(jarr)))
+
 #endif

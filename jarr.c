@@ -44,7 +44,8 @@ int main()
 	jarr_init(&x);
 	jarr_new(&x, 100);
 	jarr_cat(&x, 1, 2, 3, 4, 5);
-	jarr_foreach_index(i, &x) {
-		printf("%d\n", x.data[i]);
-	}
+	jarr_foreach_index(i, &x)
+		printf("--%d\n", x.data[i]);
+	int end = jarr_end(x);
+	printf("%d\n", end);
 }
