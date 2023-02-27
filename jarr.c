@@ -41,11 +41,13 @@ ALWAYS_INLINE double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT
 int main()
 {
 	jarray_int_t x;
-	jarr_init(&x);
-	jarr_new(&x, 100);
-	jarr_cat(&x, 1, 2, 3, 4, 5);
-	jarr_foreach_index(i, &x)
+	jarr_init(x);
+	jarr_new(x, 100);
+	jarr_cat(x, 1, 2, 3, 4, 5);
+	jarray_int_t *y = &x;
+	jarr_foreach_index(i, x)
 		printf("--%d\n", x.data[i]);
-	int end = jarr_end(x);
-	printf("%d\n", end);
+	/* int end = jarr_end(x); */
+	int _e = jarr_end(*y);
+	printf("%d\n", _e);
 }
