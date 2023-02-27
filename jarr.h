@@ -18,7 +18,7 @@
 #define JARR_IS_JARRAY 2
 #define JARR_IS_JARRAY_PTR 3
 
-#define JARR_CMT \\
+#define JARR_CMT //
 
 /* Further typechecking can be done with if (#param[0] == '&') */
 
@@ -209,15 +209,15 @@ if_		}                                                                          
 
 /* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *jarr, ...) { */
 
-#define jarr_cat(jarr, ...)                                                 \
+#define private_jarr_cat(jarr, if_, ...)                                    \
 	do {                                                                \
 		const int new_size = ((jarr)->size) + PP_NARG(__VA_ARGS__); \
 if_		if (new_size > ((jarr)->capacity)) {                        \
-			size_t tmp_cap = ((jarr)->capacity);                \
-			do {                                                \
-				tmp_cap *= 2;                               \
-			} while (new_size > tmp_cap);                       \
-			jarr_reserve_fast(jarr, tmp_cap);                   \
+if_			size_t tmp_cap = ((jarr)->capacity);                \
+if_			do {                                                \
+if_				tmp_cap *= 2;                               \
+if_			} while (new_size > tmp_cap);                       \
+if_			jarr_reserve_fast(jarr, tmp_cap);                   \
 if_		}                                                           \
 		typeof(*((jarr)->data)) tmp[] = { __VA_ARGS__ };            \
 		memcpy(((jarr)->data) + ((jarr)->size), tmp, sizeof(tmp));  \
@@ -225,6 +225,9 @@ if_		}                                                           \
 	} while (0)
 
 /* } */
+
+#define jarr_cat(jarr, ...) private_jarr_cat(jarr, , __VA_ARGS__)
+#define jarr_cat_fast(jarr, ...) private_jarr_cat(jarr, JARR_CMT, __VA_ARGS__)
 
 /* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t *jarr, int src) { */
 
@@ -264,4 +267,8 @@ if_		}                                                                         \
 #define jarr_cmp(jarr_dest, jarr_src)                                                                                            \
 	((((jarr_dest)->size) != ((jarr_src)->size)) ? 1 : memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 
+#define jarr_foreach_index(elem, jarr)\
+	for (size_t elem = 0, size = ((jarr)->size); elem < size; ++elem)
+#define jarr_foreach(elem, jarr)\
+	for (__auto_type *elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
 #endif
