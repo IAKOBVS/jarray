@@ -132,33 +132,33 @@ if_		}                          \
 
 /* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t *jarr) { */
 
-#define jarr_new(jarr, size)                                                          \
-	do {                                                                          \
-		((jarr).capacity) = MAX(2 * size, JARR_MIN_CAP);                      \
-		if ((((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))); \
-		else {                                                                \
-			((jarr).capacity) = 0;                                        \
-			perror("jarr_new malloc failed");                             \
-			return -1;                                                    \
-		}                                                                     \
+#define jarr_new(jarr, size)                                                                  \
+	do {                                                                                  \
+		((jarr).capacity) = MAX(2 * size, JARR_MIN_CAP);                              \
+		if ((likely(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr))))); \
+		else {                                                                        \
+			((jarr).capacity) = 0;                                                \
+			perror("jarr_new malloc failed");                                     \
+			return -1;                                                            \
+		}                                                                             \
 	} while (0)
 
 /* } */
 
 /* static ALWAYS_INLINE int dummy_jarr_shrink(jarray_int_t *jarr) { */
 
-#define private_jarr_shrink(jarr, if_)                                                           \
-	do {                                                                                     \
-if_		if (((jarr).capacity) != ((jarr).size)) {                                        \
-			typeof(((jarr).data)) tmp;                                               \
-			if ((tmp = realloc(((jarr).data), ((jarr).size) * JARR_T_SIZE(jarr)))) { \
-				((jarr).data) = tmp;                                             \
-				((jarr).capacity) = ((jarr).size);                               \
-			} else {                                                                 \
-				perror("jarr_shrink realloc failed");                            \
-				return -1;                                                       \
-			}                                                                        \
-if_		}                                                                                \
+#define private_jarr_shrink(jarr, if_)                                                                   \
+	do {                                                                                             \
+if_		if (((jarr).capacity) != ((jarr).size)) {                                                \
+			typeof(((jarr).data)) tmp;                                                       \
+			if (likely((tmp = realloc(((jarr).data), ((jarr).size) * JARR_T_SIZE(jarr))))) { \
+				((jarr).data) = tmp;                                                     \
+				((jarr).capacity) = ((jarr).size);                                       \
+			} else {                                                                         \
+				perror("jarr_shrink realloc failed");                                    \
+				return -1;                                                               \
+			}                                                                                \
+if_		}                                                                                        \
 	} while (0)
 
 /* } */
@@ -231,7 +231,7 @@ if_		}                                                          \
 
 #define private_jarr_push_back(jarr, src, if_)                            \
 	do {                                                              \
-if_		if (((jarr).capacity) > ((jarr).size));                   \
+if_		if (likely(((jarr).capacity) > ((jarr).size)));           \
 if_		else {                                                    \
 if_			jarr_reserve_fast(jarr, (((jarr).capacity) * 2)); \
 if_		}                                                         \
@@ -245,18 +245,18 @@ if_		}                                                         \
 
 #define jarr_pop_back(jarr) --((jarr).size);
 
-#define private_jarr_reserve(jarr, cap, if_)                                             \
-	do {                                                                             \
-if_		if ((cap) > ((jarr).capacity)) {                                         \
-			typeof(((jarr).data)) tmp;                                       \
-			if ((tmp = realloc(((jarr).data), JARR_T_SIZE(jarr) * (cap)))) { \
-				((jarr).data) = tmp;                                     \
-				((jarr).capacity) = (cap);                               \
-			} else {                                                         \
-				perror("jarr_reserve realloc failed");                   \
-				return -1;                                               \
-			}                                                                \
-if_		}                                                                        \
+#define private_jarr_reserve(jarr, cap, if_)                                                     \
+	do {                                                                                     \
+if_		if ((cap) > ((jarr).capacity)) {                                                 \
+			typeof(((jarr).data)) tmp;                                               \
+			if (likely((tmp = realloc(((jarr).data), JARR_T_SIZE(jarr) * (cap))))) { \
+				((jarr).data) = tmp;                                             \
+				((jarr).capacity) = (cap);                                       \
+			} else {                                                                 \
+				perror("jarr_reserve realloc failed");                           \
+				return -1;                                                       \
+			}                                                                        \
+if_		}                                                                                \
 	} while (0)
 
 #define jarr_reserve(jarr, cap) private_jarr_reserve(jarr, cap, )
