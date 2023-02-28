@@ -6,6 +6,14 @@
 #include "/home/james/c/vargc.h"
 #include "macros.h"
 
+#define JARR_INCLUDE
+
+#ifdef JARR_INCLUDE
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#endif
+
 #define JARR_MIN_CAP (8)
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
@@ -22,7 +30,9 @@
 
 /*
    _Generic will determine whether a jarray is passed.
-   If NULL is passed, it will expect a jarray or stack array.
+
+   If NULL is passed as array size (src_arr_size),
+   it will expect a jarray or stack array.
    You need to pass the size if it's a heap array.
 */
 
@@ -130,21 +140,29 @@ nocheck_	}                           \
 #define jarr_delete(jarr) private_jarr_delete(jarr, )
 #define jarr_delete_nocheck(jarr) private_jarr_delete(jarr, JARR_COMMENT)
 
-/* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t *jarr) { */
+/* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t jarr, size_t size) { */
 
-#define jarr_new(jarr, size)                                                                        \
+#define jarr_new(jarr, ...)                                                                         \
 	do {                                                                                        \
-		((jarr).capacity) = MAX(2 * size, JARR_MIN_CAP);                                    \
+		if (PP_NARG(__VA_ARGS__) == 1 && !PP_ISDIGIT(__VA_ARGS__))                          \
+			((jarr).capacity) = MAX(2 * PP_NARG(__VA_ARGS__), JARR_MIN_CAP);            \
+		else                                                                                \
+			((jarr).capacity) = MAX(2 * __VA_ARGS__, JARR_MIN_CAP);                     \
 		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) { \
 			((jarr).capacity) = 0;                                                      \
 			perror("jarr_new malloc failed");                                           \
 			return -1;                                                                  \
 		}                                                                                   \
+		if (PP_NARG(__VA_ARGS__) == 1 && !PP_ISDIGIT(__VA_ARGS__)) {                        \
+			typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                             \
+			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                    \
+			((jarr).size) = PP_NARG(__VA_ARGS__);                                       \
+		}                                                                                   \
 	} while (0)
 
 /* } */
 
-/* static ALWAYS_INLINE int dummy_jarr_shrink(jarray_int_t *jarr) { */
+/* static ALWAYS_INLINE int dummy_jarr_shrink(jarray_int_t jarr) { */
 
 #define private_jarr_shrink(jarr, nocheck_)                                                              \
 	do {                                                                                             \
@@ -165,7 +183,7 @@ nocheck_	}                                                                      
 #define jarr_shrink(jarr) private_jarr_shrink(jarr, )
 #define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, JARR_COMMENT)
 
-/* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *jarr, int *src_arr, size_t src_arr_size) { */
+/* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t jarr, int *src_arr, size_t src_arr_size) { */
 
 #define private_jarr_append(jarr, src_arr, src_arr_size, noalloc_)                                    \
 	do {                                                                                          \
@@ -183,7 +201,7 @@ noalloc_	}                                                                      
 
 /* } */
 
-/* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *jarr, int *src_arr, size_t src_arr_size) { */
+/* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t jarr, int *src_arr, size_t src_arr_size) { */
 
 #define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, noalloc_)                                                       \
 	do {                                                                                                                       \
@@ -204,7 +222,7 @@ noalloc_	}                                                                      
 #define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, )
 #define jarr_noalloc(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, JARR_COMMENT)
 
-/* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *jarr, ...) { */
+/* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t jarr, ...) { */
 
 #define private_jarr_cat(jarr, noalloc_, ...)                              \
 	do {                                                               \
@@ -226,7 +244,7 @@ noalloc_	}                                                          \
 #define jarr_cat(jarr, ...) private_jarr_cat(jarr, , __VA_ARGS__)
 #define jarr_cat_noalloc(jarr, ...) private_jarr_cat(jarr, JARR_COMMENT, __VA_ARGS__)
 
-/* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t *jarr, int src) { */
+/* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src) { */
 
 #define private_jarr_push_back(jarr, src, nocheck_)                          \
 	do {                                                                 \
