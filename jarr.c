@@ -95,17 +95,8 @@ ALWAYS_INLINE unsigned int near_powoftwo32(unsigned int x)
 #define STRINGIFY(s) #s
 #include <assert.h>
 
+#define NOT_NULL(x) static_assert(x != 'n', "whereby");
+
 int main()
 {
-	typedef struct vec {    \
-		int *data;         \
-		size_t size;     \
-		size_t capacity; \
-	} vec;
-	vec v;
-	vec_init(&v);
-	vec *p = &v;
-	vec_iterate(p);
-	printf("%p\n", (&v));
-	vec_iterate(&v);
 }
