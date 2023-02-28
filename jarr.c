@@ -56,7 +56,7 @@ ALWAYS_INLINE size_t near_powoftwo32(unsigned int x)
 {
 	size_t p = 1;
         while (p < (size_t)(x)) p <<= 1;
-        p;
+        return p;
 }
 
 #endif
