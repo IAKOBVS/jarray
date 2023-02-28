@@ -18,7 +18,7 @@
 #define JARR_IS_JARRAY 2
 #define JARR_IS_JARRAY_PTR 3
 
-#define JARR_CMT //
+#define JARR_COMMENT //
 
 /*
    _Generic will determine whether a jarray is passed.
@@ -128,7 +128,7 @@ nocheck_	}                           \
 	} while (0)
 
 #define jarr_delete(jarr) private_jarr_delete(jarr, )
-#define jarr_delete_nocheck(jarr) private_jarr_delete(jarr, JARR_CMT)
+#define jarr_delete_nocheck(jarr) private_jarr_delete(jarr, JARR_COMMENT)
 
 /* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t *jarr) { */
 
@@ -163,7 +163,7 @@ nocheck_	}                                                                      
 /* } */
 
 #define jarr_shrink(jarr) private_jarr_shrink(jarr, )
-#define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, JARR_CMT)
+#define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, JARR_COMMENT)
 
 /* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *jarr, int *src_arr, size_t src_arr_size) { */
 
@@ -202,7 +202,7 @@ noalloc_	}                                                                      
 /* } */
 
 #define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, )
-#define jarr_noalloc(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, JARR_CMT)
+#define jarr_noalloc(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, JARR_COMMENT)
 
 /* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t *jarr, ...) { */
 
@@ -224,7 +224,7 @@ noalloc_	}                                                          \
 /* } */
 
 #define jarr_cat(jarr, ...) private_jarr_cat(jarr, , __VA_ARGS__)
-#define jarr_cat_noalloc(jarr, ...) private_jarr_cat(jarr, JARR_CMT, __VA_ARGS__)
+#define jarr_cat_noalloc(jarr, ...) private_jarr_cat(jarr, JARR_COMMENT, __VA_ARGS__)
 
 /* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t *jarr, int src) { */
 
@@ -236,7 +236,7 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 	} while (0)
 
 #define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src, )
-#define jarr_push_back_noalloc(jarr, src) private_jarr_push_back(jarr, src, JARR_CMT)
+#define jarr_push_back_noalloc(jarr, src) private_jarr_push_back(jarr, src, JARR_COMMENT)
 
 /* } */
 
@@ -257,20 +257,20 @@ nocheck_	}                                                                      
 	} while (0)
 
 #define jarr_reserve(jarr, cap) private_jarr_reserve(jarr, cap, )
-#define jarr_reserve_nocheck(jarr, cap) private_jarr_reserve(jarr, cap, JARR_CMT)
+#define jarr_reserve_nocheck(jarr, cap) private_jarr_reserve(jarr, cap, JARR_COMMENT)
 
 #define jarr_cmp(jarr_dest, jarr_src)                                                                                       \
 	((((jarr_dest).size) != ((jarr_src).size)) ? 1 : memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
 #define jarr_cmp_nocheck(jarr_dest, jarr_src)                               \
 	(memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
 
-#define jarr_foreach_index(elem, jarr)                                         \
+#define jarr_foreach_index(elem, jarr)                                   \
 	for (size_t elem = 0, size = ((jarr).size); elem < size; ++elem)
 
-#define jarr_foreach(elem, jarr)                                                                                                    \
+#define jarr_foreach(elem, jarr)                                                                                              \
 	for (typeof(*((jarr).data)) *elem = ((jarr).data), *RESTRICT end = ((jarr).data) + ((jarr).size); elem < end; ++elem)
 
-#define jarr_foreach(elem, jarr)                                                                                                    \
+#define jarr_foreach(elem, jarr)                                                                                              \
 	for (typeof(*((jarr).data)) *elem = ((jarr).data), *RESTRICT end = ((jarr).data) + ((jarr).size); elem < end; ++elem)
 
 #define jarr_end(jarr) (*(((jarr).data) + ((jarr).size) - 1))
