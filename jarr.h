@@ -138,7 +138,7 @@ JARR_STRUCT(jarray_ushort_t, unsigned short);
 #define private_jarr_shrink(jarr, nocheck_)                                                                                                      \
 	do {                                                                                                                                     \
 		JARR_ASSERT(((jarr).capacity) || ((jarr).size) || ((jarr).ptr), "jarr_shrink is trying to shrink a freed or unallocated ptr\n"); \
-		JARR_ASSERT(((jarr).capacity) != ((jarr).size), "jarray can not be further shrunk (size == capacity)\n");                        \
+		JARR_ASSERT(((jarr).capacity) != ((jarr).size), "jarray can not be further shrunk\n");                                           \
 /* nocheck_	if (((jarr).capacity) != ((jarr).size)) {                                                                       \ */             \
 			typeof(((jarr).data)) tmp;                                                                                               \
 			if (likely((tmp = realloc(((jarr).data), ((jarr).size) * JARR_T_SIZE(jarr))))) {                                         \
@@ -236,7 +236,7 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 #define private_jarr_reserve(jarr, cap, nocheck_)                                                                                \
 	do {                                                                                                                     \
 		/* if ((cap) > (jarr.capacity)) {                                                                           \ */ \
-			JARR_ASSERT((cap) > ((jarr).capacity), "jarr_reserve: illegal cap (reserve_cap <= capacity)");           \
+			JARR_ASSERT((cap) > ((jarr).capacity), "jarr_reserve: illegal cap\n");                                   \
 			typeof(((jarr).data)) tmp;                                                                               \
 			if (likely((tmp = realloc(((jarr).data), JARR_T_SIZE(jarr) * (JARR_NEAR_POWER_OF_TWO(cap)))))) {         \
 				((jarr).data) = tmp;                                                                             \
