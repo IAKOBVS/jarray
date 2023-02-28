@@ -18,9 +18,9 @@
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 #ifdef JARR_64_BIT
-	#define JARR_NEAR_POW_OF_TWO(x) near_poweroftwo64
+	#define JARR_NEAR_POW_OF_TWO(x) near_powoftwo64
 #elif JARR_32_BIT
-	#define JARR_NEAR_POW_OF_TWO(x) near_poweroftwo32
+	#define JARR_NEAR_POW_OF_TWO(x) near_powoftwo32
 #endif
 #else
 	#define JARR_NEAR_POW_OF_TWO(x) (x)
@@ -30,8 +30,8 @@
 #define JARR_PARAM_NULL(x) ((#x[0] == 'N' && #x[0] == 'U' && #x[0] == 'L' && #x[0] == 'L') ? 1 : 0)
 #define JARR_PARAM_NULL_THEN(x, do1, do2) ((#x[0] == 'N' && #x[0] == 'U' && #x[0] == 'L' && #x[0] == 'L') ? do1 : do2)
 
-#define near_poweroftwo64(x) JARR_ASSERT(#x[0] != '0', && #x[0] != '-', "near_poweroftwo64: trying to get the nearest power of two of 0."), near_poweroftwo64(x)
-#define near_poweroftwo32(x) JARR_ASSERT(#x[0] != '0' && #x[0] != '-', "near_poweroftwo32: trying to get the nearest power of two of 0."), near_poweroftwo32(x)
+#define near_powoftwo64(x) JARR_ASSERT(#x[0] != '0', && #x[0] != '-', "near_powoftwo64: trying to get the nearest power of two of 0."), near_powoftwo64(x)
+#define near_powoftwo32(x) JARR_ASSERT(#x[0] != '0' && #x[0] != '-', "near_powoftwo32: trying to get the nearest power of two of 0."), near_powoftwo32(x)
 
 #define JARR_MIN_CAP (8)
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -56,8 +56,8 @@
 
 #define JARR_COMMENT //
 
-size_t near_powoftwo64(unsigned int x);
-size_t near_powoftwo32(unsigned int x);
+size_t private_near_powoftwo64(unsigned int x);
+size_t private_near_powoftwo32(unsigned int x);
 
 int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
 int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
