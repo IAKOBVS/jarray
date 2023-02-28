@@ -52,6 +52,16 @@
 
 #define JARR_COMMENT //
 
+size_t near_powoftwo64(unsigned int x);
+size_t near_powoftwo32(unsigned int x);
+
+int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
+int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
+float qsort_descend_fl(const void *RESTRICT x, const void *RESTRICT y);
+float qsort_ascend_fl(const void *RESTRICT y, const void *RESTRICT x);
+double qsort_descend_db(const void *RESTRICT x, const void *RESTRICT y);
+double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
+
 /*
    _Generic will determine whether a jarray is passed.
 
@@ -329,12 +339,5 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 	/* float: JARR_IS_ARRAY,                        \ */
 	/* short: JARR_IS_ARRAY,                        \ */
 	/* unsigned short: JARR_IS_ARRAY                \ */
-
-int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
-int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
-float qsort_descend_fl(const void *RESTRICT x, const void *RESTRICT y);
-float qsort_ascend_fl(const void *RESTRICT y, const void *RESTRICT x);
-double qsort_descend_db(const void *RESTRICT x, const void *RESTRICT y);
-double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
 
 #endif
