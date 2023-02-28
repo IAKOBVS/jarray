@@ -266,7 +266,7 @@ nocheck_	}                                                                      
 	(memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
 
 #define jarr_foreach_index(elem, jarr)                                         \
-	for (size_t elem = 0, const size = ((jarr).size); elem < size; ++elem)
+	for (size_t elem = 0, size = ((jarr).size); elem < size; ++elem)
 
 #define jarr_foreach(elem, jarr)                                                                                                    \
 	for (typeof(*((jarr).data)) *elem = ((jarr).data), *RESTRICT const end = ((jarr).data) + ((jarr).size); elem < end; ++elem)
