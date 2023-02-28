@@ -261,7 +261,6 @@ nocheck_	}                                                                      
 
 #define jarr_cmp(jarr_dest, jarr_src)                                                                                       \
 	((((jarr_dest).size) != ((jarr_src).size)) ? 1 : memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
-
 #define jarr_cmp_nocheck(jarr_dest, jarr_src)                               \
 	(memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
 
