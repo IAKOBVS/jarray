@@ -29,3 +29,8 @@ double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(double *)y  - *(double *)x;
 }
+
+int main()
+{
+	printf("%d\n", JARR_ASSERT(2, ==, 2));
+}
