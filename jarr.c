@@ -41,6 +41,6 @@ int main()
 	jarr_new(x, 100);
 	jarr_cat(x, 3, 1, 3, 4, 5);
 	jarr_push_back(x, 99);
-	jarr_foreach_index(i, x)
+	jarr_foreach_index(i, &x)
 		printf("--%d\n", x.data[i]);
 }

@@ -175,7 +175,7 @@ noalloc_		size_t tmp_cap = ((jarr).capacity);                                   
 noalloc_		do {                                                                          \
 noalloc_			tmp_cap *= 2;                                                         \
 noalloc_		} while (new_size > tmp_cap);                                                 \
-noalloc_		jarr_reserve_noalloc(jarr, tmp_cap);                                          \
+noalloc_		jarr_reserve_nocheck(jarr, tmp_cap);                                          \
 noalloc_	}                                                                                     \
 		memcpy(((jarr).data) + ((jarr).size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)); \
 		((jarr).size) = new_size;                                                             \
@@ -214,7 +214,7 @@ noalloc_		size_t tmp_cap = ((jarr).capacity);                \
 noalloc_		do {                                               \
 noalloc_			tmp_cap *= 2;                              \
 noalloc_		} while (new_size > tmp_cap);                      \
-noalloc_		jarr_reserve_noalloc(jarr, tmp_cap);               \
+noalloc_		jarr_reserve_nocheck(jarr, tmp_cap);               \
 noalloc_	}                                                          \
 		typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };            \
 		memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));   \
@@ -231,7 +231,7 @@ noalloc_	}                                                          \
 #define private_jarr_push_back(jarr, src, nocheck_)                          \
 	do {                                                                 \
 nocheck_	if (unlikely(((jarr).capacity) == ((jarr).size)));           \
-nocheck_		jarr_reserve_noalloc(jarr, (((jarr).capacity) * 2)); \
+nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 		((jarr).data)[((jarr).size)++] = src;                        \
 	} while (0)
 
