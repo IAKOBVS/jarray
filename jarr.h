@@ -6,7 +6,7 @@
 #include "/home/james/c/vargc.h"
 #include "macros.h"
 
-/* #define JARR_INCLUDE */
+#define JARR_INCLUDE
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
 
@@ -18,13 +18,17 @@
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 #ifdef JARR_64_BIT
-	#define JARR_NEAR_POWER_OF_TWO(x) near_poweroftwo64
+	#define JARR_NEAR_POW_OF_TWO(x) near_poweroftwo64
 #elif JARR_32_BIT
-	#define JARR_NEAR_POWER_OF_TWO(x) near_poweroftwo32
+	#define JARR_NEAR_POW_OF_TWO(x) near_poweroftwo32
 #endif
 #else
-	#define JARR_NEAR_POWER_OF_TWO(x) (x)
+	#define JARR_NEAR_POW_OF_TWO(x) (x)
 #endif
+
+#define JARR_PARAM_ZERO_OR_NEG_EXIT(x, msg) JARR_ASSERT(#x[0] != '0' && #x[0] != '-', msg)
+#define JARR_PARAM_NULL(x) ((#x[0] == 'N' && #x[0] == 'U' && #x[0] == 'L' && #x[0] == 'L') ? 1 : 0)
+#define JARR_PARAM_NULL_THEN(x, do1, do2) ((#x[0] == 'N' && #x[0] == 'U' && #x[0] == 'L' && #x[0] == 'L') ? do1 : do2)
 
 #define near_poweroftwo64(x) JARR_ASSERT(#x[0] != '0', && #x[0] != '-', "near_poweroftwo64: trying to get the nearest power of two of 0."), near_poweroftwo64(x)
 #define near_poweroftwo32(x) JARR_ASSERT(#x[0] != '0' && #x[0] != '-', "near_poweroftwo32: trying to get the nearest power of two of 0."), near_poweroftwo32(x)
@@ -77,10 +81,10 @@ double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
 		size_t capacity; \
 	} NAME
 
-#define static_jarray_init(T, name, capacity)             \
-	struct {                                          \
-		T data[JARR_NEAR_POWER_OF_TWO(capacity)]; \
-		size_t size;                              \
+#define static_jarray_init(T, name, capacity)           \
+	struct {                                        \
+		T data[JARR_NEAR_POW_OF_TWO(capacity)]; \
+		size_t size;                            \
 	}
 
 JARR_STRUCT(jarray_int_t, int);
@@ -125,28 +129,28 @@ nocheck_	}                                                                      
 
 /* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t jarr, size_t size) { */
 
-#define jarr_new(jarr, size, ...)                                                                                                  \
-	do {                                                                                                                       \
-		JARR_ASSERT(#size[0] != '0' && #size[0] != '-', "jarr_new: trying to set zero or negative number as capacity.\n"); \
-		if (PP_NARG(__VA_ARGS__) == 1 && PP_ISDIGIT(PP_GET_FIRST_ARG(__VA_ARGS__)))                                        \
-			((jarr).capacity) = MAX(JARR_NEAR_POWER_OF_TWO(2 * PP_NARG(__VA_ARGS__)), JARR_MIN_CAP);                   \
-		else                                                                                                               \
-			((jarr).capacity) = MAX(JARR_NEAR_POWER_OF_TWO(2 * PP_NARG(__VA_ARGS__)), JARR_MIN_CAP);                   \
-		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) {                                \
-			((jarr).capacity) = 0;                                                                                     \
-			perror("jarr_new malloc failed");                                                                          \
-			return -1;                                                                                                 \
-		}                                                                                                                  \
-		if (PP_NARG(__VA_ARGS__) == 1 && !PP_ISDIGIT(PP_GET_FIRST_ARG(__VA_ARGS__))) {                                     \
-			typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                                                            \
-			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                                   \
-			((jarr).size) = PP_NARG(__VA_ARGS__);                                                                      \
-		}                                                                                                                  \
+#define jarr_new(jarr, size, elem1, ...)                                                                             \
+	do {                                                                                                         \
+		JARR_PARAM_ZERO_OR_NEG_EXIT(size, "jarr_new: trying to set zero or negative number as capacity.\n"); \
+		((jarr).capacity) = MAX(2 * JARR_NEAR_POW_OF_TWO(size), JARR_MIN_CAP);                               \
+		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) {                  \
+			((jarr).capacity) = 0;                                                                       \
+			perror("jarr_new malloc failed");                                                            \
+			return -1;                                                                                   \
+		}                                                                                                    \
+		if (JARR_PARAM_NULL(elem1))                                                                          \
+			break;                                                                                       \
+		if (PP_NARG(__VA_ARGS__) == 1 && !PP_ISDIGIT(PP_GET_FIRST_ARG(__VA_ARGS__))) {                       \
+			typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                                              \
+			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                     \
+			((jarr).size) = PP_NARG(__VA_ARGS__);                                                        \
+		}                                                                                                    \
 	} while (0)
 
 /* } */
 
 #define jarr_new_auto(jarr, ...) jarr_new(jarr, PP_NARG(__VA_ARGS__), ...)
+#define jarr_new_alloc(jarr, ...) jarr_new(jarr, size, NULL)
 
 /* static ALWAYS_INLINE int dummy_jarr_shrink(jarray_int_t jarr) { */
 
@@ -171,37 +175,37 @@ nocheck_	}                                                                      
 
 /* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t jarr, int *src_arr, size_t src_arr_size) { */
 
-#define private_jarr_append(jarr, src_arr, src_arr_size, noalloc_)                                    \
-	do {                                                                                          \
-		JARR_ASSERT(#src_arr_size[0] != '0' && #src_arr_size[0] != '-', "jarr_append: trying to set zero or negative number as src_arr_size.\n"); \
-		const size_t new_size = ((jarr).size) + (src_arr_size);                               \
-noalloc_	if (new_size > ((jarr).capacity)) {                                                   \
-noalloc_		size_t tmp_cap = ((jarr).capacity);                                           \
-noalloc_		do {                                                                          \
-noalloc_			tmp_cap *= 2;                                                         \
-noalloc_		} while (new_size > tmp_cap);                                                 \
-noalloc_		jarr_reserve_nocheck(jarr, tmp_cap);                                          \
-noalloc_	}                                                                                     \
-		memcpy(((jarr).data) + ((jarr).size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)); \
-		((jarr).size) = new_size;                                                             \
+#define private_jarr_append(jarr, src_arr, src_arr_size, noalloc_)                                                                  \
+	do {                                                                                                                        \
+		JARR_PARAM_ZERO_OR_NEG_EXIT(src_arr_size, "jarr_append: trying to set zero or negative number as src_arr_size.\n"); \
+		const size_t new_size = ((jarr).size) + (src_arr_size);                                                             \
+noalloc_	if (new_size > ((jarr).capacity)) {                                                                                 \
+noalloc_		size_t tmp_cap = ((jarr).capacity);                                                                         \
+noalloc_		do {                                                                                                        \
+noalloc_			tmp_cap *= 2;                                                                                       \
+noalloc_		} while (new_size > tmp_cap);                                                                               \
+noalloc_		jarr_reserve_nocheck(jarr, tmp_cap);                                                                        \
+noalloc_	}                                                                                                                   \
+		memcpy(((jarr).data) + ((jarr).size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));                               \
+		((jarr).size) = new_size;                                                                                           \
 	} while (0)
 
 /* } */
 
 /* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t jarr, int *src_arr, size_t src_arr_size) { */
 
-#define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, noalloc_)                                                       \
-	do {                                                                                                                       \
-		switch (JARR_TYPE_CHECK(src_arr)) {                                                                                \
-		case JARR_IS_ARRAY:                                                                                                \
-			(#src_arr_size[0] == 'N' && #src_arr_size[1] == 'U' && #src_arr_size[2] == 'L' && #src_arr_size[3] == 'L') \
-				? private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_)                           \
-				: private_jarr_append(jarr, (src_arr), src_arr_size, noalloc_);                                    \
-		case JARR_IS_JARRAY:                                                                                               \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);                                   \
-		case JARR_IS_JARRAY_PTR:                                                                                           \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);                                   \
-		}                                                                                                                  \
+#define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, noalloc_)                            \
+	do {                                                                                            \
+		switch (JARR_TYPE_CHECK(src_arr)) {                                                     \
+		case JARR_IS_ARRAY:                                                                     \
+			JARR_PARAM_NULL_THEN(src_arr_size,                                              \
+				private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_), \
+				private_jarr_append(jarr, (src_arr), src_arr_size, noalloc_));          \
+		case JARR_IS_JARRAY:                                                                    \
+			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);        \
+		case JARR_IS_JARRAY_PTR:                                                                \
+			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);        \
+		}                                                                                       \
 	} while (0)
 
 /* } */
@@ -248,23 +252,34 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 
 #define jarr_pop_back(jarr) --((jarr).size);
 
-#define private_jarr_reserve(jarr, cap, nocheck_)                                                                                            \
-	do {                                                                                                                                 \
-		if ((cap) > (jarr.capacity)) {                                                                                               \
-			JARR_ASSERT(#cap[0] != '0' && #cap[0] != '-', "jarr_reserve: trying to set zero or negative number as capacity.\n"); \
-			typeof(((jarr).data)) tmp;                                                                                           \
-			if (likely((tmp = realloc(((jarr).data), JARR_T_SIZE(jarr) * (JARR_NEAR_POWER_OF_TWO(cap)))))) {                     \
-				((jarr).data) = tmp;                                                                                         \
-				((jarr).capacity) = (JARR_NEAR_POWER_OF_TWO(cap));                                                           \
-			} else {                                                                                                             \
-				perror("jarr_reserve realloc failed");                                                                       \
-				return -1;                                                                                                   \
-			}                                                                                                                    \
-		}                                                                                                                            \
+#define private_jarr_reserve(jarr, cap, powoftwo_, nocheck_)                                                                                      \
+	do {                                                                                                                                      \
+nocheck_	if ((cap) > (jarr.capacity)) {                                                                                                    \
+			JARR_PARAM_ZERO_OR_NEG_EXIT(cap, "jarr_reserve: trying to set zero or negative number as capacity.\n");                   \
+			typeof(((jarr).data)) tmp;                                                                                                \
+			if (likely((tmp = realloc(((jarr).data), JARR_T_SIZE(jarr) * ((powoftwo_ == 1) ? JARR_NEAR_POW_OF_TWO(cap) : (cap)))))) { \
+				((jarr).data) = tmp;                                                                                              \
+				((jarr).capacity) = (cap);                                                                                        \
+			} else {                                                                                                                  \
+				perror("jarr_reserve realloc failed");                                                                            \
+				return -1;                                                                                                        \
+nocheck_		}                                                                                                                         \
+		}                                                                                                                                 \
 	} while (0)
 
-#define jarr_reserve(jarr, cap) private_jarr_reserve(jarr, cap, )
-#define jarr_reserve_nocheck(jarr, cap) private_jarr_reserve(jarr, cap, JARR_COMMENT)
+#define jarr_reserve_align(jarr, cap) private_jarr_reserve(jarr, cap, 1, )
+#define jarr_reserve_nocheck_align(jarr, cap) private_jarr_reserve(jarr, cap, 1, JARR_COMMENT)
+
+#define jarr_reserve(jarr, cap) private_jarr_reserve(jarr, cap, 0, )
+#define jarr_reserve_nocheck(jarr, cap) private_jarr_reserve(jarr, cap, 0, JARR_COMMENT)
+
+#define private_jarr_reserve_x(jarr, multiplier) private_jarr_reserve(jarr, (((jarr)->capacity) * multiplier), 0, JARR_COMMENT)
+#define jarr_reserve_2x(jarr) private_jarr_reserve_x(jarr, 2)
+#define jarr_reserve_4x(jarr) private_jarr_reserve_x(jarr, 4)
+#define jarr_reserve_8x(jarr) private_jarr_reserve_x(jarr, 8)
+#define jarr_reserve_16x(jarr) private_jarr_reserve_x(jarr, 16)
+#define jarr_reserve_32x(jarr) private_jarr_reserve_x(jarr, 32)
+#define jarr_reserve_64x(jarr) private_jarr_reserve_x(jarr, 64)
 
 #define jarr_cmp(jarr_dest, jarr_src)                                                                                       \
 	((((jarr_dest).size) != ((jarr_src).size)) ? 1 : memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
