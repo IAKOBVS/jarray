@@ -262,7 +262,7 @@ nocheck_	}                                                                      
 #define jarr_cmp(jarr_dest, jarr_src)                                                                                       \
 	((((jarr_dest).size) != ((jarr_src).size)) ? 1 : memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
 
-#define jarr_foreach_index(elem, jarr)                                    \
+#define jarr_foreach_index(elem, jarr)                                         \
 	for (size_t elem = 0, const size = ((jarr).size); elem < size; ++elem)
 
 #define jarr_foreach(elem, jarr)                                                                                              \
