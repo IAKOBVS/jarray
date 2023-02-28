@@ -100,7 +100,7 @@ JARR_STRUCT(jarray_ushort_t, unsigned short);
 
 #define private_jarr_delete(jarr, nocheck_)                                                        \
 	do {                                                                                       \
-		JARR_ASSERT(NULL != ((jarr).data), "jarr_delete is trying to delete a NULL ptr."); \
+		JARR_ASSERT(!((jarr).data), "jarr_delete is trying to delete a NULL ptr."); \
 /* nocheck_	if (((jarr).data) {         \ */                                                   \
 			free((jarr).data);                                                         \
 			jarr_init(jarr);                                                           \
@@ -112,42 +112,43 @@ JARR_STRUCT(jarray_ushort_t, unsigned short);
 
 /* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t jarr, size_t size) { */
 
-#define jarr_new(jarr, ...)                                                                                                                    \
-	do {                                                                                                                                   \
-		JARR_ASSERT(!((jarr).capacity) || !((jarr).size) || !((jarr).data), "jarr_new is trying to malloc an already allocated ptr."); \
-		if (PP_NARG(__VA_ARGS__) == 1 && PP_ISDIGIT(__VA_ARGS__))                                                                      \
-			((jarr).capacity) = MAX(JARR_NEAR_POWER_OF_TWO(2 * PP_NARG(__VA_ARGS__)), JARR_MIN_CAP);                               \
-		else                                                                                                                           \
-			((jarr).capacity) = MAX(JARR_NEAR_POWER_OF_TWO(2 * PP_NARG(__VA_ARGS__)), JARR_MIN_CAP);                               \
-		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) {                                            \
-			((jarr).capacity) = 0;                                                                                                 \
-			perror("jarr_new malloc failed");                                                                                      \
-			return -1;                                                                                                             \
-		}                                                                                                                              \
-		if (PP_NARG(__VA_ARGS__) == 1 && !PP_ISDIGIT(__VA_ARGS__)) {                                                                   \
-			typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                                                                        \
-			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                                               \
-			((jarr).size) = PP_NARG(__VA_ARGS__);                                                                                  \
-		}                                                                                                                              \
+#define jarr_new(jarr, ...)                                                                                                                      \
+	do {                                                                                                                                     \
+		JARR_ASSERT(!((jarr).capacity) || !((jarr).size) || !((jarr).data), "jarr_new is trying to malloc an already allocated ptr.\n"); \
+		if (PP_NARG(__VA_ARGS__) == 1 && PP_ISDIGIT(__VA_ARGS__))                                                                        \
+			((jarr).capacity) = MAX(JARR_NEAR_POWER_OF_TWO(2 * PP_NARG(__VA_ARGS__)), JARR_MIN_CAP);                                 \
+		else                                                                                                                             \
+			((jarr).capacity) = MAX(JARR_NEAR_POWER_OF_TWO(2 * PP_NARG(__VA_ARGS__)), JARR_MIN_CAP);                                 \
+		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) {                                              \
+			((jarr).capacity) = 0;                                                                                                   \
+			perror("jarr_new malloc failed");                                                                                        \
+			return -1;                                                                                                               \
+		}                                                                                                                                \
+		if (PP_NARG(__VA_ARGS__) == 1 && !PP_ISDIGIT(__VA_ARGS__)) {                                                                     \
+			typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                                                                          \
+			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                                                 \
+			((jarr).size) = PP_NARG(__VA_ARGS__);                                                                                    \
+		}                                                                                                                                \
 	} while (0)
 
 /* } */
 
 /* static ALWAYS_INLINE int dummy_jarr_shrink(jarray_int_t jarr) { */
 
-#define private_jarr_shrink(jarr, nocheck_)                                                                                          \
-	do {                                                                                                                         \
-		JARR_ASSERT(((jarr).capacity) != ((jarr).size), "jarr_shrink is can not be further shrunk (size == capacity)");      \
-/* nocheck_	if (((jarr).capacity) != ((jarr).size)) {                                                                       \ */ \
-			typeof(((jarr).data)) tmp;                                                                                   \
-			if (likely((tmp = realloc(((jarr).data), ((jarr).size) * JARR_T_SIZE(jarr))))) {                             \
-				((jarr).data) = tmp;                                                                                 \
-				((jarr).capacity) = ((jarr).size);                                                                   \
-			} else {                                                                                                     \
-				perror("jarr_shrink realloc failed");                                                                \
-				return -1;                                                                                           \
-			}                                                                                                            \
-/* nocheck_	}                                                                                                               \ */ \
+#define private_jarr_shrink(jarr, nocheck_)                                                                                                      \
+	do {                                                                                                                                     \
+		JARR_ASSERT(((jarr).capacity) || ((jarr).size) || ((jarr).ptr), "jarr_shrink is trying to shrink a freed or unallocated ptr\n"); \
+		JARR_ASSERT(((jarr).capacity) != ((jarr).size), "jarray can not be further shrunk (size == capacity)\n");                        \
+/* nocheck_	if (((jarr).capacity) != ((jarr).size)) {                                                                       \ */             \
+			typeof(((jarr).data)) tmp;                                                                                               \
+			if (likely((tmp = realloc(((jarr).data), ((jarr).size) * JARR_T_SIZE(jarr))))) {                                         \
+				((jarr).data) = tmp;                                                                                             \
+				((jarr).capacity) = ((jarr).size);                                                                               \
+			} else {                                                                                                                 \
+				perror("jarr_shrink realloc failed");                                                                            \
+				return -1;                                                                                                       \
+			}                                                                                                                        \
+/* nocheck_	}                                                                                                               \ */             \
 	} while (0)
 
 /* } */
