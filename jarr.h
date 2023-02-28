@@ -19,7 +19,7 @@
 
 #define JARR_T_SIZE(var) (sizeof(*((var).data)))
 #define JARR_ARR_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
-#define jarr_sizeof_arr(arr) JARR_ARR_SIZE(arr)
+#define jarr_sizeof_arr(arr) (JARR_ARR_SIZE(arr))
 
 #define JARR_IS_ARRAY 1
 #define JARR_IS_ARRAY_PTR 2

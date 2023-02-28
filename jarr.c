@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "jarr.h"
 
 int qsortAscend(const void *RESTRICT x, const void *RESTRICT y)
@@ -29,18 +28,4 @@ float qsortDescendFl(const void *RESTRICT x, const void *RESTRICT y)
 double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(double *)y  - *(double *)x;
-}
-
-#include <string.h>
-#include <stdlib.h>
-
-int main()
-{
-	jarray_int_t x;
-	jarr_init(x);
-	jarr_new(x, 100);
-	jarr_cat(x, 3, 1, 3, 4, 5);
-	jarr_push_back(x, 99);
-	jarr_foreach_index(i, x)
-		printf("--%d\n", x.data[i]);
 }
