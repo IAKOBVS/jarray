@@ -36,7 +36,7 @@
 #define JARR_MIN_CAP (8)
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
-#define JARR_T_SIZE(var) (sizeof(*((var).data)))
+#define JARR_T_SIZE(var) (sizeof(*((var)->data)))
 #define JARR_ARR_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
 #define jarr_sizeof_arr(arr) (JARR_ARR_SIZE(arr))
 
@@ -102,9 +102,9 @@ JARR_STRUCT(jarray_ushort_t, unsigned short);
 
 #define jarr_init(jarr)                \
 	do {                           \
-		((jarr).capacity) = 0; \
-		((jarr).size) = 0;     \
-		((jarr).data) = NULL;  \
+		((jarr)->capacity) = 0; \
+		((jarr)->size) = 0;     \
+		((jarr)->data) = NULL;  \
 	} while (0)
 
 /*
@@ -118,8 +118,8 @@ JARR_STRUCT(jarray_ushort_t, unsigned short);
 
 #define private_jarr_delete(jarr, nocheck_)                                                 \
 	do {                                                                                \
-nocheck_	if (((jarr).data) {                                                         \
-			free((jarr).data);                                                  \
+nocheck_	if (((jarr)->data) {                                                         \
+			free((jarr)->data);                                                  \
 			jarr_init(jarr);                                                    \
 nocheck_	}                                                                           \
 	} while (0)
@@ -129,9 +129,9 @@ nocheck_	}                                                                      
 
 #define private_jarr_push_back(jarr, src, nocheck_)                          \
 	do {                                                                 \
-nocheck_	if (unlikely(((jarr).capacity) == ((jarr).size)));           \
-nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
-		((jarr).data)[((jarr).size)++] = src;                        \
+nocheck_	if (unlikely(((jarr)->capacity) == ((jarr)->size)));           \
+nocheck_		jarr_reserve_nocheck(jarr, (((jarr)->capacity) * 2)); \
+		((jarr)->data)[((jarr)->size)++] = src;                        \
 	} while (0)
 
 #define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src, )
@@ -145,19 +145,19 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 */
 #define jarr_new(jarr, ...)                                                                                     \
 	do {                                                                                                    \
-		((jarr).capacity) = MAX(2 * JARR_NEAR_POW_OF_TWO(PP_GET_FIRST_ARG(__VA_ARGS__)), JARR_MIN_CAP); \
-		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) {             \
-			((jarr).capacity) = 0;                                                                  \
+		((jarr)->capacity) = MAX(2 * JARR_NEAR_POW_OF_TWO(PP_GET_FIRST_ARG(__VA_ARGS__)), JARR_MIN_CAP); \
+		if ((unlikely(!(((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr)))))) {             \
+			((jarr)->capacity) = 0;                                                                  \
 			perror("jarr_new malloc failed");                                                       \
 			return -1;                                                                              \
 		}                                                                                               \
 		if (PP_NARG(__VA_ARGS__) == 2) {                                                                \
-			*((jarr).data) = PP_OTHER_ARGS(__VA_ARGS__);                                            \
-			((jarr).size) = 1;                                                                      \
+			*((jarr)->data) = PP_OTHER_ARGS(__VA_ARGS__);                                            \
+			((jarr)->size) = 1;                                                                      \
 		} else if (PP_NARG(__VA_ARGS__) > 2) {                                                          \
-			typeof(*((jarr).data)) tmp[] = { PP_OTHER_ARGS(__VA_ARGS__) };                          \
-			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                \
-			((jarr).size) = JARR_ARR_SIZE(tmp);                                                     \
+			typeof(*((jarr)->data)) tmp[] = { PP_OTHER_ARGS(__VA_ARGS__) };                          \
+			memcpy(((jarr)->data) + ((jarr)->size), tmp, sizeof(tmp));                                \
+			((jarr)->size) = JARR_ARR_SIZE(tmp);                                                     \
 		}                                                                                               \
 	} while (0)
 
@@ -170,11 +170,11 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 
 #define private_jarr_shrink(jarr, nocheck_)                                                              \
 	do {                                                                                             \
-nocheck_	if (((jarr).capacity) != ((jarr).size)) {                                                \
-			typeof(((jarr).data)) tmp;                                                       \
-			if (likely((tmp = realloc(((jarr).data), ((jarr).size) * JARR_T_SIZE(jarr))))) { \
-				((jarr).data) = tmp;                                                     \
-				((jarr).capacity) = ((jarr).size);                                       \
+nocheck_	if (((jarr)->capacity) != ((jarr)->size)) {                                                \
+			typeof(((jarr)->data)) tmp;                                                       \
+			if (likely((tmp = realloc(((jarr)->data), ((jarr)->size) * JARR_T_SIZE(jarr))))) { \
+				((jarr)->data) = tmp;                                                     \
+				((jarr)->capacity) = ((jarr)->size);                                       \
 			} else {                                                                         \
 				perror("jarr_shrink realloc failed");                                    \
 				return -1;                                                               \
@@ -192,16 +192,16 @@ nocheck_	}                                                                      
 #define private_jarr_append(jarr, src_arr, src_arr_size, noalloc_)                                                                  \
 	do {                                                                                                                        \
 		JARR_PARAM_ZERO_OR_NEG_EXIT(src_arr_size, "jarr_append: trying to set zero or negative number as src_arr_size.\n"); \
-		const size_t new_size = ((jarr).size) + (src_arr_size);                                                             \
-noalloc_	if (new_size > ((jarr).capacity)) {                                                                                 \
-noalloc_		size_t tmp_cap = ((jarr).capacity);                                                                         \
+		const size_t new_size = ((jarr)->size) + (src_arr_size);                                                             \
+noalloc_	if (new_size > ((jarr)->capacity)) {                                                                                 \
+noalloc_		size_t tmp_cap = ((jarr)->capacity);                                                                         \
 noalloc_		do {                                                                                                        \
 noalloc_			tmp_cap *= 2;                                                                                       \
 noalloc_		} while (new_size > tmp_cap);                                                                               \
 noalloc_		jarr_reserve_nocheck(jarr, tmp_cap);                                                                        \
 noalloc_	}                                                                                                                   \
-		memcpy(((jarr).data) + ((jarr).size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));                               \
-		((jarr).size) = new_size;                                                                                           \
+		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));                               \
+		((jarr)->size) = new_size;                                                                                           \
 	} while (0)
 
 /* } */
@@ -216,9 +216,9 @@ noalloc_	}                                                                      
 				private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_), \
 				private_jarr_append(jarr, (src_arr), src_arr_size, noalloc_));          \
 		case JARR_IS_JARRAY:                                                                    \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);        \
+			private_jarr_append(jarr, ((src_arr)->data), ((src_arr)->size), noalloc_);        \
 		case JARR_IS_JARRAY_PTR:                                                                \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);        \
+			private_jarr_append(jarr, ((src_arr)->data), ((src_arr)->size), noalloc_);        \
 		}                                                                                       \
 	} while (0)
 
@@ -232,17 +232,17 @@ noalloc_	}                                                                      
 #define private_jarr_cat(jarr, noalloc_, ...)                                                                                                                               \
 	do {                                                                                                                                                                \
 		PP_NARG(__VA_ARGS__) == 1 && ((#noalloc_[0] = '/' && #noalloc_[1] == '/') ? jarr_push_back_noalloc(jarr, __VA_ARGS__) : jarr_push_back(jarr, __VA_ARGS__)); \
-		const int new_size = ((jarr).size) + PP_NARG(__VA_ARGS__);                                                                                                  \
-noalloc_	if (new_size > ((jarr).capacity)) {                                                                                                                         \
-noalloc_		size_t tmp_cap = ((jarr).capacity);                                                                                                                 \
+		const int new_size = ((jarr)->size) + PP_NARG(__VA_ARGS__);                                                                                                  \
+noalloc_	if (new_size > ((jarr)->capacity)) {                                                                                                                         \
+noalloc_		size_t tmp_cap = ((jarr)->capacity);                                                                                                                 \
 noalloc_		do {                                                                                                                                                \
 noalloc_			tmp_cap *= 2;                                                                                                                               \
 noalloc_		} while (new_size > tmp_cap);                                                                                                                       \
 noalloc_		jarr_reserve_nocheck(jarr, tmp_cap);                                                                                                                \
 noalloc_	}                                                                                                                                                           \
-		typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                                                                                                             \
-		memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                                                                                    \
-		((jarr).size) = new_size;                                                                                                                                   \
+		typeof(*((jarr)->data)) tmp[] = { __VA_ARGS__ };                                                                                                             \
+		memcpy(((jarr)->data) + ((jarr)->size), tmp, sizeof(tmp));                                                                                                    \
+		((jarr)->size) = new_size;                                                                                                                                   \
 	} while (0)
 
 /* } */
@@ -254,16 +254,16 @@ noalloc_	}                                                                      
 
 /* } */
 
-#define jarr_pop_back(jarr) --((jarr).size);
+#define jarr_pop_back(jarr) --((jarr)->size);
 
 #define private_jarr_reserve(jarr, cap, powoftwo_, nocheck_)                                                                                      \
 	do {                                                                                                                                      \
-nocheck_	if ((cap) > (jarr.capacity)) {                                                                                                    \
+nocheck_	if ((cap) > (jarr->capacity)) {                                                                                                    \
 			JARR_PARAM_ZERO_OR_NEG_EXIT(cap, "jarr_reserve: trying to set zero or negative number as capacity.\n");                   \
-			typeof(((jarr).data)) tmp;                                                                                                \
-			if (likely((tmp = realloc(((jarr).data), JARR_T_SIZE(jarr) * ((powoftwo_ == 1) ? JARR_NEAR_POW_OF_TWO(cap) : (cap)))))) { \
-				((jarr).data) = tmp;                                                                                              \
-				((jarr).capacity) = (cap);                                                                                        \
+			typeof(((jarr)->data)) tmp;                                                                                                \
+			if (likely((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * ((powoftwo_ == 1) ? JARR_NEAR_POW_OF_TWO(cap) : (cap)))))) { \
+				((jarr)->data) = tmp;                                                                                              \
+				((jarr)->capacity) = (cap);                                                                                        \
 			} else {                                                                                                                  \
 				perror("jarr_reserve realloc failed");                                                                            \
 				return -1;                                                                                                        \
@@ -286,19 +286,19 @@ nocheck_		}                                                                     
 #define jarr_reserve_64x(jarr) private_jarr_reserve_x(jarr, 64)
 
 #define jarr_cmp(jarr_dest, jarr_src)                                                                                       \
-	((((jarr_dest).size) != ((jarr_src).size)) ? 1 : memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
+	((((jarr_dest)->size) != ((jarr_src)->size)) ? 1 : memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp_nocheck(jarr_dest, jarr_src)                               \
-	(memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
+	(memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 
 #define jarr_foreach_index(elem, jarr)                                   \
-	for (size_t elem = 0, size = ((jarr).size); elem < size; ++elem)
+	for (size_t elem = 0, size = ((jarr)->size); elem < size; ++elem)
 
 #define jarr_foreach(elem, jarr)                                                                                              \
-	for (typeof(*((jarr).data)) *elem = ((jarr).data), *RESTRICT end = ((jarr).data) + ((jarr).size); elem < end; ++elem)
+	for (typeof(*((jarr)->data)) *elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
 
-#define jarr_end(jarr) (*(((jarr).data) + ((jarr).size) - 1))
+#define jarr_end(jarr) (*(((jarr)->data) + ((jarr)->size) - 1))
 
-#define jarr_auto_elem(jarr) typeof(*((jarr).data))
+#define jarr_auto_elem(jarr) typeof(*((jarr)->data))
 
 #define jarr_auto(jarr) typeof((*(jarr)))
 

@@ -61,6 +61,7 @@ ALWAYS_INLINE unsigned int near_powoftwo32(unsigned int x)
 
 #endif
 
+
 /* unsigned int nearest_power_of_two(unsigned int x) { */
 /*     x--; */
 /*     x |= x >> 1; */
@@ -71,11 +72,40 @@ ALWAYS_INLINE unsigned int near_powoftwo32(unsigned int x)
 /*     return x+1; */
 /* } */
 
+
+#include "/home/james/c/nix.c/nix.h"
+#include "/home/james/c/jstring/jstr.h"
 #include <assert.h>
+#define JSTR_MIN_CAP 8
+
+#define _JARR_STRUCT(NAME, T)     \
+	typedef struct NAME {    \
+		T *data;         \
+		size_t size;     \
+		size_t capacity; \
+	} NAME
+
+#define vec_init(vec) \
+	(vec)->data = NULL, (vec)->size = 9, (vec)->capacity = 3; \
+
+#define vec_something(vec, elem) {vec.data[++vec.size] = elem;}
+
+#define vec_iterate(vec) {assert(#vec[0] != '&'); }
+
+#define STRINGIFY(s) #s
+#include <assert.h>
+
 int main()
 {
-	jarray_int_t a;
-	jarr_new(a, 23, 1, 3, 41);
-	jarr_foreach_index(z, a)
-		printf("%d\n", a.data[z]);
+	typedef struct vec {    \
+		int *data;         \
+		size_t size;     \
+		size_t capacity; \
+	} vec;
+	vec v;
+	vec_init(&v);
+	vec *p = &v;
+	vec_iterate(p);
+	printf("%p\n", (&v));
+	vec_iterate(&v);
 }
