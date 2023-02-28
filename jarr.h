@@ -269,7 +269,10 @@ nocheck_	}                                                                      
 	for (size_t elem = 0, size = ((jarr).size); elem < size; ++elem)
 
 #define jarr_foreach(elem, jarr)                                                                                                    \
-	for (typeof(*((jarr).data)) *elem = ((jarr).data), *RESTRICT const end = ((jarr).data) + ((jarr).size); elem < end; ++elem)
+	for (typeof(*((jarr).data)) *elem = ((jarr).data), *RESTRICT end = ((jarr).data) + ((jarr).size); elem < end; ++elem)
+
+#define jarr_foreach(elem, jarr)                                                                                                    \
+	for (typeof(*((jarr).data)) *elem = ((jarr).data), *RESTRICT end = ((jarr).data) + ((jarr).size); elem < end; ++elem)
 
 #define jarr_end(jarr) (*(((jarr).data) + ((jarr).size) - 1))
 
