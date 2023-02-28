@@ -129,21 +129,23 @@ nocheck_	}                                                                      
 
 /* static ALWAYS_INLINE int dummy_arr_new(jarray_int_t jarr, size_t size) { */
 
-#define jarr_new(jarr, size, elem1, ...)                                                                             \
-	do {                                                                                                         \
-		JARR_PARAM_ZERO_OR_NEG_EXIT(size, "jarr_new: trying to set zero or negative number as capacity.\n"); \
-		((jarr).capacity) = MAX(2 * JARR_NEAR_POW_OF_TWO(size), JARR_MIN_CAP);                               \
-		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) {                  \
-			((jarr).capacity) = 0;                                                                       \
-			perror("jarr_new malloc failed");                                                            \
-			return -1;                                                                                   \
-		}                                                                                                    \
-		if (PP_NARG(__VA_ARGS__) > 1) {                                                                      \
-			typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                                              \
-			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                     \
-			((jarr).size) = PP_NARG(__VA_ARGS__);                                                        \
-		} else if (PP_NARG(__VA_ARGS__) == 1){                                                               \
-			((jarr)->data)[((jarr).size)++] = __VA_ARGS__;                                               \
+/*
+   if you are not passing any elements to jarr_new,
+   pass NULL
+*/
+#define jarr_new(jarr, ...)                                                                                                                   \
+	do {                                                                                                                                  \
+		JARR_PARAM_ZERO_OR_NEG_EXIT(PP_GET_FIRST_ARG(__VA_ARGS__), "jarr_new: trying to set zero or negative number as capacity.\n"); \
+		((jarr).capacity) = MAX(2 * JARR_NEAR_POW_OF_TWO(PP_GET_FIRST_ARG(__VA_ARGS__)), JARR_MIN_CAP);                               \
+		if ((unlikely(!(((jarr).data) = malloc(((jarr).capacity) * JARR_T_SIZE(jarr)))))) {                                           \
+			((jarr).capacity) = 0;                                                                                                \
+			perror("jarr_new malloc failed");                                                                                     \
+			return -1;                                                                                                            \
+		}                                                                                                                             \
+		if (PP_NARG(__VA_ARGS__) == 2)                                                                                                \
+			jarr_push_back_noalloc(jarr, __VA_ARGS__);                                                                            \
+		else if (PP_NARG(__VA_ARGS__) > 2)                                                                                            \
+			jarr_cat_noalloc(jarr, __VA_ARGS__);                                                                                  \
 	} while (0)
 
 /* } */
