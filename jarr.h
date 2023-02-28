@@ -185,18 +185,18 @@ noalloc_	}                                                                      
 
 /* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *jarr, int *src_arr, size_t src_arr_size) { */
 
-#define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, noalloc_)                             \
-	do {                                                                                             \
-		switch (JARR_TYPE_CHECK(src_arr)) {                                                      \
-		case JARR_IS_ARRAY:                                                                      \
-			(#src_arr_size[0] == "N")                                                        \
-				? private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_) \
-				: private_jarr_append(jarr, (src_arr), src_arr_size, noalloc_);          \
-		case JARR_IS_JARRAY:                                                                     \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);         \
-		case JARR_IS_JARRAY_PTR:                                                                 \
-			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);         \
-		}                                                                                        \
+#define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, noalloc_)                                                       \
+	do {                                                                                                                       \
+		switch (JARR_TYPE_CHECK(src_arr)) {                                                                                \
+		case JARR_IS_ARRAY:                                                                                                \
+			(#src_arr_size[0] == 'N' && #src_arr_size[1] == 'U' && #src_arr_size[2] == 'L' && #src_arr_size[3] == 'L') \
+				? private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_)                           \
+				: private_jarr_append(jarr, (src_arr), src_arr_size, noalloc_);                                    \
+		case JARR_IS_JARRAY:                                                                                               \
+			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);                                   \
+		case JARR_IS_JARRAY_PTR:                                                                                           \
+			private_jarr_append(jarr, ((src_arr).data), ((src_arr).size), noalloc_);                                   \
+		}                                                                                                                  \
 	} while (0)
 
 /* } */
