@@ -157,7 +157,7 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr).capacity) * 2)); \
 		} else if (PP_NARG(__VA_ARGS__) > 2) {                                                          \
 			typeof(*((jarr).data)) tmp[] = { PP_OTHER_ARGS(__VA_ARGS__) };                          \
 			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                \
-			((jarr).size) = JARR_ARR_SIZE(tmp);                                                            \
+			((jarr).size) = JARR_ARR_SIZE(tmp);                                                     \
 		}                                                                                               \
 	} while (0)
 
