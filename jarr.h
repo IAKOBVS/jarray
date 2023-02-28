@@ -138,13 +138,12 @@ nocheck_	}                                                                      
 			perror("jarr_new malloc failed");                                                            \
 			return -1;                                                                                   \
 		}                                                                                                    \
-		if (JARR_PARAM_NULL(elem1))                                                                          \
-			break;                                                                                       \
-		if (PP_NARG(__VA_ARGS__) == 1 && !PP_ISDIGIT(PP_GET_FIRST_ARG(__VA_ARGS__))) {                       \
+		if (PP_NARG(__VA_ARGS__) > 1) {                                                                      \
 			typeof(*((jarr).data)) tmp[] = { __VA_ARGS__ };                                              \
 			memcpy(((jarr).data) + ((jarr).size), tmp, sizeof(tmp));                                     \
 			((jarr).size) = PP_NARG(__VA_ARGS__);                                                        \
-		}                                                                                                    \
+		} else if (PP_NARG(__VA_ARGS__) == 1){                                                               \
+			((jarr)->data)[((jarr).size)++] = __VA_ARGS__;                                               \
 	} while (0)
 
 /* } */
