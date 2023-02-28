@@ -6,14 +6,14 @@
 #include "/home/james/c/vargc.h"
 #include "macros.h"
 
-#define JARR_INCLUDE
+/* #define JARR_INCLUDE */
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
 
 #ifdef JARR_INCLUDE
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <stdlib.h>
 #endif
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
@@ -67,7 +67,7 @@ double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
 
    If NULL is passed as array size (src_arr_size),
    it will expect a jarray or stack array.
-   You need to pass the size if it's a heap array.
+   You must pass the size if it's a heap array.
 */
 
 #define JARR_STRUCT(NAME, T)     \

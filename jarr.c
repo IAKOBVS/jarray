@@ -1,5 +1,4 @@
 #include "jarr.h"
-#include <assert.h>
 #include <stdint.h>
 
 int qsortAscend(const void *RESTRICT x, const void *RESTRICT y)
@@ -55,9 +54,9 @@ ALWAYS_INLINE size_t near_powoftwo64(unsigned int x)
 
 ALWAYS_INLINE size_t near_powoftwo32(unsigned int x)
 {
-	size_t p = 1; \
-        while (p < (size_t)(x)) p <<= 1; \
-        p; \
+	size_t p = 1;
+        while (p < (size_t)(x)) p <<= 1;
+        p;
 }
 
 #endif
