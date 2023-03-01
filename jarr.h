@@ -301,7 +301,7 @@ JARR_TERNARY_END
 #ifdef JARR_DEBUG
 static ALWAYS_INLINE int dummy_jarr_reserve(jarray_int_t jarr)
 {
-	jarr_reserve(&jarr, 0);
+	return jarr_reserve(&jarr, 0);
 }
 #endif
 
@@ -326,7 +326,7 @@ JARR_TERNARY_END
 #ifdef JARR_DEBUG
 static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src)
 {
-	jarr_push_back(&jarr, src);
+	return jarr_push_back(&jarr, src);
 }
 #endif
 
@@ -377,7 +377,7 @@ JARR_TERNARY_START                                                              
 					((jarr)->capacity) = ((jarr)->size),                                    \
 					1)                                                                      \
 				:                                                                               \
-					(perror("jarr_shrink realloc failed"),                                   \
+					(perror("jarr_shrink realloc failed"),                                  \
 					0))                                                                     \
 		 :                                                                                              \
 			0                                                                                       \
@@ -398,17 +398,18 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 }
 #endif
 
-#define private_jarr_append(tmp_jarray, jarr, src_arr, src_arr_size)                                    \
-	JARR_MACRO_START                                                                                \
-		JARR_TMP_DECLARE(tmp_jarray)                                                            \
-		if ((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity)) {                           \
-			do {                                                                            \
-				((jarr)->capacity) *= 2;                                                \
-			} while ((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity));               \
-			jarr_reserve_nocheck(tmp_jarray, jarr, (((jarr)->size) + (src_arr_size)));      \
-		}                                                                                       \
-		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)); \
-		((jarr)->size) += (src_arr_size);                                                              \
+#define private_jarr_append(tmp_jarray, jarr, src_arr, src_arr_size)                                              \
+	JARR_MACRO_START                                                                                          \
+		JARR_TMP_DECLARE(tmp_jarray)                                                                      \
+		if ((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity)) {                                     \
+			do {                                                                                      \
+				((jarr)->capacity) *= 2;                                                          \
+			} while ((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity));                         \
+			if (unlikely(!jarr_reserve_nocheck(tmp_jarray, jarr, (((jarr)->size) + (src_arr_size))))) \
+				return 0;                                                                         \
+		}                                                                                                 \
+		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));           \
+		((jarr)->size) += (src_arr_size);                                                                 \
 	JARR_MACRO_END
 
 #define private_jarr_append_typecheck(tmp_jarray, jarr, src_arr, src_arr_size, noalloc_)                    \
@@ -416,7 +417,7 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 		switch (JARR_TYPE_CHECK(src_arr)) {                                                         \
 		case JARR_IS_ARRAY:                                                                         \
 			(src_arr_size)                                                                      \
-				? private_jarr_append(tmp_jarray, jarr, (src_arr), src_arr_size);           \
+				? private_jarr_append(tmp_jarray, jarr, (src_arr), src_arr_size)            \
 				: private_jarr_append(tmp_jarray, jarr, (src_arr), JARR_ARR_SIZE(src_arr)), \
 		case JARR_IS_JARRAY:                                                                        \
 			private_jarr_append(tmp_jarray, jarr, ((src_arr)->data), ((src_arr)->size));        \
@@ -437,7 +438,7 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 
 static int dummy_arr_append(jarray_int_t jarr, int *src_arr, size_t src_arr_size)
 {
-	jarr_append(&jarr, src_arr, src_arr_size);
+	return jarr_append(&jarr, src_arr, src_arr_size);
 }
 
 /* static ALWAYS_INLINE int dummy_arr_cat(jarray_int_t jarr, ...) { */
