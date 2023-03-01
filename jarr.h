@@ -17,11 +17,13 @@
 #endif
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
+
 #ifdef JARR_64_BIT
 	#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_64(x)
 #elif JARR_32_BIT
 	#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_32(x)
 #endif
+
 #else
 	#define JARR_NEAR_POW2(x) (x)
 #endif
