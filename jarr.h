@@ -1,15 +1,15 @@
 #ifndef JARR_H_DEF
 #define JARR_H_DEF
 
-#include <stddef.h>
-
-#include "/home/james/c/vargc.h"
-#include "macros.h"
-
 #define JARR_DEBUG
 #define JARR_INCLUDE
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
+
+#include "/home/james/c/vargc.h"
+#include "macros.h"
+
+#include <stddef.h>
 
 #ifdef JARR_INCLUDE
 	#include <stdio.h>
