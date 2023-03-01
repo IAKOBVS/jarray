@@ -1,10 +1,16 @@
 #ifndef JARR_H_DEF
 #define JARR_H_DEF
 
-#define JARR_DEBUG
+/* #define JARR_RELEASE */
 #define JARR_INCLUDE
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
+
+#ifdef JARR_RELEASE
+	#undef JARR_DEBUG
+#else
+	#define JARR_DEBUG
+#endif
 
 #include "/home/james/c/vargc.h"
 #include "macros.h"
@@ -65,30 +71,30 @@
 	#define JARR_MACRO_END })
 
 	#define JARR_TERNARY_START JARR_MACRO_START
-	#define JARR_TERNARY_END JARR_MACRO_END
+	#define JARR_TERNARY_END ;JARR_MACRO_END
 
-	#define JARR_DECLARE_RET(x) jarray_return_t x;
+	#define JARR_RET_DECLARE(x) jarray_return_t x;
 	#define JARR_RET_IS(RET_VAR, RET) RET_VAR = RET;
 	#define JARR_RET_SUCCESS(RET_VAR) JARR_RET_IS(RET_VAR, 1)
 	#define JARR_RET_FAIL(RET_VAR) JARR_RET_IS(RET_VAR, 0)
 	#define JARR_RET_END(x) (x);
 
-	#define JARR_DECLARE_TMP(x) jarray_tmp_t x;
+	#define JARR_TMP_DECLARE(x) jarray_tmp_t x;
 	#define JARR_TMP_IS(tmp, value) (x) = (value);
 #else
 	#define JARR_MACRO_START do {
 	#define JARR_MACRO_END } while (0)
 	
 	#define JARR_TERNARY_START (
-	#define JARR_TERNARY_END (
+	#define JARR_TERNARY_END )
 
-	#define JARR_DECLARE_RET
+	#define JARR_RET_DECLARE
 	#define JARR_RET_IS(RET_VAR, RET) RET_VAR = RET;
 	#define JARR_RET_SUCCESS(RET_VAR) JARR_RET_IS(RET_VAR, 1)
 	#define JARR_RET_FAIL(RET_VAR) JARR_RET_IS(RET_VAR, 0)
 	#define JARR_RET_END
 
-	#define JARR_DECLARE_TMP(x) jarray_tmp_t x;
+	#define JARR_TMP_DECLARE(x) jarray_tmp_t x;
 	#define JARR_TMP_IS(tmp, value) (x) = (value);
 #endif
 
@@ -224,7 +230,7 @@ JARR_TERNARY_END
 
 #define private_jarr_new(jarray_ret, jarr, size_, ...)                                             \
 	JARR_MACRO_START                                                                           \
-		JARR_DECLARE_RET(jarray_ret)                                                       \
+		JARR_RET_DECLARE(jarray_ret)                                                       \
 		((jarr)->capacity) = MAX(2 * JARR_NEAR_POW2((size_)), JARR_MIN_CAP);               \
 		if ((likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr)))))) { \
 			if (PP_NARG(__VA_ARGS__) > 1) {                                            \
@@ -260,6 +266,7 @@ static ALWAYS_INLINE int dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t 
 
 #define private_jarr_shrink(jarr, tmp_jarray, nocheck_)                                                        \
 JARR_TERNARY_START                                                                                             \
+	JARR_TMP_DECLARE(tmp_jarray)                                                                           \
 	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                                      \
 		? (                                                                                            \
 			(likely(((tmp_jarray) = realloc(((jarr)->data), ((jarr)->size) * JARR_T_SIZE(jarr))))) \
