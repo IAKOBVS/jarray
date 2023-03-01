@@ -18,20 +18,17 @@
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 #ifdef JARR_64_BIT
-	#define JARR_NEAR_POW_OF_TWO_64(x) jarr_near_pow_of_two_64(x)
+	#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_64(x)
 #elif JARR_32_BIT
-	#define JARR_NEAR_POW_OF_TWO_32(x) jarr_near_pow_of_two_32(x)
+	#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_32(x)
 #endif
 #else
-	#define JARR_NEAR_POW_OF_TWO_64(x) (x)
+	#define JARR_NEAR_POW2(x) (x)
 #endif
 
 #define JARR_PARAM_ZERO_OR_NEG_EXIT(x, msg) JARR_ASSERT(#x[0] != '0' && #x[0] != '-', msg)
 #define JARR_PARAM_NULL(x) ((#x[0] == 'N' && #x[0] == 'U' && #x[0] == 'L' && #x[0] == 'L') ? 1 : 0)
 #define JARR_PARAM_NULL_THEN(x, do1, do2) ((#x[0] == 'N' && #x[0] == 'U' && #x[0] == 'L' && #x[0] == 'L') ? do1 : do2)
-
-/* #define near_powoftwo64(x) JARR_ASSERT(#x[0] != '0', && #x[0] != '-', "near_powoftwo64: trying to get the nearest power of two of 0."), near_powoftwo64(x) */
-/* #define near_powoftwo32(x) JARR_ASSERT(#x[0] != '0' && #x[0] != '-', "near_powoftwo32: trying to get the nearest power of two of 0."), near_powoftwo32(x) */
 
 #define JARR_MIN_CAP (8)
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -51,13 +48,13 @@
 	#define JARR_ASSERT(expr, msg) static_assert(expr, msg)
 #else
 	#define JARR_ASSERT(expr, msg)
-/* #define JARR_ASSERT(expr, msg) typedef char static_assertion_##__LINE__[(expr) ? 1 : -1] */
+	/* #define JARR_ASSERT(expr, msg) typedef char static_assertion_##__LINE__[(expr) ? 1 : -1] */
 #endif
 
 #define JARR_COMMENT //
 
-unsigned int near_powoftwo64(unsigned int x);
-unsigned int near_powoftwo32(unsigned int x);
+unsigned int near_pow2_64(unsigned int x);
+unsigned int near_pow2_32(unsigned int x);
 
 int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
 int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
@@ -81,11 +78,11 @@ double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
 		size_t capacity; \
 	} NAME
 
-#define static_jarray_init(T, name, capacity)             \
-	struct {                                          \
-		T data[JARR_NEAR_POW_OF_TWO_6464(capacity)]; \
-		size_t size;                              \
-	}
+#define static_jarray_init(T, name, capacity)                \
+	struct {                                             \
+		T data[JARR_NEAR_POW2_64(capacity)]; \
+		size_t size;                                 \
+	} name
 
 JARR_STRUCT(jarray_int_t, int);
 JARR_STRUCT(jarray_uint_t, unsigned int);
@@ -145,7 +142,7 @@ nocheck_		jarr_reserve_nocheck(jarr, (((jarr)->capacity) * 2)); \
 */
 #define jarr_new(jarr, ...)                                                                                         \
 	do {                                                                                                        \
-		((jarr)->capacity) = MAX(2 * JARR_NEAR_POW_OF_TWO_64(PP_GET_FIRST_ARG(__VA_ARGS__)), JARR_MIN_CAP); \
+		((jarr)->capacity) = MAX(2 * JARR_NEAR_POW2_64(PP_GET_FIRST_ARG(__VA_ARGS__)), JARR_MIN_CAP); \
 		if ((unlikely(!(((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr)))))) {               \
 			((jarr)->capacity) = 0;                                                                     \
 			perror("jarr_new malloc failed");                                                           \
@@ -256,12 +253,12 @@ noalloc_	}                                                                      
 
 #define jarr_pop_back(jarr) --((jarr)->size);
 
-#define private_jarr_reserve(jarr, cap, powoftwo_, nocheck_)                                                                                          \
+#define private_jarr_reserve(jarr, cap, pow2_, nocheck_)                                                                                          \
 	do {                                                                                                                                          \
 nocheck_	if ((cap) > (jarr->capacity)) {                                                                                                       \
 			JARR_PARAM_ZERO_OR_NEG_EXIT(cap, "jarr_reserve: trying to set zero or negative number as capacity.\n");                       \
 			typeof(((jarr)->data)) tmp;                                                                                                   \
-			if (likely((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * ((powoftwo_ == 1) ? JARR_NEAR_POW_OF_TWO_64(cap) : (cap)))))) { \
+			if (likely((tmp = realloc(((jarr)->data), JARR_T_SIZE(jarr) * ((pow2_ == 1) ? JARR_NEAR_POW2_64(cap) : (cap)))))) { \
 				((jarr)->data) = tmp;                                                                                                 \
 				((jarr)->capacity) = (cap);                                                                                           \
 			} else {                                                                                                                      \
@@ -357,29 +354,30 @@ nocheck_		}                                                                     
 	/* unsigned short: JARR_IS_ARRAY                \ */
 
 #if defined(__GNUC__) || defined(__clang__)
-#define jarr_near_pow_of_two_32(x) \
-    ((x) : 1UL << (sizeof(x) * 8 - __builtin_clz((x) - 1)))
-#else
-// fallback implementation
-#define jarr_near_pow_of_two_32(x) \
-    ({ \
-        size_t p = 1; \
-        while (p < (size_t)(x)) p <<= 1; \
-        p; \
-    })
-#endif
+#define JARR_NEAR_POW2_32(x) \
+	((x) : 1UL << (sizeof((x)) * 8 - __builtin_clz((x) - 1)))
 
-#if defined(__GNUC__) || defined(__clang__)
-#define jarr_near_pow_of_two_64(x) \
-    ((x) ? 1 : 1ULL << (sizeof(x) * 8 - __builtin_clzll((x) - 1)))
+#define JARR_NEAR_POW2_64(x) \
+	((x) ? 1 : 1ULL << (sizeof((x)) * 8 - __builtin_clzll((x) - 1)))
 #else
-// fallback implementation
-#define jarr_near_pow_of_two_64(x) \
-    ({ \
-        uint64_t p = 1; \
-        while (p < (uint64_t)(x)) p <<= 1; \
-        p; \
-    })
+#define JARR_NEAR_POW2_32(x) \
+	(x--,                \
+	x |= x >> 1,         \
+	x |= x >> 2,         \
+	x |= x >> 4,         \
+	x |= x >> 8,         \
+	x |= x >> 16,        \
+	++x)
+
+#define JARR_NEAR_POW2_64(x) \
+	(x--,                \
+	x |= x >> 1,         \
+	x |= x >> 2,         \
+	x |= x >> 4,         \
+	x |= x >> 8,         \
+	x |= x >> 16,        \
+	x |= x >> 32,        \
+	++x)
 #endif
 
 #endif
