@@ -18,30 +18,30 @@
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
-#define JARR_NEAR_POW2_32(x) \
-	((x) : 1UL << (sizeof((x)) * 8 - __builtin_clz((x) - 1)))
+	#define JARR_NEAR_POW2_32(x) \
+		((x) : 1UL << (sizeof((x)) * 8 - __builtin_clz((x) - 1)))
 
-#define JARR_NEAR_POW2_64(x) \
-	((x) ? 1 : 1ULL << (sizeof((x)) * 8 - __builtin_clzll((x) - 1)))
+	#define JARR_NEAR_POW2_64(x) \
+		((x) ? 1 : 1ULL << (sizeof((x)) * 8 - __builtin_clzll((x) - 1)))
 #else
-#define JARR_NEAR_POW2_32(x) \
-	(x--,                \
-	x |= x >> 1,         \
-	x |= x >> 2,         \
-	x |= x >> 4,         \
-	x |= x >> 8,         \
-	x |= x >> 16,        \
-	++x)
+	#define JARR_NEAR_POW2_32(x) \
+		(x--,                \
+		x |= x >> 1,         \
+		x |= x >> 2,         \
+		x |= x >> 4,         \
+		x |= x >> 8,         \
+		x |= x >> 16,        \
+		++x)
 
-#define JARR_NEAR_POW2_64(x) \
-	(x--,                \
-	x |= x >> 1,         \
-	x |= x >> 2,         \
-	x |= x >> 4,         \
-	x |= x >> 8,         \
-	x |= x >> 16,        \
-	x |= x >> 32,        \
-	++x)
+	#define JARR_NEAR_POW2_64(x) \
+		(x--,                \
+		x |= x >> 1,         \
+		x |= x >> 2,         \
+		x |= x >> 4,         \
+		x |= x >> 8,         \
+		x |= x >> 16,        \
+		x |= x >> 32,        \
+		++x)
 #endif
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
@@ -258,8 +258,7 @@ static ALWAYS_INLINE int dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t 
 }
 #endif
 
-
-#define private_jarr_shrink(tmp_jarray, jarr, nocheck_)                                                        \
+#define private_jarr_shrink(jarr, tmp_jarray, nocheck_)                                                        \
 (                                                                                                              \
 	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                                      \
 		? (                                                                                            \
@@ -275,11 +274,11 @@ static ALWAYS_INLINE int dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t 
 )
 
 #ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define jarr_shrink(jarr) private_jarr_shrink(jarr, )
-	#define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, JARR_IGNORE_IF)
+	#define jarr_shrink(jarr) private_jarr_shrink(jarr, tmp_jarray, )
+	#define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, tmp_jarray, JARR_IGNORE_IF)
 #else
-	#define jarr_shrink(tmp_jarray, jarr) private_jarr_shrink(tmp_jarray, jarr, )
-	#define jarr_shrink_nocheck(tmp_jarray, jarr) private_jarr_shrink(tmp_jarray, jarr, JARR_IGNORE_IF)
+	#define jarr_shrink(tmp_jarray, jarr) private_jarr_shrink(jarr, tmp_jarray, )
+	#define jarr_shrink_nocheck(tmp_jarray, jarr) private_jarr_shrink(jarr, tmp_jarray, JARR_IGNORE_IF)
 #endif
 
 #ifdef JARR_DEBUG
@@ -288,7 +287,6 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 	return jarr_shrink(&jarr);
 }
 #endif
-
 
 /* static ALWAYS_INLINE int dummy_arr_append(jarray_int_t jarr, int *src_arr, size_t src_arr_size) { */
 
