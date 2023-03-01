@@ -211,14 +211,14 @@ JARR_TERNARY_END
 
 /* static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src) { */
 
-#define private_jarr_push_back(tmp_jarray, jarr, src)                                    \
-JARR_TERNARY_START                                                                       \
-	(unlikely(((jarr)->capacity) == ((jarr)->size)))                                 \
-	? (                                                                              \
-		(jarr_reserve_nocheck_align(tmp_jarray, jarr, (((jarr)->capacity) * 2))) \
-			&& ((((jarr)->data)[((jarr)->size)++] = src, 1), 1)              \
-	) :                                                                              \
-		(((jarr)->data)[((jarr)->size)++] = src, 1)                              \
+#define private_jarr_push_back(tmp_jarray, jarr, src)                                                \
+JARR_TERNARY_START                                                                                   \
+	(unlikely(((jarr)->capacity) == ((jarr)->size)))                                             \
+		?                                                                                    \
+			((jarr_reserve_nocheck_align(tmp_jarray, jarr, (((jarr)->capacity) * 2))) && \
+			((((jarr)->data)[((jarr)->size)++] = src, 1), 1))                            \
+		:                                                                                    \
+			(((jarr)->data)[((jarr)->size)++] = src, 1)                                  \
 JARR_TERNARY_END
 
 /* } */
@@ -264,20 +264,21 @@ static ALWAYS_INLINE int dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t 
 }
 #endif
 
-#define private_jarr_shrink(jarr, tmp_jarray, nocheck_)                                                        \
-JARR_TERNARY_START                                                                                             \
-	JARR_TMP_DECLARE(tmp_jarray)                                                                           \
-	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                                      \
-		? (                                                                                            \
-			(likely(((tmp_jarray) = realloc(((jarr)->data), ((jarr)->size) * JARR_T_SIZE(jarr))))) \
-				? (                                                                            \
-					((jarr)->data) = (tmp_jarray),                                         \
-					((jarr)->capacity) = ((jarr)->size),                                   \
-					1)                                                                     \
-				: (                                                                            \
-					perror("jarr_shrink realloc failed"),                                  \
-					0)                                                                     \
-		) : 0                                                                                          \
+#define private_jarr_shrink(jarr, tmp_jarray, nocheck_)                                                         \
+JARR_TERNARY_START                                                                                              \
+	JARR_TMP_DECLARE(tmp_jarray)                                                                            \
+	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                                       \
+		?                                                                                               \
+			((likely(((tmp_jarray) = realloc(((jarr)->data), ((jarr)->size) * JARR_T_SIZE(jarr))))) \
+				?                                                                               \
+					(((jarr)->data) = (tmp_jarray),                                         \
+					((jarr)->capacity) = ((jarr)->size),                                    \
+					1)                                                                      \
+				:                                                                               \
+					(perror("jarr_shrink realloc failed"),                                   \
+					0))                                                                     \
+		 :                                                                                              \
+			0                                                                                       \
 JARR_TERNARY_END
 
 #ifdef JARR_USING_STATEMENT_EXPRESSIONS
@@ -371,19 +372,20 @@ noalloc_	}                                                                  \
 #define JARR_NOCHECK ,1
 #define JARR_NOCHECK_OFF 0
 
-#define private_jarr_reserve(tmp_jarray, jarr, cap, pow2_, nocheck_)                                                                       \
-JARR_TERNARY_START                                                                                                                         \
-	(((cap) > ((jarr)->capacity)) nocheck_)                                                                                            \
-		? (                                                                                                                        \
-			(likely((tmp_jarray = realloc(((jarr)->data), JARR_T_SIZE(jarr) * ((pow2_ == 1) ? JARR_NEAR_POW2(cap) : (cap)))))) \
-				? (                                                                                                        \
-					((jarr)->data) = tmp_jarray,                                                                       \
-					((jarr)->capacity) = (cap),                                                                        \
-					1)                                                                                                 \
-				: (                                                                                                        \
-					perror("jarr_reserve realloc failed"),                                                             \
-					0)                                                                                                 \
-		) : 0                                                                                                                      \
+#define private_jarr_reserve(tmp_jarray, jarr, cap, pow2_, nocheck_)                                                                         \
+JARR_TERNARY_START                                                                                                                           \
+	(((cap) > ((jarr)->capacity)) nocheck_)                                                                                              \
+		?                                                                                                                            \
+			 ((likely((tmp_jarray = realloc(((jarr)->data), JARR_T_SIZE(jarr) * ((pow2_ == 1) ? JARR_NEAR_POW2(cap) : (cap)))))) \
+				?                                                                                                            \
+					(((jarr)->data) = tmp_jarray,                                                                        \
+					((jarr)->capacity) = (cap),                                                                          \
+					1)                                                                                                   \
+				:                                                                                                            \
+					(perror("jarr_reserve realloc failed"),                                                              \
+					0))                                                                                                  \
+		:                                                                                                                            \
+			0                                                                                                                    \
 JARR_TERNARY_END
 
 #define jarr_reserve(jarr, cap) private_jarr_reserve(tmp_jarray, jarr, cap, JARR_POW2_OFF, JARR_NOCHECK_OFF)
