@@ -262,7 +262,7 @@ JARR_TERNARY_START\
 JARR_TERNARY_END
 
 #ifdef JARR_DEBUG
-static ALWAYS_INLINE int dummy_jarr_reserve(jarray_int_t jarr)
+static ALWAYS_INLINE int dummy_jarr_new_alloc(jarray_int_t jarr)
 {
 	return jarr_new_alloc(&jarr, 0);
 }
@@ -444,9 +444,9 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 	JARR_MACRO_END
 
 #ifdef JARR_DEBUG
-static int dummy_arr_append(jarray_int_t jarr, int *src_arr, size_t src_arr_size)
+static int dummy_arr_append(jarray_int_t jarr, jarray_int_t src_arr)
 {
-	return jarr_append(&jarr, src_arr, src_arr_size);
+	return jarr_append(&jarr, src_arrr 0);
 }
 #endif
 
