@@ -1,4 +1,5 @@
 #include "jarr.h"
+
 int qsortAscend(const void *RESTRICT x, const void *RESTRICT y)
 {
 	return *(int *)x  - *(int *)y;
@@ -32,5 +33,6 @@ double qsortDescendDb(const void *RESTRICT x, const void *RESTRICT y)
 #ifdef JARR_DEBUG
 int main()
 {
+	printf("%zu\n", sizeof(1));
 }
 #endif
