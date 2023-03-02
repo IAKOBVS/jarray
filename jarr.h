@@ -423,7 +423,7 @@ static void debug_arr_append_typecheck(jarray_tmp_t tmp_jarray, jarray_int_t *ja
 {
 #endif
 
-/* #define private_jarr_append_typecheck(jarr, tmp_jarray, src_arr, src_arr_size, noalloc_)                         \ */
+#define private_jarr_append_typecheck(jarr, tmp_jarray, src_arr, src_arr_size, noalloc_)                                   \
 JARR_TERNARY_START                                                                                                         \
 	(JARR_TYPE_CHECK(src_arr) == JARR_IS_ARRAY)                                                                        \
 		? ((src_arr_size)                                                                                          \
