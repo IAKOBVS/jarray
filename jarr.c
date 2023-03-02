@@ -29,9 +29,18 @@
 /* { */
 /* 	return *(double *)y  - *(double *)x; */
 /* } */
+#include <stdarg.h>
+
+int private_jarr_assign_va_args(void* jarr, ...)
+{
+	va_list ap;
+	va_start(ap, jarr);
+	va_arg(ap, void*);
+	va_end(ap);
+}
 
 #ifdef JARR_DEBUG
-/* int main () */
-/* { */
-/* } */
+int main ()
+{
+}
 #endif

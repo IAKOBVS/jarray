@@ -118,7 +118,6 @@
 	#define JARR_ASSERT(expr, msg) static_assert(expr, msg)
 #else
 	#define JARR_ASSERT(expr, msg)
-	/* #define JARR_ASSERT(expr, msg) typedef char static_assertion_##__LINE__[(expr) ? 1 : -1] */
 #endif
 
 #define JARR_IGNORE_IF ,1
@@ -136,6 +135,8 @@
 	jarray_float_t*: JARR_IS_JARRAY_PTR,         \
 	jarray_short_t*: JARR_IS_JARRAY_PTR,         \
 	jarray_ushort_t*: JARR_IS_JARRAY_PTR,        \
+	jarray_char_t*: JARR_IS_JARRAY,              \
+	jarray_uchar_t*: JARR_IS_JARRAY,             \
 	jarray_int_t: JARR_IS_JARRAY,                \
 	jarray_uint_t: JARR_IS_JARRAY,               \
 	jarray_long_t: JARR_IS_JARRAY,               \
@@ -148,6 +149,8 @@
 	jarray_float_t: JARR_IS_JARRAY,              \
 	jarray_short_t: JARR_IS_JARRAY,              \
 	jarray_ushort_t: JARR_IS_JARRAY,             \
+	jarray_char_t: JARR_IS_JARRAY,               \
+	jarray_uchar_t: JARR_IS_JARRAY,              \
 	int*: JARR_IS_ARRAY,                         \
 	unsigned int*: JARR_IS_ARRAY,                \
 	long*: JARR_IS_ARRAY,                        \
@@ -158,20 +161,213 @@
 	long double*: JARR_IS_ARRAY,                 \
 	float*: JARR_IS_ARRAY,                       \
 	short*: JARR_IS_ARRAY,                       \
+	unsigned short*: JARR_IS_ARRAY,              \
+	int: JARR_IS_ARRAY,                          \
+	unsigned int: JARR_IS_ARRAY,                 \
+	long: JARR_IS_ARRAY,                         \
+	long long: JARR_IS_ARRAY,                    \
+	unsigned long: JARR_IS_ARRAY,                \
+	unsigned long long: JARR_IS_ARRAY,           \
+	double: JARR_IS_ARRAY,                       \
+	long double: JARR_IS_ARRAY,                  \
+	float: JARR_IS_ARRAY,                        \
+	short: JARR_IS_ARRAY,                        \
+	unsigned short: JARR_IS_ARRAY,               \
+	unsigned char: JARR_IS_ARRAY                 \
+	char: JARR_IS_ARRAY                          \
 	)
 
-	/* unsigned short*: JARR_IS_ARRAY,              \ */
-	/* int: JARR_IS_ARRAY,                          \ */
-	/* unsigned int: JARR_IS_ARRAY,                 \ */
-	/* long: JARR_IS_ARRAY,                         \ */
-	/* long long: JARR_IS_ARRAY,                    \ */
-	/* unsigned long: JARR_IS_ARRAY,                \ */
-	/* unsigned long long: JARR_IS_ARRAY,           \ */
-	/* double: JARR_IS_ARRAY,                       \ */
-	/* long double: JARR_IS_ARRAY,                  \ */
-	/* float: JARR_IS_ARRAY,                        \ */
-	/* short: JARR_IS_ARRAY,                        \ */
-	/* unsigned short: JARR_IS_ARRAY                \ */
+#define JARR_JARRAY_INT_T 1
+#define JARR_JARRAY_UINT_T 2
+#define JARR_JARRAY_LONG_T 3
+#define JARR_JARRAY_LONG_LONG_T 4
+#define JARR_JARRAY_ULONG_T 5
+#define JARR_JARRAY_ULONG_LONG_T 6
+#define JARR_JARRAY_SIZE_T_T 7
+#define JARR_JARRAY_DOUBLE_T 8
+#define JARR_JARRAY_LONG_DOUBLE_T 9
+#define JARR_JARRAY_FLOAT_T 10
+#define JARR_JARRAY_SHORT_T 11
+#define JARR_JARRAY_USHORT_T 12
+#define JARR_INT_PTR 13
+#define JARR_UNSIGNED_INT_PTR 14
+#define JARR_LONG_PTR 15
+#define JARR_LONG_LONG_PTR 16
+#define JARR_UNSIGNED_LONG_PTR 17
+#define JARR_UNSIGNED_LONG_LONG_PTR 18
+#define JARR_DOUBLE_PTR 19
+#define JARR_LONG_DOUBLE_PTR 20
+#define JARR_FLOAT_PTR 21
+#define JARR_SHORT_PTR 22
+#define JARR_UNSIGNED_SHORT_PTR 23
+#define JARR_SIZE_T_PTR 24
+#define JARR_INT 25
+#define JARR_UNSIGNED_INT 26
+#define JARR_LONG 27
+#define JARR_LONG_LONG 28
+#define JARR_UNSIGNED_LONG 29
+#define JARR_UNSIGNED_LONG_LONG 30
+#define JARR_DOUBLE 31
+#define JARR_LONG_DOUBLE 32
+#define JARR_FLOAT 33
+#define JARR_SHORT 34
+#define JARR_UNSIGNED_SHORT 35
+#define JARR_SIZE_T 36
+
+#define JARR_GET_T(var) _Generic(((var)),                     \
+	jarray_int_t*: JARR_JARRAY_INT_T_PTR,                 \
+	jarray_uint_t*: JARR_JARRAY_UINT_T_PTR,               \
+	jarray_long_t*: JARR_JARRAY_LONG_T_PTR,               \
+	jarray_long_long_t*: JARR_JARRAY_LONG_LONG_T_PTR,     \
+	jarray_ulong_t*: JARR_JARRAY_ULONG_T_PTR,             \
+	jarray_ulong_long_t*: JARR_JARRAY_ULONG_LONG_T_PTR,   \
+	jarray_size_t_t*: JARR_JARRAY_SIZE_T_T_PTR,           \
+	jarray_double_t*: JARR_JARRAY_DOUBLE_T_PTR,           \
+	jarray_long_double_t*: JARR_JARRAY_LONG_DOUBLE_T_PTR, \
+	jarray_float_t*: JARR_JARRAY_FLOAT_T_PTR,             \
+	jarray_short_t*: JARR_JARRAY_SHORT_T_PTR,             \
+	jarray_ushort_t*: JARR_JARRAY_USHORT_T_PTR,           \
+	jarray_int_t: JARR_JARRAY_INT_T,                      \
+	jarray_uint_t: JARR_JARRAY_UINT_T,                    \
+	jarray_long_t: JARR_JARRAY_LONG_T,                    \
+	jarray_long_long_t: JARR_JARRAY_LONG_LONG_T,          \
+	jarray_ulong_t: JARR_JARRAY_ULONG_T,                  \
+	jarray_ulong_long_t: JARR_JARRAY_ULONG_LONG_T,        \
+	jarray_size_t_t: JARR_JARRAY_SIZE_T_T,                \
+	jarray_double_t: JARR_JARRAY_DOUBLE_T,                \
+	jarray_long_double_t: JARR_JARRAY_LONG_DOUBLE_T,      \
+	jarray_float_t: JARR_JARRAY_FLOAT_T,                  \
+	jarray_short_t: JARR_JARRAY_SHORT_T,                  \
+	jarray_ushort_t: JARR_JARRAY_USHORT_T,                \
+	int*: JARR_INT_PTR,                                   \
+	unsigned int*: JARR_UNSIGNED INT_PTR,                 \
+	long*: JARR_LONG_PTR,                                 \
+	long long*: JARR_LONG LONG_PTR,                       \
+	unsigned long*: JARR_UNSIGNED LONG_PTR,               \
+	unsigned long long*: JARR_UNSIGNED LONG LONG_PTR,     \
+	double*: JARR_DOUBLE_PTR,                             \
+	long double*: JARR_LONG DOUBLE_PTR,                   \
+	float*: JARR_FLOAT_PTR,                               \
+	short*: JARR_SHORT_PTR,                               \
+	unsigned short*: JARR_UNSIGNED SHORT_PTR,             \
+	size_t*: JARR_SIZE_T_PTR,                             \
+	int: JARR_INT,                                        \
+	unsigned int: JARR_UNSIGNED INT,                      \
+	long: JARR_LONG,                                      \
+	long long: JARR_LONG LONG,                            \
+	unsigned long: JARR_UNSIGNED LONG,                    \
+	unsigned long long: JARR_UNSIGNED LONG LONG,          \
+	double: JARR_DOUBLE,                                  \
+	long double: JARR_LONG DOUBLE,                        \
+	float: JARR_FLOAT,                                    \
+	short: JARR_SHORT,                                    \
+	unsigned short: JARR_UNSIGNED SHORT,                  \
+	size_t: JARR_SIZE_T                                   \
+	)
+
+#define JARR_CAST_TO(var) _Generic(((var)),                \
+	jarray_int_t*: (jarray_int_t*)var,                 \
+	jarray_uint_t*: (jarray_uint_t*)var,               \
+	jarray_long_t*: (jarray_long_t*)var,               \
+	jarray_long_long_t*: (jarray_long_long_t*)var,     \
+	jarray_ulong_t*: (jarray_ulong_t*)var,             \
+	jarray_ulong_long_t*: (jarray_ulong_long_t*)var,   \
+	jarray_size_t_t*: (jarray_size_t_t*)var,           \
+	jarray_double_t*: (jarray_double_t*)var,           \
+	jarray_long_double_t*: (jarray_long_double_t*)var, \
+	jarray_float_t*: (jarray_float_t*)var,             \
+	jarray_short_t*: (jarray_short_t*)var,             \
+	jarray_ushort_t*: (jarray_ushort_t*)var,           \
+	jarray_int_t: (jarray_int_t)var,                   \
+	jarray_uint_t: (jarray_uint_t)var,                 \
+	jarray_long_t: (jarray_long_t)var,                 \
+	jarray_long_long_t: (jarray_long_long_t)var,       \
+	jarray_ulong_t: (jarray_ulong_t)var,               \
+	jarray_ulong_long_t: (jarray_ulong_long_t)var,     \
+	jarray_size_t_t: (jarray_size_t_t)var,             \
+	jarray_double_t: (jarray_double_t)var,             \
+	jarray_long_double_t: (jarray_long_double_t)var,   \
+	jarray_float_t: (jarray_float_t)var,               \
+	jarray_short_t: (jarray_short_t)var,               \
+	jarray_ushort_t: (jarray_ushort_t)var,             \
+	jarray_char_t: (jarray_char_t)var,                 \
+	jarray_uchar_t: (jarray_uchar_t)var,               \
+	int*: (int*)var,                                   \
+	unsigned int*: (unsigned int*)var,                 \
+	long*: (long*)var,                                 \
+	long long*: (long long*)var,                       \
+	unsigned long*: (unsigned long*)var,               \
+	unsigned long long*: (unsigned long long*)var,     \
+	double*: (double*)var,                             \
+	long double*: (long double*)var,                   \
+	float*: (float*)var,                               \
+	short*: (short*)var,                               \
+	unsigned short*: (unsigned short*)var,             \
+	size_t*: (size_t*)var,                             \
+	int: (int)var,                                     \
+	unsigned int: (unsigned int)var,                   \
+	long: (long)var,                                   \
+	long long: (long long)var,                         \
+	unsigned long: (unsigned long)var,                 \
+	unsigned long long: (unsigned long long)var,       \
+	double: (double)var,                               \
+	long double: (long double)var,                     \
+	float: (float)var,                                 \
+	short: (short)var,                                 \
+	unsigned short: (unsigned short)var,               \
+	size_t: (size_t)var,                               \
+	)
+
+#define JARR_VA_ARG_T(ap) _Generic(((var)),                       \
+	jarray_int_t*: va_arg(ap, jarray_int_t*),                 \
+	jarray_uint_t*: va_arg(ap, jarray_uint_t*),               \
+	jarray_long_t*: va_arg(ap, jarray_long_t*),               \
+	jarray_long_long_t*: va_arg(ap, jarray_long_long_t*),     \
+	jarray_ulong_t*: va_arg(ap, jarray_ulong_t*),             \
+	jarray_ulong_long_t*: va_arg(ap, jarray_ulong_long_t*),   \
+	jarray_size_t_t*: va_arg(ap, jarray_size_t_t*),           \
+	jarray_double_t*: va_arg(ap, jarray_double_t*),           \
+	jarray_long_double_t*: va_arg(ap, jarray_long_double_t*), \
+	jarray_float_t*: va_arg(ap, jarray_float_t*),             \
+	jarray_short_t*: va_arg(ap, jarray_short_t*),             \
+	jarray_ushort_t*: va_arg(ap, jarray_ushort_t*),           \
+	jarray_int_t: va_arg(ap, jarray_int_t),                   \
+	jarray_uint_t: va_arg(ap, jarray_uint_t),                 \
+	jarray_long_t: va_arg(ap, jarray_long_t),                 \
+	jarray_long_long_t: va_arg(ap, jarray_long_long_t),       \
+	jarray_ulong_t: va_arg(ap, jarray_ulong_t),               \
+	jarray_ulong_long_t: va_arg(ap, jarray_ulong_long_t),     \
+	jarray_size_t_t: va_arg(ap, jarray_size_t_t),             \
+	jarray_double_t: va_arg(ap, jarray_double_t),             \
+	jarray_long_double_t: va_arg(ap, jarray_long_double_t),   \
+	jarray_float_t: va_arg(ap, jarray_float_t),               \
+	jarray_short_t: va_arg(ap, jarray_short_t),               \
+	jarray_ushort_t: va_arg(ap, jarray_ushort_t),             \
+	jarray_char_t: va_arg(ap, jarray_char_t),                 \
+	jarray_uchar_t: va_arg(ap, jarray_uchar_t),               \
+	int*: va_arg(ap, int*),                                   \
+	unsigned int*: va_arg(ap, unsigned int*),                 \
+	long*: va_arg(ap, long*),                                 \
+	long long*: va_arg(ap, long long*),                       \
+	unsigned long long*: va_arg(ap, unsigned long long*),     \
+	double*: va_arg(ap, double*),                             \
+	long double*: va_arg(ap, long double*),                   \
+	float*: va_arg(ap, float*),                               \
+	short*: va_arg(ap, short*),                               \
+	unsigned short*: va_arg(ap, unsigned short*),             \
+	size_t*: va_arg(ap, size_t*),                             \
+	int: va_arg(ap, int),                                     \
+	unsigned int: va_arg(ap, unsigned int),                   \
+	long: va_arg(ap, long),                                   \
+	long long: va_arg(ap, long long),                         \
+	unsigned long long: va_arg(ap, unsigned long long),       \
+	double: va_arg(ap, double),                               \
+	long double: va_arg(ap, long double),                     \
+	float: va_arg(ap, double),                                \
+	short: va_arg(ap, int),                                   \
+	unsigned short: va_arg(ap, int),                          \
+	size_t: va_arg(ap, size_t)                                \
+
 
 unsigned int near_pow2_64(unsigned int x);
 unsigned int near_pow2_32(unsigned int x);
@@ -220,7 +416,8 @@ JARR_STRUCT(jarray_long_double_t, long double);
 JARR_STRUCT(jarray_float_t, float);
 JARR_STRUCT(jarray_short_t, short);
 JARR_STRUCT(jarray_ushort_t, unsigned short);
-
+JARR_STRUCT(jarray_char_t, char);
+JARR_STRUCT(jarray_uchar_t, unsigned char);
 
 #define jarr_init(jarr)                 \
 		((jarr)->capacity) = 0, \
@@ -328,16 +525,16 @@ static ALWAYS_INLINE void debug_jarr_push_back(jarray_int_t *jarr, int src)
 {
 #endif
 
-#define private_jarr_push_back(tmp_jarray, jarr, src)                           \
-JARR_TERNARY_START                                                              \
-	JARR_RET_DECLARE(jarray_ret)                                            \
-	JARR_TMP_DECLARE(tmp_jarray)                                            \
-	(unlikely(((jarr)->capacity) == ((jarr)->size)))                        \
-		?                                                               \
-			((jarr_reserve_nocheck(jarr, (((jarr)->capacity) * 2))) \
-			&& ((((jarr)->data)[((jarr)->size)++] = src, 1), 1))    \
-		:                                                               \
-			(((jarr)->data)[((jarr)->size)++] = src, 1)             \
+#define private_jarr_push_back(tmp_jarray, jarr, src)                                                                      \
+JARR_TERNARY_START                                                                                                         \
+	JARR_RET_DECLARE(jarray_ret)                                                                                       \
+	JARR_TMP_DECLARE(tmp_jarray)                                                                                       \
+	(unlikely(((jarr)->capacity) == ((jarr)->size)))                                                                   \
+		?                                                                                                          \
+			((private_jarr_reserve(tmp_jarray, jarr, ((jarr)->capacity) * 2, JARR_POW2_OFF, JARR_NOCHECK_OFF)) \
+			&& ((((jarr)->data)[((jarr)->size)++] = src), 1))                                                  \
+		:                                                                                                          \
+			(((jarr)->data)[((jarr)->size)++] = src, 1)                                                        \
 JARR_TERNARY_END
 
 #ifdef JARR_DEBUG
@@ -361,26 +558,33 @@ static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src)
 }
 #endif
 
+#ifdef JARR_DEBUG
+/* static ALWAYS_INLINE void dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t size_) */
+/* { */
 #define private_jarr_new(jarray_ret, jarr, size_, ...)                                             \
-	JARR_MACRO_START                                                                           \
-		JARR_RET_DECLARE(jarray_ret)                                                       \
-		((jarr)->capacity) = MAX(2 * JARR_NEAR_POW2((size_)), JARR_MIN_CAP);               \
-		if ((likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr)))))) { \
-			if (PP_NARG(__VA_ARGS__) > 1) {                                            \
-				typeof(*((jarr)->data)) tmp[] = { PP_OTHER_ARGS(__VA_ARGS__) };    \
-				memcpy(((jarr)->data) + ((jarr)->size), tmp, sizeof(tmp));         \
-				((jarr)->size) = JARR_ARR_SIZE(tmp);                               \
-			} else if (PP_NARG(__VA_ARGS__) == 1) {                                    \
-				jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__));       \
-			}                                                                          \
-			JARR_RET_SUCCESS(jarray_ret)                                               \
-		} else {                                                                           \
-			((jarr)->capacity) = 0;                                                    \
-			perror("jarr_new malloc failed");                                          \
-			JARR_RET_FAIL(jarray_ret)                                                  \
-		}                                                                                  \
-		JARR_RET_END(jarray_ret)                                                           \
-	JARR_MACRO_END
+JARR_MACRO_START                                                                                           \
+	JARR_RET_DECLARE(jarray_ret)                                                                       \
+	((jarr)->capacity) = MAX(2 * JARR_NEAR_POW2((size_)), JARR_MIN_CAP);                               \
+	((likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr))))))                      \
+		?                                                                                          \
+			(PP_NARG(__VA_ARGS__) > 1)                                                         \
+				?                                                                          \
+					typeof(*((jarr)->data)) tmp[] = { PP_OTHER_ARGS(__VA_ARGS__) };    \
+					memcpy(((jarr)->data) + ((jarr)->size), tmp, sizeof(tmp)),         \
+					((jarr)->size) = JARR_ARR_SIZE(tmp),                               \
+				:                                                                          \
+			(PP_NARG(__VA_ARGS__) == 1)                                                        \
+				jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__));               \
+		:                                                                                          \
+			JARR_RET_SUCCESS(jarray_ret)                                                       \
+			((jarr)->capacity) = 0;                                                            \
+			perror("jarr_new malloc failed");                                                  \
+			JARR_RET_FAIL(jarray_ret)                                                          \
+		JARR_RET_END(jarray_ret)                                                                   \
+JARR_MACRO_END
+/* ;} */
+#endif
+
 
 #ifdef JARR_USING_STATEMENT_EXPRESSIONS
 	#define jarr_new(jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
@@ -391,10 +595,10 @@ static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src)
 #endif
 
 #ifdef JARR_DEBUG
-static ALWAYS_INLINE int dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t _size)
-{
-	return jarr_new(jarr, 1, 3);
-}
+/* static ALWAYS_INLINE int dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t _size) */
+/* { */
+/* 	return jarr_new(jarr, 1, 3); */
+/* } */
 #endif
 
 #ifdef JARR_DEBUG
@@ -430,34 +634,34 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 }
 #endif
 
-#define private_jarr_append(tmp_jarray, jarr, src_arr, src_arr_size)                                                 \
-	JARR_MACRO_START                                                                                             \
-		JARR_TMP_DECLARE(tmp_jarray)                                                                         \
-		if ((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity)) {                                        \
-			private_jarr_grow_while_size_gt_cap((((jarr)->size) + (src_arr_size)), &((jarr)->capacity)); \
-			if (unlikely(!jarr_reserve_nocheck(tmp_jarray, jarr, (((jarr)->size) + (src_arr_size)))))    \
-				return 0;                                                                            \
-		}                                                                                                    \
-		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));              \
-		((jarr)->size) += (src_arr_size);                                                                    \
-	JARR_MACRO_END
-
-/* #define private_jarr_append(tmp_jarray, jarr, src_arr, src_arr_size)                                                                    \ */
-/* 	JARR_MACRO_START                                                                                                                \ */
-/* 		JARR_TMP_DECLARE(tmp_jarray)                                                                                            \ */
-/* 		((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity))                                                                \ */
-/* 			?                                                                                                               \ */
-/* 				((private_jarr_grow_while_size_gt_cap((((jarr)->size) + (src_arr_size)), &((jarr)->capacity))),         \ */
-/* 				(likely(jarr_reserve_nocheck(tmp_jarray, jarr, (((jarr)->size) + (src_arr_size)))))                     \ */
-/* 					?                                                                                               \ */
-/* 						memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)), \ */
-/* 						((jarr)->size) += (src_arr_size)                                                        \ */
-/* 					:                                                                                               \ */
-/* 						0)                                                                                      \ */
-/* 			:                                                                                                               \ */
-/* 		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));                                 \ */
-/* 		((jarr)->size) += (src_arr_size);                                                                                       \ */
+/* #define private_jarr_append(tmp_jarray, jarr, src_arr, src_arr_size)                                                 \ */
+/* 	JARR_MACRO_START                                                                                             \ */
+/* 		JARR_TMP_DECLARE(tmp_jarray)                                                                         \ */
+/* 		if ((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity)) {                                        \ */
+/* 			private_jarr_grow_while_size_gt_cap((((jarr)->size) + (src_arr_size)), &((jarr)->capacity)); \ */
+/* 			if (unlikely(!jarr_reserve_nocheck(tmp_jarray, jarr, (((jarr)->size) + (src_arr_size)))))    \ */
+/* 				return 0;                                                                            \ */
+/* 		}                                                                                                    \ */
+/* 		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));              \ */
+/* 		((jarr)->size) += (src_arr_size);                                                                    \ */
 /* 	JARR_MACRO_END */
+
+#define private_jarr_append(tmp_jarray, jarr, src_arr, src_arr_size)                                                                    \
+	JARR_MACRO_START                                                                                                                \
+		JARR_TMP_DECLARE(tmp_jarray)                                                                                            \
+		((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity))                                                                \
+			?                                                                                                               \
+				((private_jarr_grow_while_size_gt_cap((((jarr)->size) + (src_arr_size)), &((jarr)->capacity))),         \
+				(likely(jarr_reserve_nocheck(tmp_jarray, jarr, (((jarr)->size) + (src_arr_size)))))                     \
+					?                                                                                               \
+						memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)), \
+						((jarr)->size) += (src_arr_size)                                                        \
+					:                                                                                               \
+						0)                                                                                      \
+			:                                                                                                               \
+		memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr));                                 \
+		((jarr)->size) += (src_arr_size);                                                                                       \
+	JARR_MACRO_END
 
 #define private_jarr_append_typecheck(tmp_jarray, jarr, src_arr, src_arr_size, noalloc_)                    \
 	JARR_MACRO_START                                                                                    \
@@ -466,8 +670,10 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 			(src_arr_size)                                                                      \
 				? private_jarr_append(tmp_jarray, jarr, (src_arr), src_arr_size)            \
 				: private_jarr_append(tmp_jarray, jarr, (src_arr), JARR_ARR_SIZE(src_arr)), \
+			break;                                                                              \
 		case JARR_IS_JARRAY:                                                                        \
 			private_jarr_append(tmp_jarray, jarr, ((src_arr)->data), ((src_arr)->size));        \
+			break;                                                                              \
 		case JARR_IS_JARRAY_PTR:                                                                    \
 			private_jarr_append(tmp_jarray, jarr, ((src_arr)->data), ((src_arr)->size));        \
 		}                                                                                           \
