@@ -573,21 +573,24 @@ static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src)
 #ifdef JARR_DEBUG
 static ALWAYS_INLINE void debug_jarr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t size_)
 {
-#define private_jarr_new(jarray_ret, jarr, size_, ...)                                                  \
-(                                                                                                       \
-	(((jarr)->capacity) = MAX(2 * JARR_NEAR_POW2((size_)), JARR_MIN_CAP),                           \
-	(likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr))))))                    \
-		?                                                                                       \
-			((PP_NARG(__VA_ARGS__) == 1)                                                    \
-				?                                                                       \
-					(((((jarr)->size)) == 0),                                       \
-					jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__)), 1) \
-				:                                                                       \
-					((PP_NARG(__VA_ARGS__) > 1)                                     \
-					&& (PP_LOOP_FROM(((jarr)->data), 0, __VA_ARGS__),               \
-					((jarr)->size) = PP_NARG(__VA_ARGS__), 1)))                     \
-		:                                                                                       \
-			(((jarr)->capacity) = 0, 0)                                                     \
+#define private_jarr_new(jarray_ret, jarr, size_, ...)                                                 \
+(                                                                                                      \
+	(((jarr)->capacity) = MAX(2 * JARR_NEAR_POW2((size_)), JARR_MIN_CAP),                          \
+	(likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr))))))                   \
+		? (                                                                                    \
+			(PP_NARG(__VA_ARGS__) == 1)                                                    \
+				? (                                                                    \
+					((((jarr)->size)) == 0),                                      \
+					jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__)),   \
+					1                                                             \
+				) : (                                                                    \
+					(PP_NARG(__VA_ARGS__) > 1)                                    \
+					&& (PP_LOOP_FROM(((jarr)->data), 0, __VA_ARGS__),              \
+					((jarr)->size) = PP_NARG(__VA_ARGS__),                         \
+					1))                                                            \
+		) :                                                                                    \
+			(((jarr)->capacity) = 0,                                                       \
+			0)                                                                             \
 )
 ;}
 #endif
