@@ -18,7 +18,6 @@
 /* int qsortDescend(const void *RESTRICT x, const void *RESTRICT y) */
 /* { */
 /* 	return *(int *)y  - *(int *)x; */
-#include <stdarg.h>
 
 /* float qsortDescendFl(const void *RESTRICT x, const void *RESTRICT y) */
 /* { */
