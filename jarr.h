@@ -125,13 +125,6 @@
 unsigned int near_pow2_64(unsigned int x);
 unsigned int near_pow2_32(unsigned int x);
 
-int qsort_descend(const void *RESTRICT x, const void *RESTRICT y);
-int qsort_ascend(const void *RESTRICT y, const void *RESTRICT x);
-float qsort_descend_fl(const void *RESTRICT x, const void *RESTRICT y);
-float qsort_ascend_fl(const void *RESTRICT y, const void *RESTRICT x);
-double qsort_descend_db(const void *RESTRICT x, const void *RESTRICT y);
-double qsort_ascend_db(const void *RESTRICT y, const void *RESTRICT x);
-
 /*
    _Generic will determine whether a jarray is passed.
 
@@ -455,10 +448,10 @@ JARR_TERNARY_END
 )
 
 #ifdef JARR_DEBUG
-/* static int dummy_arr_append(jarray_int_t jarr, jarray_int_t src_arr) */
-/* { */
-/* 	return jarr_append(&jarr, src_arr, 0); */
-/* } */
+static int dummy_arr_append(jarray_int_t *jarr, jarray_int_t src_arr)
+{
+	return jarr_append(&jarr, src_arr, 0);
+}
 #endif
 
 #define JARR_NOALLOC ,1
