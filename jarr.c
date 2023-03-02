@@ -31,7 +31,7 @@
 /* } */
 
 #ifdef JARR_DEBUG
-int main ()
-{
-}
+/* int main () */
+/* { */
+/* } */
 #endif
