@@ -191,28 +191,40 @@
 #define JARR_JARRAY_USHORT_T 12
 #define JARR_INT_PTR 13
 #define JARR_UNSIGNED_INT_PTR 14
-#define JARR_LONG_PTR 15
-#define JARR_LONG_LONG_PTR 16
-#define JARR_UNSIGNED_LONG_PTR 17
-#define JARR_UNSIGNED_LONG_LONG_PTR 18
-#define JARR_DOUBLE_PTR 19
-#define JARR_LONG_DOUBLE_PTR 20
-#define JARR_FLOAT_PTR 21
-#define JARR_SHORT_PTR 22
-#define JARR_UNSIGNED_SHORT_PTR 23
-#define JARR_SIZE_T_PTR 24
-#define JARR_INT 25
-#define JARR_UNSIGNED_INT 26
-#define JARR_LONG 27
-#define JARR_LONG_LONG 28
-#define JARR_UNSIGNED_LONG 29
-#define JARR_UNSIGNED_LONG_LONG 30
-#define JARR_DOUBLE 31
-#define JARR_LONG_DOUBLE 32
-#define JARR_FLOAT 33
-#define JARR_SHORT 34
-#define JARR_UNSIGNED_SHORT 35
-#define JARR_SIZE_T 36
+#define JARR_JARRAY_INT_T_PTR 15
+#define JARR_JARRAY_UINT_T_PTR 16
+#define JARR_JARRAY_LONG_T_PTR 17
+#define JARR_JARRAY_LONG_LONG_T_PTR 18
+#define JARR_JARRAY_ULONG_T_PTR 19
+#define JARR_JARRAY_ULONG_LONG_T_PTR 20
+#define JARR_JARRAY_SIZE_T_T_PTR 21
+#define JARR_JARRAY_DOUBLE_T_PTR 22
+#define JARR_JARRAY_LONG_DOUBLE_T_PTR 23
+#define JARR_JARRAY_FLOAT_T_PTR 24
+#define JARR_JARRAY_SHORT_T_PTR 25
+#define JARR_JARRAY_USHORT_T_PTR 26
+#define JARR_LONG_PTR 27
+#define JARR_LONG_LONG_PTR 28
+#define JARR_UNSIGNED_LONG_PTR 29
+#define JARR_UNSIGNED_LONG_LONG_PTR 30
+#define JARR_DOUBLE_PTR 31
+#define JARR_LONG_DOUBLE_PTR 32
+#define JARR_FLOAT_PTR 33
+#define JARR_SHORT_PTR 34
+#define JARR_UNSIGNED_SHORT_PTR 35
+#define JARR_SIZE_T_PTR 36
+#define JARR_INT 37
+#define JARR_UNSIGNED_INT 38
+#define JARR_LONG 39
+#define JARR_LONG_LONG 40
+#define JARR_UNSIGNED_LONG 41
+#define JARR_UNSIGNED_LONG_LONG 42
+#define JARR_DOUBLE 43
+#define JARR_LONG_DOUBLE 44
+#define JARR_FLOAT 45
+#define JARR_SHORT 46
+#define JARR_UNSIGNED_SHORT 47
+#define JARR_SIZE_T 48
 
 #define JARR_GET_T(var) _Generic(((var)),                     \
 	jarray_int_t*: JARR_JARRAY_INT_T_PTR,                 \
@@ -240,7 +252,7 @@
 	jarray_short_t: JARR_JARRAY_SHORT_T,                  \
 	jarray_ushort_t: JARR_JARRAY_USHORT_T,                \
 	int*: JARR_INT_PTR,                                   \
-	unsigned int*: JARR_UNSIGNED INT_PTR,                 \
+	unsigned int*: JARR_UNSIGNED_INT_PTR,                 \
 	long*: JARR_LONG_PTR,                                 \
 	long long*: JARR_LONG LONG_PTR,                       \
 	unsigned long*: JARR_UNSIGNED LONG_PTR,               \
@@ -252,16 +264,16 @@
 	unsigned short*: JARR_UNSIGNED SHORT_PTR,             \
 	size_t*: JARR_SIZE_T_PTR,                             \
 	int: JARR_INT,                                        \
-	unsigned int: JARR_UNSIGNED INT,                      \
+	unsigned int: JARR_UNSIGNED_INT,                      \
 	long: JARR_LONG,                                      \
 	long long: JARR_LONG LONG,                            \
-	unsigned long: JARR_UNSIGNED LONG,                    \
-	unsigned long long: JARR_UNSIGNED LONG LONG,          \
+	unsigned long: JARR_UNSIGNED_LONG,                    \
+	unsigned long long: JARR_UNSIGNED_LONG_LONG,          \
 	double: JARR_DOUBLE,                                  \
-	long double: JARR_LONG DOUBLE,                        \
+	long double: JARR_LONG_DOUBLE,                        \
 	float: JARR_FLOAT,                                    \
 	short: JARR_SHORT,                                    \
-	unsigned short: JARR_UNSIGNED SHORT,                  \
+	unsigned short: JARR_UNSIGNED_SHORT,                  \
 	size_t: JARR_SIZE_T                                   \
 	)
 
@@ -315,7 +327,7 @@
 	float: (float)var,                                 \
 	short: (short)var,                                 \
 	unsigned short: (unsigned short)var,               \
-	size_t: (size_t)var,                               \
+	size_t: (size_t)var                                \
 	)
 
 #define JARR_VA_ARG_T(ap) _Generic(((var)),                       \
