@@ -46,6 +46,8 @@
 #define JARR_SHORT 46
 #define JARR_UNSIGNED_SHORT 47
 #define JARR_SIZE_T 48
+#define JARR_CHAR 49
+#define JARR_UCHAR 50
 
 #define JARR_TYPE_CHECK(src_arr) _Generic((src_arr), \
 	jarray_int_t*: JARR_IS_JARRAY_PTR,           \
@@ -98,7 +100,7 @@
 	float: JARR_IS_ARRAY,                        \
 	short: JARR_IS_ARRAY,                        \
 	unsigned short: JARR_IS_ARRAY,               \
-	unsigned char: JARR_IS_ARRAY                 \
+	unsigned char: JARR_IS_ARRAY,                \
 	char: JARR_IS_ARRAY                          \
 	)
 
@@ -150,7 +152,9 @@
 	float: JARR_FLOAT,                                    \
 	short: JARR_SHORT,                                    \
 	unsigned short: JARR_UNSIGNED_SHORT,                  \
-	size_t: JARR_SIZE_T                                   \
+	size_t: JARR_SIZE_T,                                  \
+	char: JARR_CHAR,                                      \
+	unsigned char: JARR_UCHAR                             \
 	)
 
 #define JARR_CAST_TO(var) _Generic(((var)),                \
@@ -203,7 +207,9 @@
 	float: (float)var,                                 \
 	short: (short)var,                                 \
 	unsigned short: (unsigned short)var,               \
-	size_t: (size_t)var                                \
+	size_t: (size_t)var,                               \
+	char: (char)var,                                   \
+	unsigned char: (unsigned char)var                  \
 	)
 
 #define JARR_VA_ARG_T(ap) _Generic(((var)),                       \
@@ -255,4 +261,5 @@
 	short: va_arg(ap, int),                                   \
 	unsigned short: va_arg(ap, int),                          \
 	size_t: va_arg(ap, size_t)                                \
+	)
 

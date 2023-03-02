@@ -14,6 +14,7 @@
 
 #include "/home/james/c/vargc.h"
 #include "macros.h"
+#include "types.h"
 
 #include <stddef.h>
 
@@ -22,6 +23,16 @@
 	#include <string.h>
 	#include <stdlib.h>
 #endif
+
+#define JARR_IGNORE_IF ,1
+#define JARR_NOALLOC ,1
+#define JARR_NOCHECK ,1
+#define JARR_FORCE_CMP ,1
+
+#define JARR_NOALLOC_OFF
+#define JARR_NOCHECK_OFF
+#define JARR_FORCE_CMP_OFF
+
 
 #if defined(__GNUC__) || defined(__clang__)
 	#define JARR_NEAR_POW2_32(x) \
@@ -51,15 +62,13 @@
 #endif
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
-
-#ifdef JARR_64_BIT
-	#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_64(x)
-#elif JARR_32_BIT
-	#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_32(x)
-#endif
-
-#else
-	#define JARR_NEAR_POW2(x) (x)
+	#ifdef JARR_64_BIT
+		#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_64(x)
+	#elif JARR_32_BIT
+		#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_32(x)
+	#else
+		#define JARR_NEAR_POW2(x) (x)
+	#endif
 #endif
 
 #if (defined(__GNUC__) || defined(__clang__))
@@ -120,8 +129,6 @@
 	#define JARR_ASSERT(expr, msg)
 #endif
 
-#define JARR_IGNORE_IF ,1
-
 unsigned int near_pow2_64(unsigned int x);
 unsigned int near_pow2_32(unsigned int x);
 
@@ -172,9 +179,6 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 	(void)((((jarr)->data) = (void *)0), \
 		0)                           \
 )
-
-#define JARR_NOCHECK ,1
-#define JARR_NOCHECK_OFF
 
 #define JARR_POW2 1
 #define JARR_POW2_OFF 0
@@ -326,7 +330,7 @@ static ALWAYS_INLINE void debug_jarr_new(jarray_return_t jarray_ret, jarray_int_
 				1)                                                                     \
 			:                                                                              \
 				((PP_NARG(__VA_ARGS__) == 1)                                           \
-				&& (((jarr)->data)[0] = PP_GET_FIRST_ARG(__VA_ARGS__);                 \
+				&& (((jarr)->data)[0] = PP_GET_FIRST_ARG(__VA_ARGS__),                 \
 				((((jarr)->size)) == 1),                                               \
 				1)))                                                                   \
 		: (((jarr)->capacity) = 0,                                                             \
@@ -340,20 +344,22 @@ static ALWAYS_INLINE void debug_jarr_new(jarray_return_t jarray_ret, jarray_int_
 	#define jarr_new(jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 	#define jarr_new_auto(jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #else
-	#define jarr_new(jarray_ret, jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-	#define jarr_new_auto(jarray_ret, jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	#define jarr_new(jarr, jarray_ret, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	#define jarr_new_auto(jarr, jarray_ret, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #endif
 
 #ifdef JARR_DEBUG
-/* static ALWAYS_INLINE int dummy_arr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t _size) */
-/* { */
-/* 	return jarr_new(jarr, 1, 3); */
-/* } */
+static ALWAYS_INLINE int dummy_jarr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t _size)
+{
+	return jarr_new(jarr, 1, 3);
+}
 #endif
 
 #ifdef JARR_DEBUG
 static ALWAYS_INLINE void debug_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t *jarr)
 {
+#endif
+
 #define private_jarr_shrink(jarr, tmp_jarray, nocheck_)                                            \
 JARR_TERNARY_START                                                                                 \
 	JARR_TMP_DECLARE(tmp_jarray)                                                               \
@@ -362,6 +368,8 @@ JARR_TERNARY_START                                                              
 	&& (((jarr)->data) = (tmp_jarray)), (((jarr)->capacity) = ((jarr)->size)),                 \
 	1)                                                                                         \
 JARR_TERNARY_END
+
+#ifdef JARR_DEBUG
 ;}
 #endif
 
@@ -386,11 +394,11 @@ static ALWAYS_INLINE int dummy_jarr_shrink(jarray_tmp_t tmp_jarray, jarray_int_t
 #endif
 
 #ifdef JARR_DEBUG
-static void debug_jarr_append(jarray_tmp_t tmp_jarray, jarray_int_t *jarr, int *src_arr, size_t src_arr_size)
+static void debug_arr_append(jarray_tmp_t tmp_jarray, jarray_int_t *jarr, jarray_int_t *src_arr, size_t src_arr_size)
 {
 #endif
 
-#define private_jarr_append(tmp_jarray, jarr, src_arr, src_arr_size)                                                                  \
+#define private_jarr_append(jarr, tmp_jarray, src_arr, src_arr_size, nocheck_)                                                        \
 JARR_TERNARY_START                                                                                                                    \
 	JARR_TMP_DECLARE(tmp_jarray)                                                                                                  \
 	((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity))                                                                      \
@@ -415,18 +423,18 @@ static void debug_arr_append_typecheck(jarray_tmp_t tmp_jarray, jarray_int_t *ja
 {
 #endif
 
-#define private_jarr_append_typecheck(tmp_jarray, jarr, src_arr, src_arr_size, noalloc_)                         \
-JARR_TERNARY_START                                                                                               \
-	(JARR_TYPE_CHECK(src_arr) == JARR_IS_ARRAY)                                                              \
-		? ((src_arr_size)                                                                                \
-			? private_jarr_append(tmp_jarray, jarr, (src_arr), src_arr_size)                         \
-			: private_jarr_append(tmp_jarray, jarr, (src_arr), JARR_ARR_SIZE(src_arr)))              \
-		: ((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY)                                                  \
-			?                                                                                        \
-				private_jarr_append(tmp_jarray, jarr, ((src_arr)->data), ((src_arr)->size))      \
-			:                                                                                        \
-				((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY_PTR)                                \
-				&& private_jarr_append(tmp_jarray, jarr, ((src_arr)->data), ((src_arr)->size)))) \
+/* #define private_jarr_append_typecheck(jarr, tmp_jarray, src_arr, src_arr_size, noalloc_)                         \ */
+JARR_TERNARY_START                                                                                                         \
+	(JARR_TYPE_CHECK(src_arr) == JARR_IS_ARRAY)                                                                        \
+		? ((src_arr_size)                                                                                          \
+			? private_jarr_append(jarr, tmp_jarray, (src_arr), src_arr_size, noalloc_)                         \
+			: private_jarr_append(jarr, tmp_jarray, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_))              \
+		: ((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY)                                                            \
+			?                                                                                                  \
+				private_jarr_append(jarr, tmp_jarray, ((src_arr)->data), ((src_arr)->size), noalloc_)      \
+			:                                                                                                  \
+				((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY_PTR)                                          \
+				&& private_jarr_append(jarr, tmp_jarray, ((src_arr)->data), ((src_arr)->size), noalloc_))) \
 JARR_TERNARY_END
 
 #ifdef JARR_DEBUG
@@ -436,31 +444,27 @@ JARR_TERNARY_END
 /* } */
 
 #ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(tmp_jarray, jarr, src_arr, src_arr_size, )
+	#define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, tmp_jarray, src_arr, src_arr_size, JARR_NOALLOC_OFF)
+	#define jarr_append_noalloc(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, tmp_jarray, src_arr, src_arr_size, JARR_NOALLOC)
 #else
-	#define jarr_append(tmp_jarray, jarr, src_arr, src_arr_size) private_jarr_append_typecheck(tmp_jarray, jarr, src_arr, src_arr_size, )
+	#define jarr_append(jarr, tmp_jarray, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, tmp_jarray, src_arr, src_arr_size, JARR_NOALLOC_OFF)
+	#define jarr_append_noalloc(jarr, tmp_jarray, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, tmp_jarray, src_arr, src_arr_size, JARR_NOALLOC)
 #endif
 
-#define jarr_append_noalloc(jarr, src_arr, src_arr_size)                                        \
-(                                                                                               \
-	memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)), \
-	(void)((((jarr)->size) += src_arr_size), 0)                                             \
-)
-
 #ifdef JARR_DEBUG
-static int dummy_arr_append(jarray_int_t *jarr, jarray_int_t src_arr)
+static ALWAYS_INLINE int dummy_arr_append(jarray_int_t *jarr, jarray_int_t src_arr)
 {
-	return jarr_append(&jarr, src_arr, 0);
+	return jarr_append(&jarr, src_arr, 3);
 }
 #endif
 
-#define JARR_NOALLOC ,1
-#define JARR_NOALLOC_OFF
-
-static ALWAYS_INLINE void debug_arr_cat(jarray_int_t *jarr, size_t size_) {
+#ifdef JARR_DEBUG
+static ALWAYS_INLINE void debug_jarr_cat(jarray_int_t *jarr, size_t size_)
+{
+#endif
 
 #define private_jarr_cat(jarr, size_, noalloc_, ...)                                                              \
-JARR_TERNARY_START                                                                                                \
+(                                                                                                                 \
 	((((jarr)->size) + (size_) > ((jarr)->capacity)) noalloc_)                                                \
 		?                                                                                                 \
 			(((private_jarr_grow_while_size_gt_cap((((jarr)->size) + (size_)), &((jarr)->capacity))), \
@@ -484,17 +488,23 @@ JARR_TERNARY_START                                                              
 					((PP_NARG(__VA_ARGS__) == 1)                                              \
 					jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__)),              \
 					1))                                                                       \
-JARR_TERNARY_END
+)
 
+#ifdef JARR_DEBUG
 ;}
+#endif
 
 #define jarr_cat(jarr, ...) private_jarr_cat(jarr, PP_NARG(__VA_ARGS__), JARR_NOALLOC_OFF, __VA_ARGS__)
 #define jarr_cat_noalloc(jarr, ...) private_jarr_cat(jarr, PP_NARG(__VA_ARGS__), JARR_NOALLOC, __VA_ARGS__)
 
-#define jarr_pop_back(jarr) --((jarr)->size);
+#ifdef JARR_DEBUG
+static ALWAYS_INLINE int debug_arr_cat(jarray_int_t *jarr, size_t size_)
+{
+	return jarr_cat(&jarr, 1);
+}
+#endif
 
-#define JARR_FORCE_CMP ,1
-#define JARR_FORCE_CMP_OFF
+#define jarr_pop_back(jarr) --((jarr)->size);
 
 #define private_jarr_cmp(jarr_dest, jarr_src, nocheck_)                                                                                       \
 	((((jarr_dest)->size) != ((jarr_src)->size) nocheck_) || memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
@@ -518,4 +528,5 @@ JARR_TERNARY_END
 #define JARR_SAME_TYPE(x, y) _Generic((x), \
 	typeof(y): 1,                       \
 	default: 0)
+
 #endif
