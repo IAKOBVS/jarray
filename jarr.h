@@ -341,7 +341,7 @@ static ALWAYS_INLINE void debug_jarr_new(jarray_return_t jarray_ret, jarray_int_
 
 
 #ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define jarr_new(jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	#define jarr_new(jarr, jarr_size, ...) private_jarr_new(jarray_ret, jarr, jarr_size, __VA_ARGS__)
 	#define jarr_new_auto(jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #else
 	#define jarr_new(jarr, jarray_ret, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
