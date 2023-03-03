@@ -263,3 +263,175 @@
 	size_t: va_arg(ap, size_t)                                \
 	)
 
+#define private_jarr_arr_get_data(src_arr)           \
+	_Generic((&(src_arr)),                       \
+	jarray_int_t**: (((src_arr))->data),         \
+	jarray_uint_t**: (((src_arr))->data),        \
+	jarray_long_t**: (((src_arr))->data),        \
+	jarray_long_long_t**: (((src_arr))->data),   \
+	jarray_ulong_t**: (((src_arr))->data),       \
+	jarray_ulong_long_t**: (((src_arr))->data),  \
+	jarray_size_t_t**: (((src_arr))->data),      \
+	jarray_double_t**: (((src_arr))->data),      \
+	jarray_long_double_t**: (((src_arr))->data), \
+	jarray_float_t**: (((src_arr))->data),       \
+	jarray_short_t**: (((src_arr))->data),       \
+	jarray_ushort_t**: (((src_arr))->data),      \
+	jarray_char_t**: (((src_arr))->data),        \
+	jarray_uchar_t**: (((src_arr))->data),       \
+	jarray_int_t*: (((src_arr)).data),           \
+	jarray_uint_t*: (((src_arr)).data),          \
+	jarray_long_t*: (((src_arr)).data),          \
+	jarray_long_long_t*: (((src_arr)).data),     \
+	jarray_ulong_t*: (((src_arr)).data),         \
+	jarray_ulong_long_t*: (((src_arr)).data),    \
+	jarray_size_t_t*: (((src_arr)).data),        \
+	jarray_double_t*: (((src_arr)).data),        \
+	jarray_long_double_t*: (((src_arr)).data),   \
+	jarray_float_t*: (((src_arr)).data),         \
+	jarray_short_t*: (((src_arr)).data),         \
+	jarray_ushort_t*: (((src_arr)).data),        \
+	jarray_char_t*: (((src_arr)).data),          \
+	jarray_uchar_t*: (((src_arr)).data),         \
+	int**: ((src_arr)),                          \
+	unsigned int**: ((src_arr)),                 \
+	long**: ((src_arr)),                         \
+	long long**: ((src_arr)),                    \
+	unsigned long**: ((src_arr)),                \
+	unsigned long long**: ((src_arr)),           \
+	double**: ((src_arr)),                       \
+	long double**: ((src_arr)),                  \
+	float**: ((src_arr)),                        \
+	short**: ((src_arr)),                        \
+	unsigned short**: ((src_arr)),               \
+	int*: ((src_arr)),                           \
+	unsigned int*: ((src_arr)),                  \
+	long*: ((src_arr)),                          \
+	long long*: ((src_arr)),                     \
+	unsigned long*: ((src_arr)),                 \
+	unsigned long long*: ((src_arr)),            \
+	double*: ((src_arr)),                        \
+	long double*: ((src_arr)),                   \
+	float*: ((src_arr)),                         \
+	short*: ((src_arr)),                         \
+	unsigned short*: ((src_arr)),                \
+	unsigned char*: ((src_arr)),                 \
+	char*: ((src_arr))                           \
+	)
+
+#define private_jarr_arr_get_size(src_arr, src_arr_size)                 \
+	_Generic((&src_arr),                                             \
+	jarray_int_t**: ((src_arr)->size),                               \
+	jarray_uint_t**: ((src_arr)->size),                              \
+	jarray_long_t**: ((src_arr)->size),                              \
+	jarray_long_long_t**: ((src_arr)->size),                         \
+	jarray_ulong_t**: ((src_arr)->size),                             \
+	jarray_ulong_long_t**: ((src_arr)->size),                        \
+	jarray_size_t_t**: ((src_arr)->size),                            \
+	jarray_double_t**: ((src_arr)->size),                            \
+	jarray_long_double_t**: ((src_arr)->size),                       \
+	jarray_float_t**: ((src_arr)->size),                             \
+	jarray_short_t**: ((src_arr)->size),                             \
+	jarray_ushort_t**: ((src_arr)->size),                            \
+	jarray_char_t**: ((src_arr)->size),                              \
+	jarray_uchar_t**: ((src_arr)->size),                             \
+	jarray_int_t*: ((src_arr).size),                                 \
+	jarray_uint_t*: ((src_arr).size),                                \
+	jarray_long_t*: ((src_arr).size),                                \
+	jarray_long_long_t*: ((src_arr).size),                           \
+	jarray_ulong_t*: ((src_arr).size),                               \
+	jarray_ulong_long_t*: ((src_arr).size),                          \
+	jarray_size_t_t*: ((src_arr).size),                              \
+	jarray_double_t*: ((src_arr).size),                              \
+	jarray_long_double_t*: ((src_arr).size),                         \
+	jarray_float_t*: ((src_arr).size),                               \
+	jarray_short_t*: ((src_arr).size),                               \
+	jarray_ushort_t*: ((src_arr).size),                              \
+	jarray_char_t*: ((src_arr).size),                                \
+	jarray_uchar_t*: ((src_arr).size),                               \
+	int**: src_arr_size,                                             \
+	unsigned int**: src_arr_size,                                    \
+	long**: src_arr_size,                                            \
+	long long**: src_arr_size,                                       \
+	unsigned long**: src_arr_size,                                   \
+	unsigned long long**: src_arr_size,                              \
+	double**: src_arr_size,                                          \
+	long double**: src_arr_size,                                     \
+	float**: src_arr_size,                                           \
+	short**: src_arr_size,                                           \
+	unsigned short**: src_arr_size,                                  \
+	int(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),                \
+	unsigned int(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),       \
+	long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),               \
+	long long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),          \
+	unsigned long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),      \
+	unsigned long long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])), \
+	double(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),             \
+	long double(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),        \
+	float(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),              \
+	short(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),              \
+	unsigned short(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),     \
+	unsigned char(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),      \
+	char(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0]))                \
+	)
+
+#define private_jarr_arr_ret_size(src_arr, src_arr_size)                       \
+	_Generic((&src_arr),                                                   \
+			                                                       \
+	jarray_int**: private_jarray_get_size_int(&src_arr),                   \
+	jarray_uint**: private_jarray_get_size_uint(&src_arr),                 \
+	jarray_long**: private_jarray_get_size_long(&src_arr),                 \
+	jarray_long_long**: private_jarray_get_size_long_long(&src_arr),       \
+	jarray_ulong**: private_jarray_get_size_ulong(&src_arr),               \
+	jarray_ulong_long**: private_jarray_get_size_ulong_long(&src_arr),     \
+	jarray_size_t**: private_jarray_get_size_size_t(&src_arr),             \
+	jarray_double**: private_jarray_get_size_double(&src_arr),             \
+	jarray_long_double**: private_jarray_get_size_long_double(&src_arr),   \
+	jarray_float**: private_jarray_get_size_float(&src_arr),               \
+	jarray_short**: private_jarray_get_size_short(&src_arr),               \
+	jarray_ushort**: private_jarray_get_size_ushort(&src_arr),             \
+	jarray_char**: private_jarray_get_size_char(&src_arr),                 \
+	jarray_uchar**: private_jarray_get_size_uchar(&src_arr),               \
+                                                                               \
+	jarray_int*: private_jarray_get_size_int(src_arr),                     \
+	jarray_uint*: private_jarray_get_size_uint(src_arr),                   \
+	jarray_long*: private_jarray_get_size_long(src_arr),                   \
+	jarray_long_long*: private_jarray_get_size_long_long(src_arr),         \
+	jarray_ulong*: private_jarray_get_size_ulong(src_arr),                 \
+	jarray_ulong_long*: private_jarray_get_size_ulong_long(src_arr),       \
+	jarray_size_t*: private_jarray_get_size_size_t(src_arr),               \
+	jarray_double*: private_jarray_get_size_double(src_arr),               \
+	jarray_long_double*: private_jarray_get_size_long_double(src_arr),     \
+	jarray_float*: private_jarray_get_size_float(src_arr),                 \
+	jarray_short*: private_jarray_get_size_short(src_arr),                 \
+	jarray_ushort*: private_jarray_get_size_ushort(src_arr),               \
+	jarray_char*: private_jarray_get_size_char(src_arr),                   \
+	jarray_uchar*: private_jarray_get_size_uchar(src_arr),                 \
+                                                                               \
+	int**: src_arr_size,                                                   \
+	unsigned int**: src_arr_size,                                          \
+	long**: src_arr_size,                                                  \
+	long long**: src_arr_size,                                             \
+	unsigned long**: src_arr_size,                                         \
+	unsigned long long**: src_arr_size,                                    \
+	double**: src_arr_size,                                                \
+	long double**: src_arr_size,                                           \
+	float**: src_arr_size,                                                 \
+	short**: src_arr_size,                                                 \
+	unsigned short**: src_arr_size,                                        \
+                                                                               \
+	int(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),                      \
+	unsigned int(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),             \
+	long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),                     \
+	long long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),                \
+	unsigned long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),            \
+	unsigned long long(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),       \
+	double(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),                   \
+	long double(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),              \
+	float(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),                    \
+	short(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),                    \
+	unsigned short(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),           \
+	unsigned char(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0])),            \
+	char(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0]))                      \
+	)
+

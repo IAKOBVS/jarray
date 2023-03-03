@@ -1,94 +1,37 @@
 #include "jarr.h"
+#include <stdarg.h>
 
-/* void* private_jarr_cast_to(int T, void* var) { */
-/* 	switch (T) { */
-/* 	case JARR_JARRAY_INT_T_PTR: */
-/* 		return (jarray_int_t*)var; */
-/* 	case JARR_JARRAY_UINT_T_PTR: */
-/* 		return (jarray_uint_t*)var; */
-/* 	case JARR_JARRAY_LONG_T_PTR: */
-/* 		return (jarray_long_t*)var; */
-/* 	case JARR_JARRAY_LONG_LONG_T_PTR: */
-/* 		return (jarray_long_long_t*)var; */
-/* 	case JARR_JARRAY_ULONG_T_PTR: */
-/* 		return (jarray_ulong_t*)var; */
-/* 	case JARR_JARRAY_ULONG_LONG_T_PTR: */
-/* 		return (jarray_ulong_long_t*)var; */
-/* 	case JARR_JARRAY_SIZE_T_T_PTR: */
-/* 		return (jarray_size_t_t*)var; */
-/* 	case JARR_JARRAY_DOUBLE_T_PTR: */
-/* 		return (jarray_double_t*)var; */
-/* 	case JARR_JARRAY_LONG_DOUBLE_T_PTR: */
-/* 		return (jarray_long_double_t*)var; */
-/* 	case JARR_JARRAY_FLOAT_T_PTR: */
-/* 		return (jarray_float_t*)var; */
-/* 	case JARR_JARRAY_SHORT_T_PTR: */
-/* 		return (jarray_short_t*)var; */
-/* 	case JARR_JARRAY_USHORT_T_PTR: */
-/* 		return (jarray_ushort_t*)var; */
-/* 	case JARR_INT_PTR: */
-/* 		return (int*)var; */
-/* 	case JARR_UNSIGNED_INT_PTR: */
-/* 		return (unsigned int*)var; */
-/* 	case JARR_LONG_PTR: */
-/* 		return (long*)var; */
-/* 	case JARR_LONG_LONG_PTR: */
-/* 		return (long long*)var; */
-/* 	case JARR_UNSIGNED_LONG_PTR: */
-/* 		return (unsigned long*)var; */
-/* 	case JARR_UNSIGNED_LONG_LONG_PTR: */
-/* 		return (unsigned long long*)var; */
-/* 	case JARR_DOUBLE_PTR: */
-/* 		return (double*)var; */
-/* 	case JARR_LONG_DOUBLE_PTR: */
-/* 		return (long double*)var; */
-/* 	case JARR_FLOAT_PTR: */
-/* 		return (float*)var; */
-/* 	case JARR_SHORT_PTR: */
-/* 		return (short*)var; */
-/* 	case JARR_UNSIGNED_SHORT_PTR: */
-/* 		return (unsigned short*)var; */
-/* 	case JARR_SIZE_T_PTR: */
-/* 		return (size_t*)var; */
-/* 	case JARR_INT: */
-/* 		return (int*)var; */
-/* 	case JARR_UNSIGNED_INT: */
-/* 		return (unsigned int*)var; */
-/* 	case JARR_LONG: */
-/* 		return (long*)var; */
-/* 	case JARR_LONG_LONG: */
-/* 		return (long long*)var; */
-/* 	case JARR_UNSIGNED_LONG: */
-/* 		return (unsigned long*)var; */
-/* 	case JARR_UNSIGNED_LONG_LONG: */
-/* 		return (unsigned long long*)var; */
-/* 	case JARR_DOUBLE: */
-/* 		return (double*)var; */
-/* 	case JARR_LONG_DOUBLE: */
-/* 		return (long double*)var; */
-/* 	case JARR_FLOAT: */
-/* 		return (float*)var; */
-/* 	case JARR_SHORT: */
-/* 		return (short*)var; */
-/* 	case JARR_UNSIGNED_SHORT: */
-/* 		return (unsigned short*)var; */
-/* 	case JARR_SIZE_T: */
-/* 		return (size_t*)var; */
-/* 	default: */
-/* 		return var; */
-/* 	} */
-/* } */
-
-/* void private_jarr_assign_va_args(int T, int Tdata, void* jarr, ...) */
-/* { */
-/* 	va_list ap; */
-/* 	va_start(ap, jarr); */
-/* 	typeof(private_jarr_cast_to(T, jarr)) tmp = jarr; */
-/* 	for (typeof(private_jarr_cast_to(T, jarr->data)) argv = va_arg(ap, typeof(argv)); argv; argv = va_arg(ap, typeof(argv))) */
-/* 	va_end(ap); */
-/* } */
-#define init(name) jarray_int_t name = { .data = (void *)0, .size = 0, .capacity = 0 }
-
-int main ()
-{
+#define PRIVATE_JARR_NEW(T, t)                                                         \
+static int jarr_new_##T(T *jarr, size_t size, ...)                                     \
+{                                                                                      \
+	jarr->capacity = MAX(2 * JARR_NEAR_POW2(size), JARR_MIN_CAP);                  \
+	if (likely(jarr->data = malloc((jarr->capacity) * sizeof(*jarr->data)))) {     \
+		va_list ap;                                                            \
+		va_start(ap, size);                                                    \
+		for (void* argv = va_arg(ap, void *); argv; argv = va_arg(ap, void *)) \
+			jarr->data[jarr->size++] = *(t*)argv;                          \
+		va_end(ap);                                                            \
+		return 1;                                                              \
+	}                                                                              \
+	jarr_init(jarr);                                                               \
+	return 0;                                                                      \
 }
+
+PRIVATE_JARR_NEW(jarray_int_t, int)
+PRIVATE_JARR_NEW(jarray_uint_t, unsigned int)
+PRIVATE_JARR_NEW(jarray_long_t, long)
+PRIVATE_JARR_NEW(jarray_long_long_t, long long)
+PRIVATE_JARR_NEW(jarray_ulong_t, unsigned long)
+PRIVATE_JARR_NEW(jarray_ulong_long_t, unsigned long long)
+PRIVATE_JARR_NEW(jarray_size_t_t, size_t)
+PRIVATE_JARR_NEW(jarray_double_t, double)
+PRIVATE_JARR_NEW(jarray_long_double_t, long double)
+PRIVATE_JARR_NEW(jarray_float_t, float)
+PRIVATE_JARR_NEW(jarray_short_t, short)
+PRIVATE_JARR_NEW(jarray_ushort_t, unsigned short)
+PRIVATE_JARR_NEW(jarray_char_t, char)
+PRIVATE_JARR_NEW(jarray_uchar_t, unsigned char)
+
+#ifdef JARR_DEBUG
+int main() {}
+#endif
