@@ -416,19 +416,19 @@ static void debug_arr_append_typecheck(jarray_int_t *jarr, jarray_int_t *src_arr
 {
 #endif
 
-#define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, noalloc_)                                   \
-(                                                                                                              \
-	(JARR_TYPE_CHECK(src_arr) == JARR_IS_ARRAY)                                                            \
-		? ((src_arr_size)                                                                              \
-			? private_jarr_append(jarr, (src_arr), src_arr_size, noalloc_)                         \
-			: private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_))              \
-		: ((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY)                                                \
-			?                                                                                      \
-				private_jarr_append(jarr, ((src_arr)->data), ((src_arr)->size), noalloc_)      \
-			:                                                                                      \
-				((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY_PTR)                              \
-				&& private_jarr_append(jarr, ((src_arr)->data), ((src_arr)->size), noalloc_))) \
-)
+/* #define private_jarr_append_typecheck(jarr, src_arr, src_arr_size, noalloc_)                                   \ */
+/* (                                                                                                              \ */
+/* 	(JARR_TYPE_CHECK(src_arr) == JARR_IS_ARRAY)                                                            \ */
+/* 		? ((src_arr_size)                                                                              \ */
+/* 			? private_jarr_append(jarr, (src_arr), src_arr_size, noalloc_)                         \ */
+/* 			: private_jarr_append(jarr, (src_arr), JARR_ARR_SIZE(src_arr), noalloc_))              \ */
+/* 		: ((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY)                                                \ */
+/* 			?                                                                                      \ */
+/* 				private_jarr_append(jarr, ((src_arr)->data), ((src_arr)->size), noalloc_)      \ */
+/* 			:                                                                                      \ */
+/* 				((JARR_TYPE_CHECK(src_arr) == JARR_IS_JARRAY_PTR)                              \ */
+/* 				&& private_jarr_append(jarr, ((src_arr)->data), ((src_arr)->size), noalloc_))) \ */
+/* ) */
 
 #ifdef JARR_DEBUG
 ;}
@@ -437,11 +437,11 @@ static void debug_arr_append_typecheck(jarray_int_t *jarr, jarray_int_t *src_arr
 /* } */
 
 #ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, JARR_NOALLOC_OFF)
-	#define jarr_append_noalloc(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, JARR_NOALLOC)
+	#define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append(jarr, src_arr, src_arr_size, JARR_NOALLOC_OFF)
+	#define jarr_append_noalloc(jarr, src_arr, src_arr_size) private_jarr_append(jarr, src_arr, src_arr_size, JARR_NOALLOC)
 #else
-	#define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, JARR_NOALLOC_OFF)
-	#define jarr_append_noalloc(jarr, src_arr, src_arr_size) private_jarr_append_typecheck(jarr, src_arr, src_arr_size, JARR_NOALLOC)
+	#define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append(jarr, src_arr, src_arr_size, JARR_NOALLOC_OFF)
+	#define jarr_append_noalloc(jarr, src_arr, src_arr_size) private_jarr_append(jarr, src_arr, src_arr_size, JARR_NOALLOC)
 #endif
 
 #ifdef JARR_DEBUG
@@ -509,8 +509,11 @@ static ALWAYS_INLINE int debug_arr_cat(jarray_int_t *jarr, size_t size_)
 #define jarr_foreach_index(elem, jarr)                                   \
 	for (size_t elem = 0, size = ((jarr)->size); elem < size; ++elem)
 
-#define jarr_foreach(elem, jarr)                                                                                              \
-	for (typeof(*((jarr)->data)) *elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
+#define jarr_foreach(elem, jarr)                                                                                                           \
+	for (typeof(*((jarr)->data)) RESTRICT *elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
+
+#define jarr_foreach_arr(elem, arr)                                                                                                        \
+	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&((arr)[(sizeof(arr)/sizeof(arr[0])) - 1])); elem < end; ++elem)
 
 #define jarr_end(jarr) (*(((jarr)->data) + ((jarr)->size) - 1))
 
