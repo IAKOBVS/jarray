@@ -62,8 +62,8 @@
 	jarray_float_t*: JARR_IS_JARRAY_PTR,         \
 	jarray_short_t*: JARR_IS_JARRAY_PTR,         \
 	jarray_ushort_t*: JARR_IS_JARRAY_PTR,        \
-	jarray_char_t*: JARR_IS_JARRAY,              \
-	jarray_uchar_t*: JARR_IS_JARRAY,             \
+	jarray_char_t*: JARR_IS_JARRAY_PTR,          \
+	jarray_uchar_t*: JARR_IS_JARRAY_PTR,         \
 	jarray_int_t: JARR_IS_JARRAY,                \
 	jarray_uint_t: JARR_IS_JARRAY,               \
 	jarray_long_t: JARR_IS_JARRAY,               \
