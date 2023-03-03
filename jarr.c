@@ -87,8 +87,7 @@
 /* 	for (typeof(private_jarr_cast_to(T, jarr->data)) argv = va_arg(ap, typeof(argv)); argv; argv = va_arg(ap, typeof(argv))) */
 /* 	va_end(ap); */
 /* } */
-
-int f() { return 1; }
+#define init(name) jarray_int_t name = { .data = (void *)0, .size = 0, .capacity = 0 }
 
 int main ()
 {

@@ -172,12 +172,12 @@ JARR_STRUCT(jarray_ushort_t, unsigned short);
 JARR_STRUCT(jarray_char_t, char);
 JARR_STRUCT(jarray_uchar_t, unsigned char);
 
-#define jarr_init(jarr)                      \
-(                                            \
-	((jarr)->capacity) = 0,              \
-	((jarr)->size) = 0,                  \
-	(void)((((jarr)->data) = (void *)0), \
-		0)                           \
+#define jarr_init(jarr)                \
+(void)(                                \
+	((jarr)->capacity) = 0,        \
+	((jarr)->size) = 0,            \
+	((((jarr)->data) = (void *)0), \
+	0)                             \
 )
 
 #define JARR_POW2 1
@@ -192,10 +192,10 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
    i.e., it asserts that jarray has enough capacity.
 */
 
-#define private_jarr_delete(jarr, nocheck_)                                \
-(void)(                                                                    \
-	(((jarr)->data) nocheck_) && (free((jarr)->data), jarr_init(jarr), \
-	0)                                                                 \
+#define private_jarr_delete(jarr, nocheck_)                                      \
+(                                                                                \
+	(((jarr)->data) nocheck_) && (void)(free((jarr)->data), jarr_init(jarr), \
+	0)                                                                       \
 )
 
 #define jarr_delete(jarr) private_jarr_delete(jarr, JARR_NOCHECK_OFF)
@@ -209,7 +209,7 @@ static ALWAYS_INLINE void debug_jarr_new_alloc(jarray_int_t *jarr, size_t cap)
 #define jarr_new_alloc(jarr, cap)                                                      \
 (                                                                                      \
 	((((jarr)->capacity) = MAX(((cap)), JARR_MIN_CAP)),                            \
-	((likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr))))))) \
+	(likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr)))))) \
 	|| (((jarr)->capacity) = 0,                                                    \
 	0)                                                                             \
 )
@@ -236,31 +236,31 @@ static ALWAYS_INLINE void debug_jarr_reserve(jarray_int_t *jarr, size_t cap)
 {
 #endif
 
-#define private_jarr_reserve(jarr, cap, pow2_, nocheck_)                                                                     \
-(                                                                                                                            \
-	(((cap) > ((jarr)->capacity)) nocheck_)                                                                              \
+#define private_jarr_reserve(jarr, cap, pow2_, nocheck_)                                                                               \
+(                                                                                                                                      \
+	(((cap) > ((jarr)->capacity)) nocheck_)                                                                                        \
 	&& (likely((private_jarr_tmp_realloc((void **)&((jarr)->data), JARR_T_SIZE(jarr) * ((pow2_) ? JARR_NEAR_POW2(cap) : (cap)))))) \
-	&& (((jarr)->capacity) = (cap)),                                                                                     \
-	1                                                                                                                    \
+	&& ((((jarr)->capacity) = (cap)),                                                                                               \
+	1)                                                                                                                              \
 )
 
 #ifdef JARR_DEBUG
 ;}
 #endif
 
-	#define jarr_reserve(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2_OFF, JARR_NOCHECK_OFF)
-	#define jarr_reserve_align(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2, JARR_NOCHECK_OFF)
+#define jarr_reserve(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2_OFF, JARR_NOCHECK_OFF)
+#define jarr_reserve_align(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2, JARR_NOCHECK_OFF)
 
-	#define jarr_reserve_nocheck(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2_OFF, JARR_NOCHECK)
-	#define jarr_reserve_nocheck_align(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2, JARR_NOCHECK)
+#define jarr_reserve_nocheck(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2_OFF, JARR_NOCHECK)
+#define jarr_reserve_nocheck_align(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2, JARR_NOCHECK)
 
-	#define private_jarr_reserve_x(jarr, multiplier) private_jarr_reserve(jarr, (((jarr)->capacity) * multiplier), 0, JARR_COMMENT)
-	#define jarr_reserve_2x(jarr) private_jarr_reserve_x(jarr, 2)
-	#define jarr_reserve_4x(jarr) private_jarr_reserve_x(jarr, 4)
-	#define jarr_reserve_8x(jarr) private_jarr_reserve_x(jarr, 8)
-	#define jarr_reserve_16x(jarr) private_jarr_reserve_x(jarr, 16)
-	#define jarr_reserve_32x(jarr) private_jarr_reserve_x(jarr, 32)
-	#define jarr_reserve_64x(jarr) private_jarr_reserve_x(jarr, 64)
+#define private_jarr_reserve_x(jarr, multiplier) private_jarr_reserve(jarr, (((jarr)->capacity) * multiplier), 0, JARR_COMMENT)
+#define jarr_reserve_2x(jarr) private_jarr_reserve_x(jarr, 2)
+#define jarr_reserve_4x(jarr) private_jarr_reserve_x(jarr, 4)
+#define jarr_reserve_8x(jarr) private_jarr_reserve_x(jarr, 8)
+#define jarr_reserve_16x(jarr) private_jarr_reserve_x(jarr, 16)
+#define jarr_reserve_32x(jarr) private_jarr_reserve_x(jarr, 32)
+#define jarr_reserve_64x(jarr) private_jarr_reserve_x(jarr, 64)
 
 #ifdef JARR_DEBUG
 static ALWAYS_INLINE int dummy_jarr_reserve(jarray_int_t jarr)
@@ -349,12 +349,12 @@ static ALWAYS_INLINE void debug_jarr_shrink(jarray_int_t *jarr)
 {
 #endif
 
-#define private_jarr_shrink(jarr, nocheck_)                                                           \
-(                                                                                                     \
-	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                             \
+#define private_jarr_shrink(jarr, nocheck_)                                                                     \
+(                                                                                                               \
+	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                                       \
 	&& ((likely(private_jarr_tmp_realloc((void **)&((jarr)->data), (((jarr)->size) * JARR_T_SIZE(jarr)))))) \
-	&& (((jarr)->capacity) = ((jarr)->size)),                                                     \
-	1                                                                                             \
+	&& ((((jarr)->capacity) = ((jarr)->size)),                                                              \
+	1)                                                                                                      \
 )
 
 #ifdef JARR_DEBUG
