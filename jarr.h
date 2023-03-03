@@ -305,9 +305,9 @@ static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src)
 #endif
 
 #ifdef JARR_DEBUG
-static ALWAYS_INLINE void debug_jarr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t size_)
+static ALWAYS_INLINE void debug_jarr_new(jarray_int_t *jarr, size_t size_)
 {
-#define private_jarr_new(jarray_ret, jarr, size_, ...)                                                 \
+#define private_jarr_new(jarr, size_, ...)                                                 \
 (                                                                                                      \
 	(((jarr)->capacity) = MAX(2 * JARR_NEAR_POW2((size_)), JARR_MIN_CAP),                          \
 	(likely((((jarr)->data) = malloc(((jarr)->capacity) * JARR_T_SIZE(jarr))))))                   \
@@ -329,15 +329,15 @@ static ALWAYS_INLINE void debug_jarr_new(jarray_return_t jarray_ret, jarray_int_
 
 
 #ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define jarr_new(jarr, jarr_size, ...) private_jarr_new(jarray_ret, jarr, jarr_size, __VA_ARGS__)
-	#define jarr_new_auto(jarr, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	#define jarr_new(jarr, jarr_size, ...) private_jarr_new(jarr, jarr_size, __VA_ARGS__)
+	#define jarr_new_auto(jarr, ...) private_jarr_new(jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #else
-	#define jarr_new(jarr, jarray_ret, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-	#define jarr_new_auto(jarr, jarray_ret, ...) private_jarr_new(jarray_ret, jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	#define jarr_new(jarr, ...) private_jarr_new(jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+	#define jarr_new_auto(jarr, ...) private_jarr_new(jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #endif
 
 #ifdef JARR_DEBUG
-static ALWAYS_INLINE int dummy_jarr_new(jarray_return_t jarray_ret, jarray_int_t *jarr, size_t _size)
+static ALWAYS_INLINE int dummy_jarr_new(jarray_int_t *jarr, size_t _size)
 {
 	return jarr_new(jarr, 1, 3);
 }
