@@ -12,10 +12,9 @@
 	#define JARR_DEBUG
 #endif
 
-#include "/home/james/c/macros/vargc.h"
-#include "macros.h"
-#include "types.h"
-
+#include "/home/james/c/macros/vargc.h" // gch
+#include "macros.h" // gch
+#include "types.h" //gch
 #include <stddef.h>
 
 #ifdef JARR_INCLUDE
@@ -25,26 +24,13 @@
 	#include <stdint.h>
 #endif
 
-#define JARR_IGNORE_IF ,1
-#define JARR_NOALLOC ,1
-#define JARR_NOCHECK ,1
-#define JARR_FORCE_CMP ,1
-
-#define JARR_NOALLOC_OFF
-#define JARR_NOCHECK_OFF
-#define JARR_FORCE_CMP_OFF
-
+#define JARR_MIN_CAP 8
 
 #if defined(__GNUC__) || defined(__clang__)
 	#define JARR_NEAR_POW2_32(x) \
 		((x) ? 1 : 1UL << (sizeof((x)) * 8 - __builtin_clz((x) - 1)))
-
-	/* static ALWAYS_INLINE unsigned int private_jarr_near_pow_32(unsigned int x) { return JARR_NEAR_POW2_32(x); } */
-
 	#define JARR_NEAR_POW2_64(x) \
 		((x) ? 1 : 1ULL << (sizeof((x)) * 8 - __builtin_clzll((x) - 1)))
-
-	/* static ALWAYS_INLINE uint64_t private_jarr_near_pow_64(unsigned int x) { return JARR_NEAR_POW2_64(x); } */
 #else
 	#define JARR_NEAR_POW2_32(x) \
 		(x--,                \
@@ -54,8 +40,6 @@
 		x |= x >> 8,         \
 		x |= x >> 16,        \
 		++x)
-	/* static ALWAYS_INLINE unsigned int private_jarr_near_pow_32(unsigned int x) { return JARR_NEAR_POW2_32(x); } */
-
 	#define JARR_NEAR_POW2_64(x) \
 		(x--,                \
 		x |= x >> 1,         \
@@ -65,7 +49,6 @@
 		x |= x >> 16,        \
 		x |= x >> 32,        \
 		++x)
-	/* static ALWAYS_INLINE unsigned int private_jarr_near_pow_64(unsigned int x) { return JARR_NEAR_POW2_64(x); } */
 #endif
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
@@ -77,67 +60,6 @@
 		#define JARR_NEAR_POW2(x) (x)
 	#endif
 #endif
-
-#if (defined(__GNUC__) || defined(__clang__))
-	#define JARR_USING_STATEMENT_EXPRESSIONS
-#endif
-
-#ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define JARR_MACRO_START ({
-	#define JARR_MACRO_END })
-
-	#define JARR_TERNARY_START JARR_MACRO_START
-	#define JARR_TERNARY_END ;JARR_MACRO_END
-
-	#define JARR_RET_DECLARE(x) jarray_return_t x;
-	#define JARR_RET_IS(RET_VAR, RET) RET_VAR = RET;
-	#define JARR_RET_IS_EXPR(RET_VAR, RET) RET_VAR = RET
-	#define JARR_RET_SUCCESS(RET_VAR) JARR_RET_IS(RET_VAR, 1)
-	#define JARR_RET_FAIL(RET_VAR) JARR_RET_IS(RET_VAR, 0)
-	#define JARR_RET_END(x) (x);
-
-	#define JARR_TMP_DECLARE(x) jarray_tmp_t x;
-	#define JARR_TMP_IS(tmp, value) (x) = (value);
-#else
-	#define JARR_MACRO_START do {
-	#define JARR_MACRO_END } while (0)
-	
-	#define JARR_TERNARY_START (
-	#define JARR_TERNARY_END )
-
-	#define JARR_RET_DECLARE
-	#define JARR_RET_IS(RET_VAR, RET) RET_VAR = RET;
-	#define JARR_RET_IS_EXPR(RET_VAR, RET) RET_VAR = RET
-	#define JARR_RET_SUCCESS(RET_VAR) JARR_RET_IS(RET_VAR, 1)
-	#define JARR_RET_FAIL(RET_VAR) JARR_RET_IS(RET_VAR, 0)
-	#define JARR_RET_END
-
-	#define JARR_TMP_DECLARE(x) jarray_tmp_t x;
-	#define JARR_TMP_IS(tmp, value) (x) = (value);
-#endif
-
-#define JARR_MIN_CAP (8)
-#define MAX(a,b) ((a)>(b)?(a):(b))
-
-#define JARR_T_SIZE(var) (sizeof(*((var)->data)))
-#define JARR_ARR_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
-#define jarr_sizeof_arr(arr) (JARR_ARR_SIZE(arr))
-
-#define JARR_IS_ARRAY 1
-#define JARR_IS_ARRAY_PTR 2
-#define JARR_IS_JARRAY 3
-#define JARR_IS_JARRAY_PTR 4
-
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_STATIC_ASSERT__) && defined(_Static_assert)
-	#define JARR_ASSERT(expr, msg) _Static_assert(expr, msg)
-#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_STATIC_ASSERT__)
-	#define JARR_ASSERT(expr, msg) static_assert(expr, msg)
-#else
-	#define JARR_ASSERT(expr, msg)
-#endif
-
-unsigned int near_pow2_64(unsigned int x);
-unsigned int near_pow2_32(unsigned int x);
 
 /*
    _Generic will determine whether a jarray is passed.
@@ -160,9 +82,6 @@ unsigned int near_pow2_32(unsigned int x);
 		T data[JARR_NEAR_POW2(capacity)]; \
 		size_t size;                      \
 	} name
-
-typedef int jarray_return_t;
-typedef void *jarray_tmp_t;
 
 JARR_STRUCT(jarray_int_t, int);
 JARR_STRUCT(jarray_uint_t, unsigned int);
@@ -209,20 +128,6 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 /* jarray_char_t */
 /* jarray_uchar_t */
 
-/* int: jarray_int_t, */
-/* unsigned int: jarray_uint_t, */
-/* long: jarray_long_t, */
-/* long long: jarray_long_long_t, */
-/* unsigned long: jarray_ulong_t, */
-/* unsigned long long: jarray_ulong_long_t, */
-/* size: jarray_size_t_t_t, */
-/* double: jarray_double_t, */
-/* long double: jarray_long_double_t, */
-/* *jarray_float_t: jarray_float_t, */
-/* short: jarray_short_t, */
-/* unsigned short: jarray_ushort_t, */
-/* char: jarray_char_t, */
-/* *jarray_unsigned_char_t: jarray_uchar_t, */
 
 /* int */
 /* unsigned int */
@@ -239,23 +144,22 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
 /* char */
 /* unsigned char */
 
-#define JARR_DEFINE_F_T_t(F)               \
-F(jarray_int_t, int)                       \
-F(jarray_uint_t, unsigned int)             \
-F(jarray_long_t, long)                     \
-F(jarray_long_long_t, long long)           \
-F(jarray_ulong_t, unsigned long)           \
-F(jarray_ulong_long_t, unsigned long long) \
-F(jarray_size_t_t, size_t)                 \
-F(jarray_double_t, double)                 \
-F(jarray_long_double_t, long double)       \
-F(jarray_float_t, float)                   \
-F(jarray_short_t, short)                   \
-F(jarray_ushort_t, unsigned short)         \
-F(jarray_char_t, char)                     \
-F(jarray_uchar_t, unsigned char)           \
+/* int: jarray_int_t, */
+/* unsigned int: jarray_uint_t, */
+/* long: jarray_long_t, */
+/* long long: jarray_long_long_t, */
+/* unsigned long: jarray_ulong_t, */
+/* unsigned long long: jarray_ulong_long_t, */
+/* size: jarray_size_t_t_t, */
+/* double: jarray_double_t, */
+/* long double: jarray_long_double_t, */
+/* *jarray_float_t: jarray_float_t, */
+/* short: jarray_short_t, */
+/* unsigned short: jarray_ushort_t, */
+/* char: jarray_char_t, */
+/* *jarray_unsigned_char_t: jarray_uchar_t, */
 
-#define JARR_DEFINE_F_T(F) \
+#define JARR_TEMPLATE_T(F) \
 F(jarray_int_t)            \
 F(jarray_uint_t)           \
 F(jarray_long_t)           \
@@ -271,7 +175,23 @@ F(jarray_ushort_t)         \
 F(jarray_char_t)           \
 F(jarray_uchar_t)          \
 
-#define JARR_DEFINE_G(F, T, ...) _Generic((T),                                  \
+#define JARR_TEMPLATE_T_t(F)               \
+F(jarray_int_t, int)                       \
+F(jarray_uint_t, unsigned int)             \
+F(jarray_long_t, long)                     \
+F(jarray_long_long_t, long long)           \
+F(jarray_ulong_t, unsigned long)           \
+F(jarray_ulong_long_t, unsigned long long) \
+F(jarray_size_t_t, size_t)                 \
+F(jarray_double_t, double)                 \
+F(jarray_long_double_t, long double)       \
+F(jarray_float_t, float)                   \
+F(jarray_short_t, short)                   \
+F(jarray_ushort_t, unsigned short)         \
+F(jarray_char_t, char)                     \
+F(jarray_uchar_t, unsigned char)           \
+
+#define JARR_GENERIC(F, T, ...) _Generic((T),                                  \
 	*jarray_int_t: F##_jarray_int_t(jarr_ptr, __VA_ARGS__),                 \
 	*jarray_uint_t: F##_jarray_uint_t(jarr_ptr, __VA_ARGS__),               \
 	*jarray_long_t F##_jarray_long_t(jarr_ptr, __VA_ARGS__),                \
@@ -291,20 +211,20 @@ F(jarray_uchar_t)          \
 #define PRIVATE_JARR_GET_DATA(T, t)                                               \
 static ALWAYS_INLINE t* private_jarr_get_data_##T(T *jarr) { return jarr->data; }
 
-JARR_DEFINE_F_T_t(PRIVATE_JARR_GET_DATA)
-#define jarr_get_data(jarr_ptr) JARR_DEFINE_G(jarr_get_data, jarr_ptr, )
+JARR_TEMPLATE_T_t(PRIVATE_JARR_GET_DATA)
+#define jarr_get_data(jarr_ptr) JARR_GENERIC(jarr_get_data, jarr_ptr, )
 
 #define PRIVATE_JARR_GET_SIZE(T)                                                        \
 static ALWAYS_INLINE size_t private_jarr_get_size_##T(T *jarr) { return jarr->size; }
 
-JARR_DEFINE_F_T(PRIVATE_JARR_GET_SIZE)
-#define jarr_get_size(jarr_ptr) JARR_DEFINE_G(jarr_get_size, jarr_ptr, )
+JARR_TEMPLATE_T(PRIVATE_JARR_GET_SIZE)
+#define jarr_get_size(jarr_ptr) JARR_GENERIC(jarr_get_size, jarr_ptr, )
 
 #define PRIVATE_JARR_GET_CAPACITY(T)                                                           \
 static ALWAYS_INLINE size_t private_jarr_get_capacity_##T(T *jarr) { return jarr->capacity; }
 
-JARR_DEFINE_F_T(PRIVATE_JARR_GET_CAPACITY)
-#define jarr_get_capacity(jarr_ptr) JARR_DEFINE_G(jarr_get_capacity, jarr_ptr, )
+JARR_TEMPLATE_T(PRIVATE_JARR_GET_CAPACITY)
+#define jarr_get_capacity(jarr_ptr) JARR_GENERIC(jarr_get_capacity, jarr_ptr, )
 
 #define PRIVATE_JARR_INIT(T)                                   \
 static ALWAYS_INLINE void jarr_init_##T(T *jarr)               \
@@ -312,8 +232,8 @@ static ALWAYS_INLINE void jarr_init_##T(T *jarr)               \
 	jarr->data = NULL, jarr->capacity = 0, jarr->size = 0; \
 }                                                              \
 
-JARR_DEFINE_F_T(PRIVATE_JARR_INIT)
-#define jarr_init(jarr_ptr) JARR_DEFINE_G(jarr_init, jarr_ptr, )
+JARR_TEMPLATE_T(PRIVATE_JARR_INIT)
+#define jarr_init(jarr_ptr) JARR_GENERIC(jarr_init, jarr_ptr, )
 
 #define JARR_INIT(jarr)                                                          \
 (void)(((jarr)->capacity) = 0, ((jarr)->size) = 0, ((((jarr)->data) = NULL), 0))
@@ -336,8 +256,8 @@ static ALWAYS_INLINE void jarr_delete_##T(T *jarr)               \
 	if (jarr->data) free((jarr)->data), jarr_init_##T(jarr); \
 }
 
-JARR_DEFINE_F_T(PRIVATE_JARR_DELETE)
-#define jarr_delete(jarr_ptr) JARR_DEFINE_G(jarr_delete, jarr_ptr, )
+JARR_TEMPLATE_T(PRIVATE_JARR_DELETE)
+#define jarr_delete(jarr_ptr) JARR_GENERIC(jarr_delete, jarr_ptr, )
 
 #define PRIVATE_JARR_DELETE_NOCHECK(T)                     \
 static ALWAYS_INLINE void jarr_delete_nocheck_##T(T *jarr) \
@@ -345,11 +265,8 @@ static ALWAYS_INLINE void jarr_delete_nocheck_##T(T *jarr) \
 	free(jarr->data), jarr_init_##T(jarr);             \
 }
 
-JARR_DEFINE_F_T(PRIVATE_JARR_DELETE_NOCHECK)
-#define jarr_delete_nocheck(jarr_ptr) JARR_DEFINE_G(jarr_delete_nocheck, jarr_ptr, )
-
-#define JARR_DELETE(jarr) private_jarr_delete(jarr, JARR_NOCHECK_OFF)
-#define JARR_DELETE_NOCHECK(jarr) private_jarr_delete(jarr, JARR_NOCHECK)
+JARR_TEMPLATE_T(PRIVATE_JARR_DELETE_NOCHECK)
+#define jarr_delete_nocheck(jarr_ptr) JARR_GENERIC(jarr_delete_nocheck, jarr_ptr, )
 
 #define PRIVATE_JARR_NEW_ALLOC(T)                                                               \
 static ALWAYS_INLINE int jarr_new_alloc_##T(T *jarr, size_t cap)                                \
@@ -358,24 +275,8 @@ static ALWAYS_INLINE int jarr_new_alloc_##T(T *jarr, size_t cap)                
 	return (likely((jarr->data) = malloc(jarr->capacity * sizeof(*(jarr->data))))) ? 1 : 0; \
 }
 
-JARR_DEFINE_F_T(PRIVATE_JARR_NEW_ALLOC)
-#define jarr_new_alloc(jarr_ptr, cap) JARR_DEFINE_G(jarr_ptr, jarr_new_alloc, cap)
-
-static ALWAYS_INLINE int private_jarr_tmp_realloc(void **jarr, size_t size)
-{
-	void *RESTRICT tmp;
-	return (likely(tmp = realloc(*jarr, size))) ? (*jarr = tmp, 1) : 0;
-}
-
-#define private_jarr_reserve(jarr, cap, pow2_, nocheck_)                                                                               \
-(                                                                                                                                      \
-	(((cap) > ((jarr)->capacity)) nocheck_)                                                                                        \
-	&& (likely((private_jarr_tmp_realloc((void **)&((jarr)->data), JARR_T_SIZE(jarr) * ((pow2_) ? JARR_NEAR_POW2(cap) : (cap)))))) \
-	&& ((((jarr)->capacity) = (cap)),                                                                                              \
-	1)                                                                                                                             \
-)
-
-/* static ALWAYS_INLINE int private_jarr_reserve_T(jarray_int_t *jarr, size_t cap) */
+JARR_TEMPLATE_T(PRIVATE_JARR_NEW_ALLOC)
+#define jarr_new_alloc(jarr_ptr, cap) JARR_GENERIC(jarr_ptr, jarr_new_alloc, cap)
 
 #define PRIVATE_JARR_RESERVE(T)                                                                                               \
 static ALWAYS_INLINE int jarr_reserve_##T(T *jarr, size_t cap)                                                                \
@@ -391,11 +292,11 @@ static ALWAYS_INLINE int jarr_reserve_nocheck_##T(T *jarr, size_t cap)          
 	return ((tmp = (realloc(jarr->data, sizeof(*jarr->data) * cap))) ? (jarr = tmp, 1) : 0); \
 }
 
-JARR_DEFINE_F_T(PRIVATE_JARR_RESERVE)
-#define jarr_reserve(jarr_ptr, cap) JARR_DEFINE_G(jarr_reserve, jarr_ptr, cap)
+JARR_TEMPLATE_T(PRIVATE_JARR_RESERVE)
+#define jarr_reserve(jarr_ptr, cap) JARR_GENERIC(jarr_reserve, jarr_ptr, cap)
 
-JARR_DEFINE_F_T(PRIVATE_JARR_RESERVE_NOCHECK)
-#define jarr_reserve_nocheck(jarr_ptr, cap) JARR_DEFINE_G(jarr_reserve_nocheck, jarr_ptr, cap)
+JARR_TEMPLATE_T(PRIVATE_JARR_RESERVE_NOCHECK)
+#define jarr_reserve_nocheck(jarr_ptr, cap) JARR_GENERIC(jarr_reserve_nocheck, jarr_ptr, cap)
 
 #define jarr_reserve_2x(jarr) jarr_reserve_nocheck(jarr, (2 * ((jarr)->capacity)))
 #define jarr_reserve_4x(jarr) jarr_reserve_nocheck(jarr, (4 * ((jarr)->capacity)))
@@ -412,58 +313,29 @@ static ALWAYS_INLINE int jarr_push_back_##T(T *jarr, t src)                     
 		: (jarr->data[jarr->size++] = src, 1);                                                            \
 }
 
-JARR_DEFINE_F_T_t(PRIVATE_JARR_PUSH_BACK)
-#define jarr_push_back(jarr_ptr, value) JARR_DEFINE_G(jarr_push_back, jarr_ptr, value)
+JARR_TEMPLATE_T_t(PRIVATE_JARR_PUSH_BACK)
+#define jarr_push_back(jarr_ptr, value) JARR_GENERIC(jarr_push_back, jarr_ptr, value)
 
-#define JARR_PUSH_BACK(jarr, src) private_jarr_push_back(jarr, src)
-#define JARR_PUSH_BACK_NOALLOC(jarr, src) \
-	(((jarr)->data)[((jarr)->size)++] = src)
+#define jarr_shrink(jarr_ptr) JARR_GENERIC(jarr_shrink, jarr_ptr, )
 
+#define jarr_new_auto(jarr_ptr, ...) JARR_GENERIC(jarr_new, jarr_ptr, __VA_ARGS__)
+#define jarr_new(jarr_ptr, jarr_size, ...) JARR_GENERIC(jarr_new, jarr_ptr, jarr_size)
 
-#define private_jarr_shrink(jarr, nocheck_)                                                                     \
-(                                                                                                               \
-	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                                       \
-	&& ((likely(private_jarr_tmp_realloc((void **)&((jarr)->data), (((jarr)->size) * JARR_T_SIZE(jarr)))))) \
-	&& ((((jarr)->capacity) = ((jarr)->size)),                                                              \
-	1)                                                                                                      \
-)
+#define jarr_cat(jarr_ptr, ...) JARR_GENERIC(jarr_cat, jarr_ptr, PP_NARG(__VA_ARGS__), ...)
+#define jarr_cat_noalloc(jarr_ptr, ...) JARR_GENERIC(jarr_cat_noalloc, jarr_ptr, PP_NARG(__VA_ARGS__), ...)
 
-#ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define jarr_shrink(jarr) private_jarr_shrink(jarr, )
-	#define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, JARR_IGNORE_IF)
-#else
-	#define jarr_shrink(jarr) private_jarr_shrink(jarr, )
-	#define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, JARR_IGNORE_IF)
-#endif
-
-
-#define jarr_new_auto(jarr_ptr, ...) JARR_DEFINE_G(jarr_new, jarr_ptr, __VA_ARGS__)
-#define jarr_new(jarr_ptr, jarr_size, ...) JARR_DEFINE_G(jarr_new, jarr_ptr, jarr_size)
-
-#define jarr_cat(jarr_ptr, ...) \
-	((jarr_ptr)->dest == capacity) JARR_DEFINE_G(jarr_cat, jarr_ptr, PP_NARG(__VA_ARGS__), ...)
-
-#define jarr_cat_noalloc(jarr_ptr, ...) JARR_DEFINE_G(jarr_cat, jarr_ptr, PP_NARG(__VA_ARGS__), ...)
-
-#define jarr_append(jarr_ptr, src_arr) JARR_DEFINE_G(jarr_append, jarr_ptr, src_arr)
+#define jarr_append(jarr_ptr, src_arr) JARR_GENERIC(jarr_append, jarr_ptr, src_arr)
 
 #define jarr_pop_back(jarr) --((jarr)->size);
 
-#define private_jarr_cmp(jarr_dest, jarr_src, nocheck_)                                                                                \
-	((((jarr_dest)->size) != ((jarr_src)->size) nocheck_) || memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
+#define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
+#define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 
-#define jar_cmp(jarr_dest, jarr_src) private_jarr_cmp(jarr_dest, jarr_src, JARR_FORCE_CMP_OFF)
+#define jarr_foreach_index(elem, jarr) for (size_t elem = 0, size = ((jarr)->size); elem < size; ++elem)
 
-#define jarr_cmp_nocheck(jarr_dest, jarr_src) private_jarr_cmp(jarr_dest, jarr_src, JARR_FORCE_CMP)
+#define jarr_foreach(elem, jarr) for (typeof(*((jarr)->data)) *RESTRICT elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
 
-#define jarr_foreach_index(elem, jarr)                                   \
-	for (size_t elem = 0, size = ((jarr)->size); elem < size; ++elem)
-
-#define jarr_foreach(elem, jarr)                                                                                                           \
-	for (typeof(*((jarr)->data)) *RESTRICT elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
-
-#define jarr_foreach_arr(elem, arr)                                                                                                        \
-	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&((arr)[(sizeof(arr)/sizeof(arr[0])) - 1])); elem < end; ++elem)
+#define jarr_foreach_arr(elem, arr) for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&((arr)[(sizeof(arr)/sizeof(arr[0])) - 1])); elem < end; ++elem)
 
 #define jarr_end(jarr) (*(((jarr)->data) + ((jarr)->size) - 1))
 
@@ -473,6 +345,7 @@ JARR_DEFINE_F_T_t(PRIVATE_JARR_PUSH_BACK)
 
 #define JARR_SAME_TYPE(x, y) _Generic((x), \
 	typeof(y): 1,                      \
-	default: 0)
+	default: 0                         \
+	)
 
 #endif

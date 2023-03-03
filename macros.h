@@ -33,3 +33,17 @@
   #define likely(x) (x)
   #define unlikely(x) (x)
 #endif
+
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_STATIC_ASSERT__) && defined(_Static_assert)
+	#define JARR_ASSERT(expr, msg) _Static_assert(expr, msg)
+#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_STATIC_ASSERT__)
+	#define JARR_ASSERT(expr, msg) static_assert(expr, msg)
+#else
+	#define JARR_ASSERT(expr, msg)
+#endif
+
+#define JARR_T_SIZE(var) (sizeof(*((var)->data)))
+#define JARR_ARR_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
+#define jarr_sizeof_arr(arr) (JARR_ARR_SIZE(arr))
+
+#define MAX(a,b) ((a)>(b)?(a):(b))
