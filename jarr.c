@@ -34,4 +34,9 @@ int jarr_cat_##T(T *jarr, size_t size, ...)                                     
 
 JARR_DEFINE_F_T_t(PRIVATE_JARR_CAT)
 
-int main(){}
+#ifdef DEUG
+int main()
+{
+
+}
+#endif
