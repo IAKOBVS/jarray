@@ -290,15 +290,9 @@ static ALWAYS_INLINE void debug_jarr_push_back(jarray_int_t *jarr, int src)
 ;}
 #endif
 
-#ifdef JARR_USING_STATEMENT_EXPRESSIONS
-	#define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src)
-	#define jarr_push_back_noalloc(jarr, src) \
-		((jarr)->data)[((jarr)->size)++] = src
-#else
-	#define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src)
-	#define jarr_push_back_noalloc(jarr, src) \
-		((jarr)->data)[((jarr)->size)++] = src
-#endif
+#define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src)
+#define jarr_push_back_noalloc(jarr, src) \
+	((jarr)->data)[((jarr)->size)++] = src
 
 #ifdef JARR_DEBUG
 static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src)
@@ -469,7 +463,7 @@ static ALWAYS_INLINE void debug_jarr_cat(jarray_int_t *jarr, size_t size_)
 					1)                                                                        \
 				:                                                                                 \
 					((PP_NARG(__VA_ARGS__) == 1)                                              \
-					jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__)),              \
+					&& jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__)),           \
 					1))                                                                       \
 		:                                                                                                 \
 			((PP_NARG(__VA_ARGS__) > 1)                                                               \
@@ -479,7 +473,7 @@ static ALWAYS_INLINE void debug_jarr_cat(jarray_int_t *jarr, size_t size_)
 					1)                                                                        \
 				:                                                                                 \
 					((PP_NARG(__VA_ARGS__) == 1)                                              \
-					jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__)),              \
+					&& jarr_push_back_noalloc(jarr, PP_GET_FIRST_ARG(__VA_ARGS__)),           \
 					1))                                                                       \
 )
 
