@@ -255,6 +255,22 @@ F(jarray_ushort_t, unsigned short)         \
 F(jarray_char_t, char)                     \
 F(jarray_uchar_t, unsigned char)           \
 
+#define JARR_DEFINE_F_T_t_ptr(F)           \
+F(jarray_int_t, int*)                       \
+F(jarray_uint_t, unsigned int*)             \
+F(jarray_long_t, long*)                     \
+F(jarray_long_long_t, long long*)           \
+F(jarray_ulong_t, unsigned long*)           \
+F(jarray_ulong_long_t, unsigned long long*) \
+F(jarray_size_t_t, size_t*)                 \
+F(jarray_double_t, double*)                 \
+F(jarray_long_double_t, long double*)       \
+F(jarray_float_t, float*)                   \
+F(jarray_short_t, short*)                   \
+F(jarray_ushort_t, unsigned short*)         \
+F(jarray_char_t, char*)                     \
+F(jarray_uchar_t, unsigned char*)           \
+
 #define JARR_DEFINE_F_T(F) \
 F(jarray_int_t)            \
 F(jarray_uint_t)           \
@@ -411,31 +427,24 @@ JARR_DEFINE_F_T(PRIVATE_JARR_RESERVE)
 JARR_DEFINE_F_T(PRIVATE_JARR_RESERVE_NOCHECK)
 #define jarr_reserve_nocheck(jarr_ptr, cap) JARR_DEFINE_G(jarr_reserve_nocheck, jarr_ptr, cap)
 
-#define JARR_RESERVE(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2_OFF, JARR_NOCHECK_OFF)
-#define JARR_RESERVE_ALIGN(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2, JARR_NOCHECK_OFF)
+#define jarr_reserve_2x(jarr) jarr_reserve_nocheck(jarr, (2 * ((jarr)->capacity)))
+#define jarr_reserve_4x(jarr) jarr_reserve_nocheck(jarr, (4 * ((jarr)->capacity)))
+#define jarr_reserve_8x(jarr) jarr_reserve_nocheck(jarr, (8 * ((jarr)->capacity)))
+#define jarr_reserve_16x(jarr) jarr_reserve_nocheck(jarr, (16 * ((jarr)->capacity)))
+#define jarr_reserve_32x(jarr) jarr_reserve_nocheck(jarr, (32 * ((jarr)->capacity)))
+#define jarr_reserve_64x(jarr) jarr_reserve_nocheck(jarr, (64 * ((jarr)->capacity)))
 
-#define JARR_RESERVE_NOCHECK(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2_OFF, JARR_NOCHECK)
-#define JARR_RESERVE_NOCHECK_ALIGN(jarr, cap) private_jarr_reserve(jarr, cap, JARR_POW2, JARR_NOCHECK)
-
-#define private_jarr_reserve_x(jarr, multiplier) private_jarr_reserve(jarr, (((jarr)->capacity) * multiplier), 0, JARR_COMMENT)
-#define jarr_reserve_2x(jarr) private_jarr_reserve_x(jarr, 2)
-#define jarr_reserve_4x(jarr) private_jarr_reserve_x(jarr, 4)
-#define jarr_reserve_8x(jarr) private_jarr_reserve_x(jarr, 8)
-#define jarr_reserve_16x(jarr) private_jarr_reserve_x(jarr, 16)
-#define jarr_reserve_32x(jarr) private_jarr_reserve_x(jarr, 32)
-#define jarr_reserve_64x(jarr) private_jarr_reserve_x(jarr, 64)
-
-#define private_jarr_push_back(jarr, src)                                                                      \
-(                                                                                                              \
-	(unlikely(((jarr)->capacity) == ((jarr)->size)))                                                       \
-		?                                                                                              \
-			((private_jarr_reserve(jarr, ((jarr)->capacity) * 2, JARR_POW2_OFF, JARR_NOCHECK_OFF)) \
-			&& ((((jarr)->data)[((jarr)->size)++] = src),                                          \
-			1))                                                                                    \
-		:                                                                                              \
-			(((jarr)->data)[((jarr)->size)++] = src,                                               \
-			1)                                                                                     \
-)
+/* #define private_jarr_push_back(jarr, src)                                                                      \ */
+/* (                                                                                                              \ */
+/* 	(unlikely(((jarr)->capacity) == ((jarr)->size)))                                                       \ */
+/* 		?                                                                                              \ */
+/* 			((private_jarr_reserve(jarr, ((jarr)->capacity) * 2, JARR_POW2_OFF, JARR_NOCHECK_OFF)) \ */
+/* 			&& ((((jarr)->data)[((jarr)->size)++] = src),                                          \ */
+/* 			1))                                                                                    \ */
+/* 		:                                                                                              \ */
+/* 			(((jarr)->data)[((jarr)->size)++] = src,                                               \ */
+/* 			1)                                                                                     \ */
+/* ) */
 
 #define PRIVATE_JARR_PUSH_BACK(T, t)                                                                              \
 static ALWAYS_INLINE int jarr_push_back_##T(T *jarr, t src)                                                       \
@@ -494,29 +503,29 @@ JARR_DEFINE_F_T_t(PRIVATE_JARR_PUSH_BACK)
 	#define jarr_shrink_nocheck(jarr) private_jarr_shrink(jarr, JARR_IGNORE_IF)
 #endif
 
-static ALWAYS_INLINE void private_jarr_grow_while_size_gt_cap(size_t size, size_t *cap)
-{
-	do { (*cap) *= 2; } while (size > *cap);
-}
+/* static ALWAYS_INLINE void private_jarr_grow_while_size_gt_cap(size_t size, size_t *cap) */
+/* { */
+/* 	do { (*cap) *= 2; } while (size > *cap); */
+/* } */
 
 
-#define private_jarr_append(jarr, src_arr, src_arr_size, nocheck_)                                                        \
-(                                                                                                                         \
-	((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity))                                                          \
-		?                                                                                                         \
-			(((private_jarr_grow_while_size_gt_cap((((jarr)->size) + (src_arr_size)), &((jarr)->capacity))),  \
-			(likely(private_jarr_reserve(jarr, (((jarr)->size) + (src_arr_size)), JARR_POW2, JARR_NOCHECK)))) \
-			&& (memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)),       \
-			((jarr)->size) += (src_arr_size)),                                                                \
-			1)                                                                                                \
-		:                                                                                                         \
-			(memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)),          \
-			((jarr)->size) += (src_arr_size),                                                                 \
-			1)                                                                                                \
-)
+/* #define private_jarr_append(jarr, src_arr, src_arr_size, nocheck_)                                                        \ */
+/* (                                                                                                                         \ */
+/* 	((((jarr)->size) + (src_arr_size)) > ((jarr)->capacity))                                                          \ */
+/* 		?                                                                                                         \ */
+/* 			(((private_jarr_grow_while_size_gt_cap((((jarr)->size) + (src_arr_size)), &((jarr)->capacity))),  \ */
+/* 			(likely(private_jarr_reserve(jarr, (((jarr)->size) + (src_arr_size)), JARR_POW2, JARR_NOCHECK)))) \ */
+/* 			&& (memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)),       \ */
+/* 			((jarr)->size) += (src_arr_size)),                                                                \ */
+/* 			1)                                                                                                \ */
+/* 		:                                                                                                         \ */
+/* 			(memcpy(((jarr)->data) + ((jarr)->size), (src_arr), (src_arr_size) * JARR_T_SIZE(jarr)),          \ */
+/* 			((jarr)->size) += (src_arr_size),                                                                 \ */
+/* 			1)                                                                                                \ */
+/* ) */
 
-#define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append(jarr, private_jarr_arr_get_data(src_arr), private_jarr_arr_get_size(src_arr, src_arr_size), JARR_NOALLOC_OFF)
-#define jarr_append_noalloc(jarr, src_arr, src_arr_size) private_jarr_append(jarr, private_jarr_arr_get_data(src_arr), private_jarr_arr_get_size(src_arr, src_arr_size), JARR_NOALLOC)
+/* #define jarr_append(jarr, src_arr, src_arr_size) private_jarr_append(jarr, private_jarr_arr_get_data(src_arr), private_jarr_arr_get_size(src_arr, src_arr_size), JARR_NOALLOC_OFF) */
+/* #define jarr_append_noalloc(jarr, src_arr, src_arr_size) private_jarr_append(jarr, private_jarr_arr_get_data(src_arr), private_jarr_arr_get_size(src_arr, src_arr_size), JARR_NOALLOC) */
 
 /* #define PRIVATE_JARR_CAT(jarr, size_, noalloc_, ...)                                                              \ */
 /* (                                                                                                                 \ */
@@ -548,12 +557,15 @@ static ALWAYS_INLINE void private_jarr_grow_while_size_gt_cap(size_t size, size_
 /* #define JARR_CAT(jarr, ...) PRIVATE_JARR_CAT(jarr, PP_NARG(__VA_ARGS__), JARR_NOALLOC_OFF, __VA_ARGS__) */
 /* #define JARR_CAT_noalloc(jarr, ...) PRIVATE_JARR_CAT(jarr, PP_NARG(__VA_ARGS__), JARR_NOALLOC, __VA_ARGS__) */
 
-#define jarr_new(jarr_ptr, ...) JARR_DEFINE_G(jarr_new, jarr_ptr, __VA_ARGS__)
+#define jarr_new_auto(jarr_ptr, ...) JARR_DEFINE_G(jarr_new, jarr_ptr, __VA_ARGS__)
+#define jarr_new(jarr_ptr, jarr_size, ...) JARR_DEFINE_G(jarr_new, jarr_ptr, jarr_size)
 
 #define jarr_cat(jarr_ptr, ...) \
 	((jarr_ptr)->dest == capacity) JARR_DEFINE_G(jarr_cat, jarr_ptr, PP_NARG(__VA_ARGS__), ...)
 
 #define jarr_cat_noalloc(jarr_ptr, ...) JARR_DEFINE_G(jarr_cat, jarr_ptr, PP_NARG(__VA_ARGS__), ...)
+
+#define jarr_append(jarr_ptr, src_arr) JARR_DEFINE_G(jarr_append, jarr_ptr, src_arr)
 
 #define jarr_pop_back(jarr) --((jarr)->size);
 
