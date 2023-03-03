@@ -88,8 +88,10 @@
 /* 	va_end(ap); */
 /* } */
 
-#ifdef JARR_DEBUG
+/* #ifdef JARR_DEBUG */
 int main ()
 {
+	jarray_int_t t;
+	jarr_new(&t, 1, 2);
 }
-#endif
+/* #endif */
