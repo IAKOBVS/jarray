@@ -88,9 +88,8 @@
 /* 	va_end(ap); */
 /* } */
 
+int f() { return 1; }
+
 int main ()
 {
-	jarray_int_t t;
-	jarr_new(&t, 1, 99);
-	jarr_cat(&t, 55, 44, 33, 22);
 }

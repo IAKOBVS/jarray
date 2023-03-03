@@ -192,10 +192,10 @@ JARR_STRUCT(jarray_uchar_t, unsigned char);
    i.e., it asserts that jarray has enough capacity.
 */
 
-#define private_jarr_delete(jarr, nocheck_)                                      \
-(                                                                                \
-	(((jarr)->data) nocheck_) && (void)(free((jarr)->data), jarr_init(jarr), \
-	0)                                                                       \
+#define private_jarr_delete(jarr, nocheck_)                                \
+(void)(                                                                    \
+	(((jarr)->data) nocheck_) && (free((jarr)->data), jarr_init(jarr), \
+	0)                                                                 \
 )
 
 #define jarr_delete(jarr) private_jarr_delete(jarr, JARR_NOCHECK_OFF)
@@ -225,10 +225,10 @@ static ALWAYS_INLINE int dummy_jarr_new_alloc(jarray_int_t jarr)
 }
 #endif
 
-static ALWAYS_INLINE int private_jarr_tmp_realloc(void *jarr, size_t size)
+static ALWAYS_INLINE int private_jarr_tmp_realloc(void **jarr, size_t size)
 {
 	void *RESTRICT tmp;
-	return (likely(tmp = realloc(jarr, size))) ? (jarr = tmp, 1) : 0;
+	return (likely(tmp = realloc(*jarr, size))) ? (*jarr = tmp, 1) : 0;
 }
 
 #ifdef JARR_DEBUG
@@ -236,10 +236,10 @@ static ALWAYS_INLINE void debug_jarr_reserve(jarray_int_t *jarr, size_t cap)
 {
 #endif
 
-#define private_jarr_reserve(jarr, cap, pow2_, nocheck_)                                                         \
+#define private_jarr_reserve(jarr, cap, pow2_, nocheck_)                                                                     \
 (                                                                                                                            \
 	(((cap) > ((jarr)->capacity)) nocheck_)                                                                              \
-	&& (likely((private_jarr_tmp_realloc(((jarr)->data), JARR_T_SIZE(jarr) * ((pow2_) ? JARR_NEAR_POW2(cap) : (cap)))))) \
+	&& (likely((private_jarr_tmp_realloc((void **)&((jarr)->data), JARR_T_SIZE(jarr) * ((pow2_) ? JARR_NEAR_POW2(cap) : (cap)))))) \
 	&& (((jarr)->capacity) = (cap)),                                                                                     \
 	1                                                                                                                    \
 )
@@ -292,7 +292,7 @@ static ALWAYS_INLINE void debug_jarr_push_back(jarray_int_t *jarr, int src)
 
 #define jarr_push_back(jarr, src) private_jarr_push_back(jarr, src)
 #define jarr_push_back_noalloc(jarr, src) \
-	((jarr)->data)[((jarr)->size)++] = src
+	(((jarr)->data)[((jarr)->size)++] = src)
 
 #ifdef JARR_DEBUG
 static ALWAYS_INLINE int dummy_jarr_push_back(jarray_int_t jarr, int src)
@@ -352,7 +352,7 @@ static ALWAYS_INLINE void debug_jarr_shrink(jarray_int_t *jarr)
 #define private_jarr_shrink(jarr, nocheck_)                                                           \
 (                                                                                                     \
 	((((jarr)->capacity) != ((jarr)->size)) nocheck_)                                             \
-	&& ((likely(private_jarr_tmp_realloc(((jarr)->data), (((jarr)->size) * JARR_T_SIZE(jarr)))))) \
+	&& ((likely(private_jarr_tmp_realloc((void **)&((jarr)->data), (((jarr)->size) * JARR_T_SIZE(jarr)))))) \
 	&& (((jarr)->capacity) = ((jarr)->size)),                                                     \
 	1                                                                                             \
 )
@@ -455,8 +455,8 @@ static ALWAYS_INLINE void debug_jarr_cat(jarray_int_t *jarr, size_t size_)
 	((((jarr)->size) + (size_) > ((jarr)->capacity)) noalloc_)                                                \
 		?                                                                                                 \
 			(((private_jarr_grow_while_size_gt_cap((((jarr)->size) + (size_)), &((jarr)->capacity))), \
-			jarr_reserve_nocheck(jarr, ((jarr)->capacity))),                                          \
-			(PP_NARG(__VA_ARGS__) > 1)                                                                \
+			jarr_reserve_nocheck(jarr, ((jarr)->capacity)))                                           \
+			&& (PP_NARG(__VA_ARGS__) > 1)                                                             \
 				?                                                                                 \
 					(PP_LOOP_FROM(((jarr)->data), 0, __VA_ARGS__),                            \
 					((jarr)->size) = PP_NARG(__VA_ARGS__),                                    \
@@ -504,7 +504,7 @@ static ALWAYS_INLINE int debug_arr_cat(jarray_int_t *jarr, size_t size_)
 	for (size_t elem = 0, size = ((jarr)->size); elem < size; ++elem)
 
 #define jarr_foreach(elem, jarr)                                                                                                           \
-	for (typeof(*((jarr)->data)) RESTRICT *elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
+	for (typeof(*((jarr)->data)) *RESTRICT elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); elem < end; ++elem)
 
 #define jarr_foreach_arr(elem, arr)                                                                                                        \
 	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&((arr)[(sizeof(arr)/sizeof(arr[0])) - 1])); elem < end; ++elem)
@@ -516,7 +516,7 @@ static ALWAYS_INLINE int debug_arr_cat(jarray_int_t *jarr, size_t size_)
 #define jarr_auto(jarr) typeof((*(jarr)))
 
 #define JARR_SAME_TYPE(x, y) _Generic((x), \
-	typeof(y): 1,                       \
+	typeof(y): 1,                      \
 	default: 0)
 
 #endif
