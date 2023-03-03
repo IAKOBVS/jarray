@@ -39,12 +39,12 @@
 	#define JARR_NEAR_POW2_32(x) \
 		((x) ? 1 : 1UL << (sizeof((x)) * 8 - __builtin_clz((x) - 1)))
 
-	static ALWAYS_INLINE unsigned int private_jarr_near_pow_32(unsigned int x) { return JARR_NEAR_POW2_32(x); }
+	/* static ALWAYS_INLINE unsigned int private_jarr_near_pow_32(unsigned int x) { return JARR_NEAR_POW2_32(x); } */
 
 	#define JARR_NEAR_POW2_64(x) \
 		((x) ? 1 : 1ULL << (sizeof((x)) * 8 - __builtin_clzll((x) - 1)))
 
-	static ALWAYS_INLINE uint64_t private_jarr_near_pow_64(unsigned int x) { return JARR_NEAR_POW2_64(x); }
+	/* static ALWAYS_INLINE uint64_t private_jarr_near_pow_64(unsigned int x) { return JARR_NEAR_POW2_64(x); } */
 #else
 	#define JARR_NEAR_POW2_32(x) \
 		(x--,                \
@@ -54,7 +54,7 @@
 		x |= x >> 8,         \
 		x |= x >> 16,        \
 		++x)
-	static ALWAYS_INLINE unsigned int private_jarr_near_pow_32(unsigned int x) { return JARR_NEAR_POW2_32(x); }
+	/* static ALWAYS_INLINE unsigned int private_jarr_near_pow_32(unsigned int x) { return JARR_NEAR_POW2_32(x); } */
 
 	#define JARR_NEAR_POW2_64(x) \
 		(x--,                \
@@ -65,7 +65,7 @@
 		x |= x >> 16,        \
 		x |= x >> 32,        \
 		++x)
-	static ALWAYS_INLINE unsigned int private_jarr_near_pow_64(unsigned int x) { return JARR_NEAR_POW2_64(x); }
+	/* static ALWAYS_INLINE unsigned int private_jarr_near_pow_64(unsigned int x) { return JARR_NEAR_POW2_64(x); } */
 #endif
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
@@ -254,22 +254,6 @@ F(jarray_short_t, short)                   \
 F(jarray_ushort_t, unsigned short)         \
 F(jarray_char_t, char)                     \
 F(jarray_uchar_t, unsigned char)           \
-
-#define JARR_DEFINE_F_T_t_ptr(F)           \
-F(jarray_int_t, int*)                       \
-F(jarray_uint_t, unsigned int*)             \
-F(jarray_long_t, long*)                     \
-F(jarray_long_long_t, long long*)           \
-F(jarray_ulong_t, unsigned long*)           \
-F(jarray_ulong_long_t, unsigned long long*) \
-F(jarray_size_t_t, size_t*)                 \
-F(jarray_double_t, double*)                 \
-F(jarray_long_double_t, long double*)       \
-F(jarray_float_t, float*)                   \
-F(jarray_short_t, short*)                   \
-F(jarray_ushort_t, unsigned short*)         \
-F(jarray_char_t, char*)                     \
-F(jarray_uchar_t, unsigned char*)           \
 
 #define JARR_DEFINE_F_T(F) \
 F(jarray_int_t)            \

@@ -40,12 +40,12 @@ ERROR:                                                                          
 JARR_DEFINE_F_T_t(PRIVATE_JARR_CAT)
 
 #define PRIVATE_JARR_APPEND(T, t)                                                                 \
-int jarr_append_##T(T *jarr, t src_arr, size_t src_arr_size)                                      \
+int jarr_append_##T(T *jarr, t *src_arr, size_t src_arr_size)                                      \
 {                                                                                                 \
 	if (jarr->size + src_arr_size > jarr->capacity) {                                         \
 		do { jarr->capacity *= 2; } while (jarr->size + src_arr_size > jarr->capacity);   \
-		t tmp;                                                                            \
-		if (unlikely(!(tmp = realloc(jarr->data, jarr->capacity * sizeof(*jarr->data))))) \
+		t* tmp;                                                                            \
+		if (unlikely(!(tmp = realloc(jarr->data, jarr->capacity * sizeof(*src_arr))))) \
 			goto ERROR;                                                               \
 	}                                                                                         \
 	memcpy(jarr->data, src_arr, src_arr_size * sizeof(*src_arr));                             \
@@ -54,7 +54,7 @@ ERROR:                                                                          
 	return (JARR_INIT(jarr), 0);                                                              \
 }
 
-JARR_DEFINE_F_T_t_ptr(PRIVATE_JARR_APPEND)
+JARR_DEFINE_F_T_t(PRIVATE_JARR_APPEND)
 
 #define DEBUG
 #ifdef DEBUG
