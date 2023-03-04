@@ -210,11 +210,17 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		size_t size;                      \
 	} name
 
-#define jarr_init(jarr_ptr)                                                                      \
-	(void)(((jarr_ptr)->capacity) = 0, ((jarr_ptr)->size) = 0, ((jarr_ptr)->data) = NULL, 0)
+#define jarr_init(jarr_ptr)         \
+(void)(                             \
+	((jarr_ptr)->capacity) = 0, \
+	((jarr_ptr)->size) = 0,     \
+	((jarr_ptr)->data) = NULL,  \
+0)
 
-#define jarr_delete_nocheck(jarr_ptr)                          \
-	(void)(free((jarr_ptr)->data), jarr_init(jarr_ptr), 0)
+#define jarr_delete_nocheck(jarr_ptr) \
+(void)(free((jarr_ptr)->data),        \
+	jarr_init(jarr_ptr),          \
+0)
 
 #define jarr_delete(jarr_ptr)                                   \
 	(void)(((jarr)->data) && jarr_delete_nocheck(jarr_ptr))
