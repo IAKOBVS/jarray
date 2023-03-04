@@ -2,7 +2,7 @@
 #define JARR_H_DEF
 
 /*
-   you shall check non-nonalloc macros for non-zero value,
+   you shall check nonnoalloc macros for non-zero value
    and decide how to error-handle malloc or realloc failures.
 
    _nocheck macros will not error check user input,
