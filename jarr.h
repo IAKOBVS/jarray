@@ -119,6 +119,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_reserve(jarr_ptr, cap) (((cap) > ((jarr_ptr)->capacity)) ? (jarr_reserve_nocheck(jarr_ptr, cap)) : 1)
 
 #define define_jarr_reserve_x(jarr_ptr, multiplier) jarr_reserve_nocheck(jarr_ptr, (multiplier * ((jarr_ptr)->capacity)))
+
 #define jarr_reserve_2x(jarr_ptr) define_jarr_reserve_x(jarr_ptr, 2)
 #define jarr_reserve_4x(jarr_ptr) define_jarr_reserve_x(jarr_ptr, 4)
 #define jarr_reserve_8x(jarr_ptr) define_jarr_reserve_x(jarr_ptr, 8)
@@ -188,9 +189,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 )
 
 #define define_cat(F, jarr_ptr, ...) F(jarr_ptr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-#define jarr_cat(jarr_ptr, ...) define_cat(private_jarr_cat)
-#define jarr_cat_noalloc(jarr_ptr, ...) define_cat(private_jarr_cat_noalloc)
-#define jarr_cat_nocheck(jarr_ptr, ...) define_cat(private_jarr_cat_nocheck)
+
+#define jarr_cat(jarr_ptr, ...) define_cat(private_jarr_cat, jarr_ptr, __VA_ARGS__)
+#define jarr_cat_noalloc(jarr_ptr, ...) define_cat(private_jarr_cat_noalloc, jarr_ptr, __VA_ARGS__)
+#define jarr_cat_nocheck(jarr_ptr, ...) define_cat(private_jarr_cat_nocheck, jarr_ptr, __VA_ARGS__)
 
 #define private_jarr_new(jarr_ptr, cap, ...)                                                      \
 (                                                                                                 \
