@@ -39,9 +39,9 @@
 #define JARR_MIN_CAP 8
 
 #if defined(__GNUC__) || defined(__clang__)
-	#define JARR_NEAR_POW2_32(x) \
+	#define JARR_NEAR_POW2_32(x)                                          \
 		((x) ? 1 : 1UL << (sizeof((x)) * 8 - __builtin_clz((x) - 1)))
-	#define JARR_NEAR_POW2_64(x) \
+	#define JARR_NEAR_POW2_64(x)                                             \
 		((x) ? 1 : 1ULL << (sizeof((x)) * 8 - __builtin_clzll((x) - 1)))
 #else
 	#define JARR_NEAR_POW2_32(x) \
@@ -144,7 +144,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_push_back(jarr_ptr, value)                           \
 (                                                                 \
-	 (((jarr_ptr)->capacity) > ((jarr_ptr)->size))                \
+	 (((jarr_ptr)->capacity) > ((jarr_ptr)->size))            \
 		 ? ((jarr_push_back_noalloc(jarr_ptr, value)), 1) \
 		 : (jarr_push_back_nocheck(jarr_ptr, value))      \
 )
