@@ -262,7 +262,7 @@ static ALWAYS_INLINE int private_jarr_reserve_nocheck(void **jarr, size_t size)
 
 #define jarr_append(jarr_ptr, src_arr) JARR_GENERIC(jarr_append, jarr_ptr, src_arr)
 
-#define jarr_pop_back(jarr) --((jarr)->size);
+#define jarr_pop_back(jarr) --((jarr)->size)
 
 #define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
