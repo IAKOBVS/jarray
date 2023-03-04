@@ -222,13 +222,13 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_new_alloc(jarr_ptr, cap)                                                                                              \
 	(jarr->capacity = MAX(cap, JARR_MIN_CAP), (likely((jarr->data) = malloc(jarr->capacity * sizeof(*(jarr->data))))) ? 1 : 0)
 
-static ALWAYS_INLINE int private_jarr_reserve_nocheck(void **jarr, size_t size)
+static ALWAYS_INLINE int private_jarr_tmp_realloc(void **jarr, size_t size)
 {
 	void *tmp;
-	return ((tmp = (realloc(*jarr, size))) ? (*jarr = tmp, 1) : 0);
+	return ((tmp = realloc(*jarr, size)) ? (*jarr = tmp, 1) : 0);
 }
 
-#define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_reserve_nocheck(&((jarr_ptr)->data), cap * sizeof(*((jarr)->data))))
+#define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_tmp_realloc((void **)&((jarr_ptr)->data), cap * sizeof(*((jarr)->data))))
 
 #define jarr_reserve(jarr_ptr, cap) (((cap) > ((jarr)->capacity)) ? (jarr_reserve_nocheck(jarr_ptr, cap)) : 1)
 

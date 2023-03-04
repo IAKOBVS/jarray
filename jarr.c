@@ -32,7 +32,7 @@ int jarr_cat_##T(T *jarr, size_t size, ...)                                     
 {                                                                                                   \
 	if (jarr->size + size > jarr->capacity) {                                                   \
 		do { jarr->capacity *= 2; } while (jarr->size + size > jarr->capacity);             \
-		jarr_reserve_nocheck_##T(jarr, jarr->capacity);\
+		jarr_reserve_nocheck(jarr, jarr->capacity);\
 	}                                                                                           \
 	PRIVATE_JARR_CONCAT(T, jarr, t, argv, size);                                                \
 	return 1;                                                                                   \
@@ -48,7 +48,7 @@ int jarr_append_##T(T *jarr, t *src_arr, size_t src_arr_size)                   
 {                                                                                               \
 	if (jarr->size + src_arr_size > jarr->capacity) {                                       \
 		do { jarr->capacity *= 2; } while (jarr->size + src_arr_size > jarr->capacity); \
-		jarr_reserve_nocheck_##T(jarr, jarr->capacity);                                 \
+		jarr_reserve_nocheck(jarr, jarr->capacity);                                 \
 	}                                                                                       \
 	memcpy(jarr->data, src_arr, src_arr_size * sizeof(*src_arr));                           \
 	return 1;                                                                               \
