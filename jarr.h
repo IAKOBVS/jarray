@@ -222,16 +222,13 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_new_alloc(jarr_ptr, cap)                                                                                              \
 	(jarr->capacity = MAX(cap, JARR_MIN_CAP), (likely((jarr->data) = malloc(jarr->capacity * sizeof(*(jarr->data))))) ? 1 : 0)
 
-#define PRIVATE_JARR_RESERVE_NOCHECK(T)                                                          \
-static ALWAYS_INLINE int jarr_reserve_nocheck_##T(T *jarr, size_t cap)                           \
-{                                                                                                \
-	T *tmp;                                                                                  \
-	return ((tmp = (realloc(jarr->data, sizeof(*jarr->data) * cap))) ? (jarr = tmp, 1) : 0); \
+static ALWAYS_INLINE int private_jarr_reserve_nocheck(void **jarr, size_t size)
+{
+	void *tmp;
+	return ((tmp = (realloc(*jarr, size))) ? (*jarr = tmp, 1) : 0);
 }
 
-JARR_TEMPLATE_T(PRIVATE_JARR_RESERVE_NOCHECK)
-
-#define jarr_reserve_nocheck(jarr_ptr, cap) JARR_GENERIC(jarr_reserve_nocheck, jarr_ptr, cap)
+#define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_reserve_nocheck(&((jarr_ptr)->data), cap * sizeof(*((jarr)->data))))
 
 #define jarr_reserve(jarr_ptr, cap) (((cap) > ((jarr)->capacity)) ? (jarr_reserve_nocheck(jarr_ptr, cap)) : 1)
 
@@ -248,23 +245,14 @@ JARR_TEMPLATE_T(PRIVATE_JARR_RESERVE_NOCHECK)
 #define jarr_shrink_nocheck(jarr_ptr)\
 	jarr_reserve_nocheck(jarr_ptr, ((jarr)->size))
 
-#define PRIVATE_JARR_PUSH_BACK(T, t)                                                                              \
-static ALWAYS_INLINE int jarr_push_back_##T(T *jarr, t src)                                                       \
-{                                                                                                                 \
-	return (unlikely(jarr->capacity == jarr->size))                                                           \
-		? ((jarr_reserve_nocheck_##T(jarr, jarr->capacity * 2)) && ((jarr->data[jarr->size++] = src), 1)) \
-		: (jarr->data[jarr->size++] = src, 1);                                                            \
-}
+#define jarr_push_back_noalloc(jarr_ptr, value)          \
+	(void)((((jarr_ptr)->data)[((jarr_ptr)->size)++] = value), 0)
 
-JARR_TEMPLATE_T_t(PRIVATE_JARR_PUSH_BACK)
+#define jarr_push_back_nocheck(jarr_ptr, value)                                                                        \
+	((jarr_reserve_nocheck_##T(jarr_ptr, jarr_ptr->capacity * 2)) && (jarr_push_back_noalloc(jarr_ptr, value), 1))
 
-#define jarr_push_back(jarr_ptr, value) JARR_GENERIC(jarr_push_back, jarr_ptr, value)
-#define jarr_push_back_noalloc(jarr_ptr, value) ((jarr_ptr)->data)[((jarr_ptr)->size)++] = value
-
-/* #define jarr_push_back(jarr_ptr, value)                                                                                         \ */
-/* 	(unlikely(((jarr)->capacity) == ((jarr)->size))                                                                         \ */
-/* 		? (jarr_reserve_nocheck_##T((jarr), ((jarr)->capacity * 2)) && ((((jarr)->data)[((jarr)->size)++] = (src)), 1)) \ */
-/* 		: ((((jarr)->data)[((jarr)->size)++] = (src), 1)))                                                              \ */
+#define jarr_push_back(jarr_ptr, value)                                                                                                \
+	((unlikely((jarr_ptr)->capacity)) ? (jarr_push_back_noheck(jarr_ptr, value)) : ((jarr_push_back_noalloc(jarr_ptr, value)), 1))
 
 #define jarr_new_auto(jarr_ptr, ...) JARR_GENERIC(jarr_new, jarr_ptr, __VA_ARGS__)
 #define jarr_new(jarr_ptr, jarr_size, ...) JARR_GENERIC(jarr_new, jarr_ptr, jarr_size)

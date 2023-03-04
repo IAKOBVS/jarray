@@ -58,9 +58,36 @@ ERROR:                                                                          
 
 JARR_TEMPLATE_T_t(PRIVATE_JARR_APPEND)
 
+#define MAX_(a,b) ((a) > (b) ? (a) : (b))
+
+static ALWAYS_INLINE int tmp_realloc(void **arr, size_t size)
+{
+	void *tmp;
+	if ((tmp = realloc(*arr, size))) {
+		*arr = tmp;
+		return 1;
+	}
+	return 0;
+}
+
+static ALWAYS_INLINE void tmp_grow(size_t size, size_t *arr_cap)
+{
+	do {
+		*arr_cap *= 2;
+	} while (size > *arr_cap);
+}
+
+#define reserve(arr, size)                                                             \
+	(size > ((arr)->capacity))                                                     \
+		? (tmp_realloc(&((arr)->data), size * sizeof(*((arr)->data)))) ? 1 : 0 \
+		: 1                                                                    \
+
 #ifdef JARR_DEBUG
 int main()
 {
+	jarray_int_t arr;
+	int ret;
+	printf("%d\n", ((ret = 1), ret++));
 	return 0;
 }
 #endif
