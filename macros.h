@@ -34,6 +34,35 @@
   #define unlikely(x) (x)
 #endif
 
+
+#if defined(__GNUC__) || defined(__clang__)
+    #if __has_attribute(pure)
+        #define PURE __attribute__((pure))
+    #else
+        #define PURE
+    #endif
+
+    #if __has_attribute(const)
+        #define CONST __attribute__((const))
+    #else
+        #define CONST
+    #endif
+
+    #if __has_attribute(flatten)
+        #define FLATTEN __attribute__((flatten))
+    #else
+        #define FLATTEN
+    #endif
+#elif defined(_MSC_VER)
+    #define PURE __declspec(noalias)
+    #define CONST __declspec(restrict)
+    #define FLATTEN
+#else
+    #define PURE
+    #define CONST
+    #define FLATTEN
+#endif
+
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_STATIC_ASSERT__) && defined(_Static_assert)
 	#define JARR_ASSERT(expr, msg) _Static_assert(expr, msg)
 #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_STATIC_ASSERT__)
