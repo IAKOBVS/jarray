@@ -1,4 +1,5 @@
 #include "jarr.h"
+#include <stdio.h>
 
 #ifdef JARR_DEBUG
 static void ALWAYS_INLINE f()
@@ -17,6 +18,7 @@ static void ALWAYS_INLINE f()
 
 int main()
 {
+	f();
 	return 0;
 }
 #endif
