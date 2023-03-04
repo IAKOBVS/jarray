@@ -2,9 +2,12 @@
 #define JARR_H_DEF
 
 /*
+   you shall check non-nonalloc macros for non-zero value,
+   and decide how to error-handle malloc or realloc failures.
+
    _nocheck macros will not error check user input,
    e.g., if (ptr) before delete,
-   if (reserve_cap > capacity) before realloc;
+   if (reserve_cap > capacity) before realloc.
 
    _noalloc macros will skip allocation,
    i.e., it asserts that jarray has enough capacity.
@@ -247,8 +250,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_reserve_32x(jarr_ptr) jarr_reserve_nocheck(jarr_ptr, (32 * ((jarr_ptr)->capacity)))
 #define jarr_reserve_64x(jarr_ptr) jarr_reserve_nocheck(jarr_ptr, (64 * ((jarr_ptr)->capacity)))
 
-#define jarr_shrink(jarr_ptr)                                      \
-	((likely(((jarr_ptr)->capacity) != ((jarr_ptr)->size)))            \
+#define jarr_shrink(jarr_ptr)                                          \
+	((likely(((jarr_ptr)->capacity) != ((jarr_ptr)->size)))        \
 		? (jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->size))) \
 		: 1)
 
@@ -260,7 +263,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_push_back_nocheck(jarr_ptr, value)                      \
 (                                                                    \
-	(jarr_reserve_nocheck_##T(jarr_ptr, jarr_ptr->capacity * 2)) \
+	(jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity) * 2)) \
 	&& (jarr_push_back_noalloc(jarr_ptr, value), 1)              \
  )
 
@@ -303,7 +306,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define private_jarr_cat(jarr_ptr, argc, ...)                               \
 (                                                                           \
-	(((jarr_ptr)->size) + size > ((jarr_ptr)->capacity))                    \
+	(((jarr_ptr)->size) + argc > ((jarr_ptr)->capacity))                    \
 		? private_jarr_cat_nocheck(jarr_ptr, (argc), __VA_ARGS__)   \
 		: (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), \
 		1)                                                          \
@@ -351,10 +354,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		elem < end; ++elem)
 
 #define jarr_end(jarr_ptr) (*(((jarr_ptr)->data) + ((jarr_ptr)->size) - 1))
+#define jarr_start(jarr_ptr) (*(((jarr_ptr)->data)))
 
-#define jarr_auto_elem(jarr_ptr) typeof(*((jarr_ptr)->data))
+#define jarr_typeof_elem(jarr_ptr) typeof(*((jarr_ptr)->data))
 
-#define jarr_auto(jarr_ptr) typeof((*(jarr_ptr)))
+#define jarr_typeof(jarr_ptr) typeof((*(jarr_ptr)))
 
 #define JARR_SAME_TYPE(x, y) _Generic((x), \
 	typeof(y): 1,                      \
