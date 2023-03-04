@@ -215,26 +215,30 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	((jarr_ptr)->capacity) = 0, \
 	((jarr_ptr)->size) = 0,     \
 	((jarr_ptr)->data) = NULL,  \
-0)
-
-#define jarr_delete_nocheck(jarr_ptr) \
-(void)(free((jarr_ptr)->data),        \
-	jarr_init(jarr_ptr),          \
-0)
-
-#define jarr_delete(jarr_ptr)                                   \
-	(void)(((jarr)->data) && jarr_delete_nocheck(jarr_ptr))
-
-#define jarr_new_alloc(jarr_ptr, cap)                                                         \
-(	jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                          \
-	(likely((jarr_ptr->data) = malloc(jarr_ptr->capacity * sizeof(*((jarr_ptr)->data))))) \
-		? 1                                                                           \
-		: 0                                                                           \
+	0                           \
 )
 
-#define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_realloc((void **)&((jarr_ptr)->data), cap * sizeof(*((jarr_ptr)->data))))
+#define jarr_delete_nocheck(jarr_ptr) \
+(void)(                               \
+	free((jarr_ptr)->data),       \
+	jarr_init(jarr_ptr),          \
+	0                             \
+)
 
-#define jarr_reserve(jarr_ptr, cap) (((cap) > ((jarr)->capacity)) ? (jarr_reserve_nocheck(jarr_ptr, cap)) : 1)
+#define jarr_delete(jarr_ptr)                                   \
+	(((jarr_ptr)->data)) && (jarr_delete_nocheck(jarr_ptr), \
+	0)                                                      \
+
+#define jarr_new_alloc(jarr_ptr, cap)                                                     \
+(	jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                      \
+	(likely((jarr_ptr->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) \
+		? 1                                                                       \
+		: 0                                                                       \
+)
+
+#define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_realloc((void **)&((jarr_ptr)->data), cap * JARR_SIZEOF_T(jarr_ptr)))
+
+#define jarr_reserve(jarr_ptr, cap) (((cap) > ((jarr_ptr)->capacity)) ? (jarr_reserve_nocheck(jarr_ptr, cap)) : 1)
 
 #define jarr_reserve_2x(jarr_ptr) jarr_reserve_nocheck(jarr_ptr, (2 * ((jarr_ptr)->capacity)))
 #define jarr_reserve_4x(jarr_ptr) jarr_reserve_nocheck(jarr_ptr, (4 * ((jarr_ptr)->capacity)))
@@ -244,12 +248,12 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_reserve_64x(jarr_ptr) jarr_reserve_nocheck(jarr_ptr, (64 * ((jarr_ptr)->capacity)))
 
 #define jarr_shrink(jarr_ptr)                                      \
-	((likely(((jarr)->capacity) != ((jarr)->size)))            \
-		? (jarr_reserve_nocheck(jarr_ptr, ((jarr)->size))) \
+	((likely(((jarr_ptr)->capacity) != ((jarr_ptr)->size)))            \
+		? (jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->size))) \
 		: 1)
 
 #define jarr_shrink_nocheck(jarr_ptr)\
-	(jarr_reserve_nocheck(jarr_ptr, ((jarr)->size)))
+	(jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->size)))
 
 #define jarr_push_back_noalloc(jarr_ptr, value)                       \
 	(void)((((jarr_ptr)->data)[((jarr_ptr)->size)++] = value), 0)
@@ -262,7 +266,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_push_back(jarr_ptr, value)                           \
 (                                                                 \
-	 (((jarr_ptr)->capacity) > ((jarr)->size))                \
+	 (((jarr_ptr)->capacity) > ((jarr_ptr)->size))                \
 		 ? ((jarr_push_back_noalloc(jarr_ptr, value)), 1) \
 		 : (jarr_push_back_nocheck(jarr_ptr, value))      \
 )
@@ -292,14 +296,14 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define private_jarr_cat_nocheck(jarr_ptr, argc, ...)                                                 \
 (                                                                                                     \
 	(private_jarr_grow_cap_while_lt_size((((jarr_ptr)->size) + (argc)), &((jarr_ptr)->capacity)), \
-	jarr_reserve_nocheck(jarr_ptr, ((jarr)->capacity))                                            \
+	jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity))                                            \
 	&& (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__),                                  \
 	1))                                                                                           \
 )
 
 #define private_jarr_cat(jarr_ptr, argc, ...)                               \
 (                                                                           \
-	(((jarr)->size) + size > ((jarr_ptr)->capacity))                    \
+	(((jarr_ptr)->size) + size > ((jarr_ptr)->capacity))                    \
 		? private_jarr_cat_nocheck(jarr_ptr, (argc), __VA_ARGS__)   \
 		: (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), \
 		1)                                                          \
@@ -316,7 +320,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 (                                                                                                     \
 	((jarr_ptr)->size) = 0,                                                                       \
 	((jarr_ptr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                          \
-	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * sizeof(*((jarr_ptr)->data))))) \
+	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * JARR_SIZEOF_T(jarr_ptr)))) \
 		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__),                              \
 		1)                                                                                    \
 		: (jarr_init(jarr_ptr),                                                               \
@@ -329,28 +333,28 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_new_auto(jarr_ptr, ...)                                  \
 	private_jarr_new(jarr_ptr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarr_pop_back(jarr) --((jarr)->size)
+#define jarr_pop_back(jarr_ptr) --((jarr_ptr)->size)
 
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_nocheck(jarr_dest, jarr_src)
 
-#define jarr_foreach_index(elem, jarr)               \
-	for (size_t elem = 0, size = ((jarr)->size); \
+#define jarr_foreach_index(elem, jarr)                   \
+	for (size_t elem = 0, size = ((jarr_ptr)->size); \
 		elem < size; ++elem)
 
-#define jarr_foreach(elem, jarr)                                                                                       \
-	for (typeof(*((jarr)->data)) *RESTRICT elem = ((jarr)->data), *RESTRICT end = ((jarr)->data) + ((jarr)->size); \
+#define jarr_foreach(elem, jarr)                                                                                                       \
+	for (typeof(*((jarr_ptr)->data)) *RESTRICT elem = ((jarr_ptr)->data), *RESTRICT end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
 		elem < end; ++elem)
 
-#define jarr_foreach_arr(elem, arr)                                                                                   \
-	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&((arr)[(sizeof(arr)/sizeof(arr[0])) - 1])); \
+#define jarr_foreach_arr(elem, arr)                                                                     \
+	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&(JARR_SIZEOF_ARR(arr) - 1])); \
 		elem < end; ++elem)
 
-#define jarr_end(jarr) (*(((jarr)->data) + ((jarr)->size) - 1))
+#define jarr_end(jarr_ptr) (*(((jarr_ptr)->data) + ((jarr_ptr)->size) - 1))
 
-#define jarr_auto_elem(jarr) typeof(*((jarr)->data))
+#define jarr_auto_elem(jarr_ptr) typeof(*((jarr_ptr)->data))
 
-#define jarr_auto(jarr) typeof((*(jarr)))
+#define jarr_auto(jarr_ptr) typeof((*(jarr_ptr)))
 
 #define JARR_SAME_TYPE(x, y) _Generic((x), \
 	typeof(y): 1,                      \
