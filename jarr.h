@@ -103,16 +103,16 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	0                             \
 )                                     \
 
-#define jarr_delete(jarr_ptr)                                 \
-(void)(                                                       \
-	((jarr_ptr)->data) && (jarr_delete_nocheck(jarr_ptr), \
-	0)                                                    \
-)                                                             \
+#define jarr_delete(jarr_ptr)                 \
+(void)(                                       \
+	((jarr_ptr)->data)                    \
+	&& (jarr_delete_nocheck(jarr_ptr), 0) \
+)                                             \
 
-#define jarr_new_alloc(jarr_ptr, cap)                                                     \
-(	jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                      \
-	(likely((jarr_ptr->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) \
-	? 1 : 0                                                                           \
+#define jarr_new_alloc(jarr_ptr, cap)                                                             \
+(                                                                                                 \
+	 jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                             \
+	(likely((jarr_ptr->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) ? 1 : 0 \
 )
 
 #define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_realloc((void **)&((jarr_ptr)->data), cap * JARR_SIZEOF_T(jarr_ptr)))
@@ -158,13 +158,13 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_append(jarr_ptr, src_arr, src_arr_size)                                                                   \
 (                                                                                                                      \
 	(((jarr_ptr)->size) + (src_arr_size) > ((jarr_ptr)->capacity))                                                 \
-	?                                                                                                              \
+		?                                                                                                      \
 		((private_jarr_grow_cap_while_lt_size((((jarr_ptr)->size) + (src_arr_size)), &((jarr_ptr)->capacity)), \
 		jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity)))                                                \
 		&& (memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr))),                           \
 		(((jarr_ptr)->size) += (src_arr_size)),                                                                \
 		1)                                                                                                     \
-	:                                                                                                              \
+		:                                                                                                      \
 		(memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                               \
 		(((jarr_ptr)->size) += (src_arr_size)),                                                                \
 		1)                                                                                                     \
@@ -173,24 +173,21 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define private_jarr_cat_noalloc(jarr_ptr, argc, ...)                      \
 (void)(                                                                    \
 	PP_LOOP_FROM(((jarr_ptr)->data), ((jarr_ptr)->size), __VA_ARGS__), \
-	((((jarr_ptr)->size) += argc),                                     \
-	0)                                                                 \
+	(((jarr_ptr)->size) += argc), 0                                    \
 )
 
 #define private_jarr_cat_nocheck(jarr_ptr, argc, ...)                                                 \
 (                                                                                                     \
 	(private_jarr_grow_cap_while_lt_size((((jarr_ptr)->size) + (argc)), &((jarr_ptr)->capacity)), \
 	jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity))                                        \
-	&& (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__),                                  \
-	1))                                                                                           \
+	&& (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), 1))                              \
 )
 
-#define private_jarr_cat(jarr_ptr, argc, ...)                               \
-(                                                                           \
-	(((jarr_ptr)->size) + argc > ((jarr_ptr)->capacity))                \
-		? private_jarr_cat_nocheck(jarr_ptr, (argc), __VA_ARGS__)   \
-		: (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), \
-			1)                                                  \
+#define private_jarr_cat(jarr_ptr, argc, ...)                                \
+(                                                                            \
+	(((jarr_ptr)->size) + argc > ((jarr_ptr)->capacity))                 \
+		? private_jarr_cat_nocheck(jarr_ptr, (argc), __VA_ARGS__)    \
+		: private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), 1 \
 )
 
 #define define_cat(F, jarr_ptr, ...) F(jarr_ptr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
@@ -204,10 +201,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	((jarr_ptr)->size) = 0,                                                                   \
 	((jarr_ptr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                      \
 	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * JARR_SIZEOF_T(jarr_ptr)))) \
-		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__),                          \
-			1)                                                                        \
-		: (jarr_init(jarr_ptr),                                                           \
-			0)                                                                        \
+		? private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1                         \
+		: jarr_init(jarr_ptr), 0                                                          \
 )
 
 
