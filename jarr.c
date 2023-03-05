@@ -1,25 +1,29 @@
 #include "jarr.h"
 #include <stdio.h>
-#include <assert.h>
 
 #ifdef JARR_DEBUG
-static void ALWAYS_INLINE f()
+
+#include <assert.h>
+static ALWAYS_INLINE int debug()
 {
+	int ret;
+	char a[100];
 	jarray_int_t arr;
 	jarr_init(&arr);
-	jarr_new(&arr, 1, 2);
-	char a[100];
-	jarr_append(&arr, a, 10);
-	jarr_cat(&arr, 1, 3, 4);
-	jarr_push_back(&arr, 3);
-	jarr_reserve(&arr, 100);
-	jarr_shrink(&arr);
-	jarr_delete(&arr);
+	assert(jarr_new(&arr, 1, 2));
+	assert(jarr_append(&arr, a, 10));
+	assert(jarr_cat(&arr, 1, 3, 4));
+	assert(jarr_push_back(&arr, 3));
+	assert(jarr_reserve(&arr, 100));
+	assert(jarr_shrink(&arr));
+	(jarr_delete(&arr), 0);
+	return 1;
 }
 
 int main()
 {
-	f();
+	assert(debug());
 	return 0;
 }
+
 #endif

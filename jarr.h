@@ -132,8 +132,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_shrink(jarr_ptr)                                  \
 (                                                              \
 	(likely(((jarr_ptr)->capacity) != ((jarr_ptr)->size))) \
-		? jarr_shrink_nocheck(jarr_ptr)                \
-		: 1                                            \
+		? (jarr_shrink_nocheck(jarr_ptr))              \
+		: (1)                                          \
 )
 
 #define jarr_push_back_noalloc(jarr_ptr, value)                       \
@@ -142,8 +142,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_push_back_nocheck(jarr_ptr, value)                      \
 (                                                                    \
 	(jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity) * 2)) \
-	&& (jarr_push_back_noalloc(jarr_ptr, value),                 \
-	1)                                                           \
+	&& (jarr_push_back_noalloc(jarr_ptr, value), 1)              \
 )
 
 #define jarr_push_back(jarr_ptr, value)                           \
@@ -182,8 +181,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define private_jarr_cat(jarr_ptr, argc, ...)                                \
 (                                                                            \
 	(((jarr_ptr)->size) + argc > ((jarr_ptr)->capacity))                 \
-		? private_jarr_cat_nocheck(jarr_ptr, (argc), __VA_ARGS__)    \
-		: private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), 1 \
+		? (private_jarr_cat_nocheck(jarr_ptr, (argc), __VA_ARGS__))    \
+		: (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), 1) \
 )
 
 #define define_cat(F, jarr_ptr, ...) F(jarr_ptr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
@@ -197,8 +196,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	((jarr_ptr)->size) = 0,                                                                   \
 	((jarr_ptr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                      \
 	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * JARR_SIZEOF_T(jarr_ptr)))) \
-		? private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1                         \
-		: jarr_init(jarr_ptr), 0                                                          \
+		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1)                         \
+		: (jarr_init(jarr_ptr), 0)                                                          \
 )
 
 #define jarr_new(jarr_ptr, cap, ...) private_jarr_new(jarr_ptr, cap, __VA_ARGS__)

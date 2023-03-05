@@ -986,77 +986,203 @@ extern void __assert_perror_fail(int __errnum, const char *__file,
 extern void __assert(const char *__assertion, const char *__file, int __line)
     __attribute__((__nothrow__, __leaf__)) __attribute__((__noreturn__));
 
-static void __attribute__((always_inline)) inline f() {
+static __attribute__((always_inline)) inline int debug() {
+  int ret;
+  char a[100];
   jarray_int_t arr;
   (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
 	 ((&arr)->data) = ((void *)0), 0);
-  (_Static_assert(_Generic((1), size_t : 1, default : 0),
-		  "trying to assign non-size_t as cap"),
-   ((&arr)->size) = 0,
-   ((&arr)->capacity) =
-       ((2 * ((1) ? 1 : 1ULL << (sizeof((1)) * 8 - __builtin_clzll((1) - 1)))) >
-		(8)
-	    ? (2 *
-	       ((1) ? 1 : 1ULL << (sizeof((1)) * 8 - __builtin_clzll((1) - 1))))
-	    : (8)),
-   (__builtin_expect(!!(((&arr)->data) = malloc((((&arr)->capacity)) *
-						(sizeof(*((&arr)->data))))),
-		     1))
-   ? (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
-	    (((&arr)->size) += 1), 0),
-   1
-   : (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
-	    ((&arr)->data) = ((void *)0), 0),
-   0);
-  char a[100];
-  ((((&arr)->size) + (10) > ((&arr)->capacity))
-       ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + (10)),
-					       &((&arr)->capacity)),
-	   (private_jarr_realloc(
-	       (void **)&((&arr)->data),
-	       ((&arr)->capacity) * (sizeof(*((&arr)->data)))))) &&
-	  (memcpy(((&arr)->data), a, (10) * sizeof(*a)), ((&arr)->size) += (10),
-	   1))
-       : (memcpy(((&arr)->data), a, (10) * sizeof(*a)), ((&arr)->size) += (10),
-	  1));
-  ((((&arr)->size) + 3 > ((&arr)->capacity))
-       ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
-					       &((&arr)->capacity)),
-	   (private_jarr_realloc(
-	       (void **)&((&arr)->data),
-	       ((&arr)->capacity) * (sizeof(*((&arr)->data))))) &&
-	       ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
+  ((void)sizeof(((((&arr)->size) = 0,
+		  ((&arr)->capacity) =
+		      ((2 * ((1) ? 1
+				 : 1ULL << (sizeof((1)) * 8 -
+					    __builtin_clzll((1) - 1)))) > (8)
+			   ? (2 * ((1) ? 1
+				       : 1ULL << (sizeof((1)) * 8 -
+						  __builtin_clzll((1) - 1))))
+			   : (8)),
+		  (__builtin_expect(
+		      !!(((&arr)->data) = malloc((((&arr)->capacity)) *
+						 (sizeof(*((&arr)->data))))),
+		      1))
+		  ? (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
+			   (((&arr)->size) += 1), 0),
+		  1
+		  : (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
+			   ((&arr)->data) = ((void *)0), 0),
+		  0))
+		    ? 1
+		    : 0),
+   __extension__({
+     if ((((&arr)->size) = 0,
+	  ((&arr)->capacity) =
+	      ((2 * ((1) ? 1
+			 : 1ULL << (sizeof((1)) * 8 -
+				    __builtin_clzll((1) - 1)))) > (8)
+		   ? (2 * ((1) ? 1
+			       : 1ULL << (sizeof((1)) * 8 -
+					  __builtin_clzll((1) - 1))))
+		   : (8)),
+	  (__builtin_expect(
+	      !!(((&arr)->data) =
+		     malloc((((&arr)->capacity)) * (sizeof(*((&arr)->data))))),
+	      1))
+	  ? (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
+		   (((&arr)->size) += 1), 0),
+	  1
+	  : (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
+		   ((&arr)->data) = ((void *)0), 0),
+	  0))
+       ;
+     else
+       __assert_fail("jarr_new(&arr, 1, 2)", "jarr.c", 13,
+		     __extension__ __PRETTY_FUNCTION__);
+   }));
+  ((void)sizeof(
+       (((((&arr)->size) + (10) > ((&arr)->capacity))
+	     ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + (10)),
+						     &((&arr)->capacity)),
+		 (private_jarr_realloc(
+		     (void **)&((&arr)->data),
+		     ((&arr)->capacity) * (sizeof(*((&arr)->data)))))) &&
+		(memcpy(((&arr)->data), a, (10) * sizeof(*a)),
+		 ((&arr)->size) += (10), 1))
+	     : (memcpy(((&arr)->data), a, (10) * sizeof(*a)),
+		((&arr)->size) += (10), 1)))
+	   ? 1
+	   : 0),
+   __extension__({
+     if (((((&arr)->size) + (10) > ((&arr)->capacity))
+	      ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + (10)),
+						      &((&arr)->capacity)),
+		  (private_jarr_realloc(
+		      (void **)&((&arr)->data),
+		      ((&arr)->capacity) * (sizeof(*((&arr)->data)))))) &&
+		 (memcpy(((&arr)->data), a, (10) * sizeof(*a)),
+		  ((&arr)->size) += (10), 1))
+	      : (memcpy(((&arr)->data), a, (10) * sizeof(*a)),
+		 ((&arr)->size) += (10), 1)))
+       ;
+     else
+       __assert_fail("jarr_append(&arr, a, 10)", "jarr.c", 14,
+		     __extension__ __PRETTY_FUNCTION__);
+   }));
+  ((void)sizeof(
+       (((((&arr)->size) + 3 > ((&arr)->capacity))
+	     ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
+						     &((&arr)->capacity)),
+		 (private_jarr_realloc(
+		     (void **)&((&arr)->data),
+		     ((&arr)->capacity) * (sizeof(*((&arr)->data))))) &&
+		     ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
+				     ((&arr)->data)[((&arr)->size) + 1] = 3,
+				     ((&arr)->data)[((&arr)->size) + 2] = 4,
+				     0)),
+			     (((&arr)->size) += ((3))), 0),
+		      1)))
+	     : (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
+			      ((&arr)->data)[((&arr)->size) + 1] = 3,
+			      ((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
+		      (((&arr)->size) += (3)), 0),
+	 1))
+	   ? 1
+	   : 0),
+   __extension__({
+     if (((((&arr)->size) + 3 > ((&arr)->capacity))
+	      ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
+						      &((&arr)->capacity)),
+		  (private_jarr_realloc(
+		      (void **)&((&arr)->data),
+		      ((&arr)->capacity) * (sizeof(*((&arr)->data))))) &&
+		      ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
+				      ((&arr)->data)[((&arr)->size) + 1] = 3,
+				      ((&arr)->data)[((&arr)->size) + 2] = 4,
+				      0)),
+			      (((&arr)->size) += ((3))), 0),
+		       1)))
+	      : (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
 			       ((&arr)->data)[((&arr)->size) + 1] = 3,
 			       ((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
-		       (((&arr)->size) += ((3))), 0),
-		1)))
-       : (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
-			((&arr)->data)[((&arr)->size) + 1] = 3,
-			((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
-		(((&arr)->size) += (3)), 0),
-   1);
-  ((((&arr)->capacity) > ((&arr)->size))
-       ? (((void)((((&arr)->data)[((&arr)->size)++] = 3), 0)), 1)
-       : ((((private_jarr_realloc(
-	       (void **)&((&arr)->data),
-	       ((&arr)->capacity) * 2 * (sizeof(*((&arr)->data)))))) &&
-	   ((void)((((&arr)->data)[((&arr)->size)++] = 3), 0), 1))));
-  (((100) > ((&arr)->capacity))
-       ? ((private_jarr_realloc((void **)&((&arr)->data),
-				100 * (sizeof(*((&arr)->data))))))
-       : 1);
-  ((__builtin_expect(!!(((&arr)->capacity) != ((&arr)->size)), 1))
-       ? ((private_jarr_realloc((void **)&((&arr)->data),
-				((&arr)->size) * (sizeof(*((&arr)->data))))))
-       : 1);
-  (void)(((&arr)->data) &&
-	 ((void)(free((&arr)->data),
-		 (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
-			((&arr)->data) = ((void *)0), 0),
-		 0),
-	  0));
+		       (((&arr)->size) += (3)), 0),
+	  1))
+       ;
+     else
+       __assert_fail("jarr_cat(&arr, 1, 3, 4)", "jarr.c", 15,
+		     __extension__ __PRETTY_FUNCTION__);
+   }));
+  ((void)sizeof(
+       (((((&arr)->capacity) > ((&arr)->size))
+	     ? (((void)((((&arr)->data)[((&arr)->size)++] = 3), 0)), 1)
+	     : ((((private_jarr_realloc(
+		     (void **)&((&arr)->data),
+		     ((&arr)->capacity) * 2 * (sizeof(*((&arr)->data)))))) &&
+		 ((void)((((&arr)->data)[((&arr)->size)++] = 3), 0), 1)))))
+	   ? 1
+	   : 0),
+   __extension__({
+     if (((((&arr)->capacity) > ((&arr)->size))
+	      ? (((void)((((&arr)->data)[((&arr)->size)++] = 3), 0)), 1)
+	      : ((((private_jarr_realloc(
+		      (void **)&((&arr)->data),
+		      ((&arr)->capacity) * 2 * (sizeof(*((&arr)->data)))))) &&
+		  ((void)((((&arr)->data)[((&arr)->size)++] = 3), 0), 1)))))
+       ;
+     else
+       __assert_fail("jarr_push_back(&arr, 3)", "jarr.c", 16,
+		     __extension__ __PRETTY_FUNCTION__);
+   }));
+  ((void)sizeof(
+       ((((100) > ((&arr)->capacity))
+	     ? ((private_jarr_realloc((void **)&((&arr)->data),
+				      100 * (sizeof(*((&arr)->data))))))
+	     : 1))
+	   ? 1
+	   : 0),
+   __extension__({
+     if ((((100) > ((&arr)->capacity))
+	      ? ((private_jarr_realloc((void **)&((&arr)->data),
+				       100 * (sizeof(*((&arr)->data))))))
+	      : 1))
+       ;
+     else
+       __assert_fail("jarr_reserve(&arr, 100)", "jarr.c", 17,
+		     __extension__ __PRETTY_FUNCTION__);
+   }));
+  ((void)sizeof(
+       (((__builtin_expect(!!(((&arr)->capacity) != ((&arr)->size)), 1))
+	     ? ((private_jarr_realloc(
+		   (void **)&((&arr)->data),
+		   ((&arr)->size) * (sizeof(*((&arr)->data))))))
+	     : 1))
+	   ? 1
+	   : 0),
+   __extension__({
+     if (((__builtin_expect(!!(((&arr)->capacity) != ((&arr)->size)), 1))
+	      ? ((private_jarr_realloc(
+		    (void **)&((&arr)->data),
+		    ((&arr)->size) * (sizeof(*((&arr)->data))))))
+	      : 1))
+       ;
+     else
+       __assert_fail("jarr_shrink(&arr)", "jarr.c", 18,
+		     __extension__ __PRETTY_FUNCTION__);
+   }));
+  ((void)(((&arr)->data) &&
+	  ((void)(free((&arr)->data),
+		  (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
+			 ((&arr)->data) = ((void *)0), 0),
+		  0),
+	   0)),
+   0);
+  return 1;
 }
 int main() {
-  f();
+  ((void)sizeof((debug()) ? 1 : 0), __extension__({
+     if (debug())
+       ;
+     else
+       __assert_fail("debug()", "jarr.c", 25,
+		     __extension__ __PRETTY_FUNCTION__);
+   }));
   return 0;
 }
