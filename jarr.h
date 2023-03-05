@@ -178,9 +178,9 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	&& (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), 1))                              \
 )
 
-#define private_jarr_cat(jarr_ptr, argc, ...)                                \
-(                                                                            \
-	(((jarr_ptr)->size) + argc > ((jarr_ptr)->capacity))                 \
+#define private_jarr_cat(jarr_ptr, argc, ...)                                  \
+(                                                                              \
+	(((jarr_ptr)->size) + argc > ((jarr_ptr)->capacity))                   \
 		? (private_jarr_cat_nocheck(jarr_ptr, (argc), __VA_ARGS__))    \
 		: (private_jarr_cat_noalloc(jarr_ptr, (argc), __VA_ARGS__), 1) \
 )
@@ -196,8 +196,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	((jarr_ptr)->size) = 0,                                                                   \
 	((jarr_ptr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                      \
 	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * JARR_SIZEOF_T(jarr_ptr)))) \
-		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1)                         \
-		: (jarr_init(jarr_ptr), 0)                                                          \
+		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1)                       \
+		: (jarr_init(jarr_ptr), 0)                                                        \
 )
 
 #define jarr_new(jarr_ptr, cap, ...) private_jarr_new(jarr_ptr, cap, __VA_ARGS__)
@@ -212,7 +212,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	for (size_t elem = 0, size = ((jarr_ptr)->size); \
 		elem < size; ++elem)
 
-#define jarr_foreach(elem, jarr_ptr)                                                                                                       \
+#define jarr_foreach(elem, jarr_ptr)                                                                                                   \
 	for (typeof(*((jarr_ptr)->data)) *RESTRICT elem = ((jarr_ptr)->data), *RESTRICT end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
 		elem < end; ++elem)
 
