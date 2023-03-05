@@ -107,10 +107,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	&& (jarr_delete_nocheck(jarr_ptr), 0) \
 )                                             \
 
-#define jarr_new_alloc(jarr_ptr, cap)                                                             \
-(                                                                                                 \
-	jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                              \
-	(likely((jarr_ptr->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) ? 1 : 0 \
+#define jarr_new_alloc(jarr_ptr, cap)                                                               \
+(                                                                                                   \
+	jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                                \
+	(likely(((jarr_ptr)->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) ? 1 : 0 \
 )
 
 #define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_realloc((void **)&((jarr_ptr)->data), cap * JARR_SIZEOF_T(jarr_ptr)))
@@ -243,7 +243,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t size)
 {
 	void *tmp;
-	return ((tmp = realloc(*jarr, size)) ? (*jarr = tmp, 1) : 0);
+	if (likely(tmp = realloc(*jarr, size))) {
+		*jarr = tmp;
+		return 1;
+	}
+	return 0;
 }
 
 static ALWAYS_INLINE void private_jarr_grow_cap_while_lt_size(size_t size, size_t *RESTRICT cap)

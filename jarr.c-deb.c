@@ -992,27 +992,28 @@ static __attribute__((always_inline)) inline int debug() {
   jarray_int_t arr;
   (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
 	 ((&arr)->data) = ((void *)0), 0);
-  ((void)sizeof(((((&arr)->size) = 0,
-		  ((&arr)->capacity) =
-		      ((2 * ((1) ? 1
-				 : 1ULL << (sizeof((1)) * 8 -
-					    __builtin_clzll((1) - 1)))) > (8)
-			   ? (2 * ((1) ? 1
-				       : 1ULL << (sizeof((1)) * 8 -
-						  __builtin_clzll((1) - 1))))
-			   : (8)),
-		  (__builtin_expect(
-		      !!(((&arr)->data) = malloc((((&arr)->capacity)) *
-						 (sizeof(*((&arr)->data))))),
-		      1))
-		  ? (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
-			   (((&arr)->size) += 1), 0),
-		  1
-		  : (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
-			   ((&arr)->data) = ((void *)0), 0),
-		  0))
-		    ? 1
-		    : 0),
+  ((void)sizeof(
+       ((((&arr)->size) = 0,
+	 ((&arr)->capacity) =
+	     ((2 * ((1) ? 1
+			: 1ULL << (sizeof((1)) * 8 -
+				   __builtin_clzll((1) - 1)))) > (8)
+		  ? (2 * ((1) ? 1
+			      : 1ULL << (sizeof((1)) * 8 -
+					 __builtin_clzll((1) - 1))))
+		  : (8)),
+	 (__builtin_expect(
+	     !!(((&arr)->data) =
+		    malloc((((&arr)->capacity)) * (sizeof(*((&arr)->data))))),
+	     1))
+	     ? ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
+		       (((&arr)->size) += 1), 0),
+		1)
+	     : ((void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
+		       ((&arr)->data) = ((void *)0), 0),
+		0)))
+	   ? 1
+	   : 0),
    __extension__({
      if ((((&arr)->size) = 0,
 	  ((&arr)->capacity) =
@@ -1027,12 +1028,12 @@ static __attribute__((always_inline)) inline int debug() {
 	      !!(((&arr)->data) =
 		     malloc((((&arr)->capacity)) * (sizeof(*((&arr)->data))))),
 	      1))
-	  ? (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
-		   (((&arr)->size) += 1), 0),
-	  1
-	  : (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
-		   ((&arr)->data) = ((void *)0), 0),
-	  0))
+	      ? ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
+			(((&arr)->size) += 1), 0),
+		 1)
+	      : ((void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
+			((&arr)->data) = ((void *)0), 0),
+		 0)))
        ;
      else
        __assert_fail("jarr_new(&arr, 1, 2)", "jarr.c", 13,
@@ -1069,27 +1070,7 @@ static __attribute__((always_inline)) inline int debug() {
    }));
   ((void)sizeof(
        (((((&arr)->size) + 3 > ((&arr)->capacity))
-	     ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
-						     &((&arr)->capacity)),
-		 (private_jarr_realloc(
-		     (void **)&((&arr)->data),
-		     ((&arr)->capacity) * (sizeof(*((&arr)->data))))) &&
-		     ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
-				     ((&arr)->data)[((&arr)->size) + 1] = 3,
-				     ((&arr)->data)[((&arr)->size) + 2] = 4,
-				     0)),
-			     (((&arr)->size) += ((3))), 0),
-		      1)))
-	     : (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
-			      ((&arr)->data)[((&arr)->size) + 1] = 3,
-			      ((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
-		      (((&arr)->size) += (3)), 0),
-	 1))
-	   ? 1
-	   : 0),
-   __extension__({
-     if (((((&arr)->size) + 3 > ((&arr)->capacity))
-	      ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
+	     ? (((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
 						      &((&arr)->capacity)),
 		  (private_jarr_realloc(
 		      (void **)&((&arr)->data),
@@ -1099,12 +1080,32 @@ static __attribute__((always_inline)) inline int debug() {
 				      ((&arr)->data)[((&arr)->size) + 2] = 4,
 				      0)),
 			      (((&arr)->size) += ((3))), 0),
-		       1)))
-	      : (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
+		       1))))
+	     : ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
 			       ((&arr)->data)[((&arr)->size) + 1] = 3,
 			       ((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
 		       (((&arr)->size) += (3)), 0),
-	  1))
+		1)))
+	   ? 1
+	   : 0),
+   __extension__({
+     if (((((&arr)->size) + 3 > ((&arr)->capacity))
+	      ? (((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
+						       &((&arr)->capacity)),
+		   (private_jarr_realloc(
+		       (void **)&((&arr)->data),
+		       ((&arr)->capacity) * (sizeof(*((&arr)->data))))) &&
+		       ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
+				       ((&arr)->data)[((&arr)->size) + 1] = 3,
+				       ((&arr)->data)[((&arr)->size) + 2] = 4,
+				       0)),
+			       (((&arr)->size) += ((3))), 0),
+			1))))
+	      : ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
+				((&arr)->data)[((&arr)->size) + 1] = 3,
+				((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
+			(((&arr)->size) += (3)), 0),
+		 1)))
        ;
      else
        __assert_fail("jarr_cat(&arr, 1, 3, 4)", "jarr.c", 15,
@@ -1150,18 +1151,18 @@ static __attribute__((always_inline)) inline int debug() {
    }));
   ((void)sizeof(
        (((__builtin_expect(!!(((&arr)->capacity) != ((&arr)->size)), 1))
-	     ? ((private_jarr_realloc(
+	     ? (((private_jarr_realloc(
 		   (void **)&((&arr)->data),
-		   ((&arr)->size) * (sizeof(*((&arr)->data))))))
-	     : 1))
+		   ((&arr)->size) * (sizeof(*((&arr)->data)))))))
+	     : (1)))
 	   ? 1
 	   : 0),
    __extension__({
      if (((__builtin_expect(!!(((&arr)->capacity) != ((&arr)->size)), 1))
-	      ? ((private_jarr_realloc(
+	      ? (((private_jarr_realloc(
 		    (void **)&((&arr)->data),
-		    ((&arr)->size) * (sizeof(*((&arr)->data))))))
-	      : 1))
+		    ((&arr)->size) * (sizeof(*((&arr)->data)))))))
+	      : (1)))
        ;
      else
        __assert_fail("jarr_shrink(&arr)", "jarr.c", 18,
