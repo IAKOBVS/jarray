@@ -82,11 +82,19 @@
 
 JARR_TEMPLATE_T_t(JARR_STRUCT)
 
-#define static_jarray_init(T, name, capacity)     \
+#define jarray_static_init(T, name, capacity)     \
 	struct {                                  \
 		T data[JARR_NEAR_POW2(capacity)]; \
 		size_t size;                      \
 	} name
+
+#define jarr_st_get_capacity(jarr_st)\
+	(sizeof(jarr_st)/sizeof(*jarr_st))
+
+#define jarr_st_init(jarr_st)  \
+(void)(                        \
+	((jarr_st)->size) = 0, \
+)
 
 #define jarr_init(jarr_ptr)          \
 (void)(                              \
@@ -109,7 +117,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_new_alloc(jarr_ptr, cap)                                                               \
 (                                                                                                   \
-	jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                                \
+	((jarr_ptr)->capacity) = MAX(cap, JARR_MIN_CAP),                                                \
 	(likely(((jarr_ptr)->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) ? 1 : 0 \
 )
 
@@ -152,6 +160,9 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		 : (jarr_push_back_nocheck(jarr_ptr, value))      \
 )
 
+#define jarr_st_push_back(jarr_st, value)\
+	(jarr_push_back_noalloc(jarr_st, value))
+
 #define jarr_append(jarr_ptr, src_arr, src_arr_size)                                                                   \
 (                                                                                                                      \
 	(((jarr_ptr)->size) + (src_arr_size) > ((jarr_ptr)->capacity))                                                 \
@@ -168,8 +179,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define private_jarr_cat_noalloc(jarr_ptr, argc, ...)                      \
 (void)(                                                                    \
 	PP_LOOP_FROM(((jarr_ptr)->data), ((jarr_ptr)->size), __VA_ARGS__), \
-	(((jarr_ptr)->size) += argc), 0                                    \
+	((((jarr_ptr)->size) += argc), 0)                                  \
 )
+
+#define jarr_st_cat(jarr_st, ...)                                            \
+	private_jarr_cat_noalloc(jarr_st, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
 #define private_jarr_cat_nocheck(jarr_ptr, argc, ...)                                                 \
 (                                                                                                     \
@@ -193,9 +207,9 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define private_jarr_new(jarr_ptr, cap, ...)                                                      \
 (                                                                                                 \
-	((jarr_ptr)->size) = 0,                                                                   \
+	(((jarr_ptr)->size) = 0,                                                                   \
 	((jarr_ptr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                      \
-	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * JARR_SIZEOF_T(jarr_ptr)))) \
+	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * JARR_SIZEOF_T(jarr_ptr))))) \
 		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1)                       \
 		: (jarr_init(jarr_ptr), 0)                                                        \
 )
