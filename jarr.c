@@ -1,5 +1,6 @@
 #include "jarr.h"
 #include <stdio.h>
+#include <assert.h>
 
 #ifdef JARR_DEBUG
 static void ALWAYS_INLINE f()

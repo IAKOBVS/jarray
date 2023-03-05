@@ -88,19 +88,17 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		size_t size;                      \
 	} name
 
-#define jarr_init(jarr_ptr)         \
-(void)(                             \
-	((jarr_ptr)->capacity) = 0, \
-	((jarr_ptr)->size) = 0,     \
-	((jarr_ptr)->data) = NULL,  \
-	0                           \
+#define jarr_init(jarr_ptr)          \
+(void)(                              \
+	((jarr_ptr)->capacity) = 0,  \
+	((jarr_ptr)->size) = 0,      \
+	((jarr_ptr)->data) = NULL, 0 \
 )
 
 #define jarr_delete_nocheck(jarr_ptr) \
 (void)(                               \
 	free((jarr_ptr)->data),       \
-	jarr_init(jarr_ptr),          \
-	0                             \
+	jarr_init(jarr_ptr), 0        \
 )                                     \
 
 #define jarr_delete(jarr_ptr)                 \
@@ -111,7 +109,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_new_alloc(jarr_ptr, cap)                                                             \
 (                                                                                                 \
-	 jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                             \
+	jarr_ptr->capacity = MAX(cap, JARR_MIN_CAP),                                              \
 	(likely((jarr_ptr->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) ? 1 : 0 \
 )
 
@@ -203,7 +201,6 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		: jarr_init(jarr_ptr), 0                                                          \
 )
 
-
 #define jarr_new(jarr_ptr, cap, ...) private_jarr_new(jarr_ptr, cap, __VA_ARGS__)
 #define jarr_new_auto(jarr_ptr, ...) private_jarr_new(jarr_ptr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
@@ -237,6 +234,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define JARR_SAME_TYPE(x, y) _Generic((x), \
 	typeof(y): 1,                      \
 	default: 0                         \
+	)
+
+#define JARR_TYPE_IS(type, x) _Generic((x), \
+	type: 1,                            \
+	default: 0                          \
 	)
 
 static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t size)
