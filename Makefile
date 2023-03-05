@@ -1,8 +1,9 @@
 CC = gcc
-CFLAGS = -std=c11
+CFLAGS = -std=c11 -Winvalid-pch
 PCH = /home/james/c/macros/vargc.h types.h macros.h generic.h
 OPTFLAGS =
-GCH = $(patsubst %.h,%.h.gch,$(wildcard *.h))
+HEADER_FILES = $(wildcard *.h)
+GCH = $(patsubst %.h,%.h.gch,$(HEADER_FILES))
 
 all: jarr
 
@@ -10,7 +11,7 @@ jarr: jarr.c $(GCH)
 	$(CC) $(OPTFLAGS) $(CFLAGS) -include $(PCH) -o $@ jarr.c
 
 %.h.gch: %.h
-	$(CC) $(OPTFLAGS) $(CFLAGS) -x c-header -o $@ $<
+	$(CC) $(OPTFLAGS) $(CFLAGS) -MMD -MF $(patsubst %.h.gch,%.d,$@) -MT $@ -o $@ -c $<
 
 .PHONY: clean clean-gch rebuild
 

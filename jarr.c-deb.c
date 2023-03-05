@@ -990,61 +990,21 @@ static void __attribute__((always_inline)) inline f() {
    (__builtin_expect(!!(((&arr)->data) = malloc((((&arr)->capacity)) *
 						(sizeof(*((&arr)->data))))),
 		     1))
-       ? ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
-		 ((((&arr)->size) += 1), 0)),
-	  1)
-       : ((void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
-		 ((&arr)->data) = ((void *)0), 0),
-	  0));
+   ? (void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 2, 0)),
+	    (((&arr)->size) += 1), 0),
+   1
+   : (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
+	    ((&arr)->data) = ((void *)0), 0),
+   0);
   char a[100];
-  ((((&arr)->size) + (10) > ((&arr)->capacity))
-       ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + (10)),
-					       &((&arr)->capacity)),
-	   (private_jarr_realloc(
-	       (void **)&((&arr)->data),
-	       ((&arr)->capacity) * (sizeof(*((&arr)->data)))))) &&
-	      (memcpy(((&arr)->data), a, (10) * sizeof(*a))),
-	  (((&arr)->size) += (10)), 1)
-       : (memcpy(((&arr)->data), a, (10) * sizeof(*a)),
-	  (((&arr)->size) += (10)), 1));
-  ((((&arr)->size) + 3 > ((&arr)->capacity))
-       ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))),
-					       &((&arr)->capacity)),
-	   (private_jarr_realloc(
-	       (void **)&((&arr)->data),
-	       ((&arr)->capacity) * (sizeof(*((&arr)->data))))) &&
-	       ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
-			       ((&arr)->data)[((&arr)->size) + 1] = 3,
-			       ((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
-		       ((((&arr)->size) += ((3))), 0)),
-		1)))
-       : ((void)(((void)(((&arr)->data)[((&arr)->size) + 0] = 1,
-			 ((&arr)->data)[((&arr)->size) + 1] = 3,
-			 ((&arr)->data)[((&arr)->size) + 2] = 4, 0)),
-		 ((((&arr)->size) += (3)), 0)),
-	  1));
-  ((((&arr)->capacity) > ((&arr)->size))
-       ? (((void)((((&arr)->data)[((&arr)->size)++] = 3), 0)), 1)
-       : ((((private_jarr_realloc(
-	       (void **)&((&arr)->data),
-	       ((&arr)->capacity) * 2 * (sizeof(*((&arr)->data)))))) &&
-	   ((void)((((&arr)->data)[((&arr)->size)++] = 3), 0), 1))));
-  (((100) > ((&arr)->capacity))
-       ? ((private_jarr_realloc((void **)&((&arr)->data),
-				100 * (sizeof(*((&arr)->data))))))
-       : 1);
-  ((__builtin_expect(!!(((&arr)->capacity) != ((&arr)->size)), 1))
-       ? ((private_jarr_realloc((void **)&((&arr)->data),
-				((&arr)->size) * (sizeof(*((&arr)->data))))))
-       : 1);
-  (void)(((&arr)->data) &&
-	 ((void)(free((&arr)->data),
-		 (void)(((&arr)->capacity) = 0, ((&arr)->size) = 0,
-			((&arr)->data) = ((void *)0), 0),
-		 0),
-	  0));
+ ( (((&arr)->size) + (10) > ((&arr)->capacity)) ? ((private_jarr_grow_cap_while_lt_size((((&arr)->size) + (10)), &((&arr)->capacity)), (private_jarr_realloc((void **)&((&arr)->data), ((&arr)->capacity) * (sizeof(*((&arr)->data)))))) && (memcpy(((&arr)->data), a, (10) * sizeof(*a)), ((&arr)->size) += (10), 1) : (memcpy(((&arr)->data), a, (10) * sizeof(*a)), ((&arr)->size) += (10), 1) );
+ ( (((&arr)->size) + 3 > ((&arr)->capacity)) ? ( (private_jarr_grow_cap_while_lt_size((((&arr)->size) + ((3))), &((&arr)->capacity)), (private_jarr_realloc((void **)&((&arr)->data), ((&arr)->capacity) * (sizeof(*((&arr)->data))))) && ((void)( ((void)( ((&arr)->data)[((&arr)->size)+0] = 1, ((&arr)->data)[((&arr)->size)+1] = 3, ((&arr)->data)[((&arr)->size)+2] = 4, 0)), (((&arr)->size) += ((3))), 0 ), 1)) ) : (void)( ((void)( ((&arr)->data)[((&arr)->size)+0] = 1, ((&arr)->data)[((&arr)->size)+1] = 3, ((&arr)->data)[((&arr)->size)+2] = 4, 0)), (((&arr)->size) += (3)), 0 ), 1 );
+ ( (((&arr)->capacity) > ((&arr)->size)) ? (((void)((((&arr)->data)[((&arr)->size)++] = 3), 0)), 1) : (( ((private_jarr_realloc((void **)&((&arr)->data), ((&arr)->capacity) * 2 * (sizeof(*((&arr)->data)))))) && ((void)((((&arr)->data)[((&arr)->size)++] = 3), 0), 1) )) );
+ (((100) > ((&arr)->capacity)) ? ((private_jarr_realloc((void **)&((&arr)->data), 100 * (sizeof(*((&arr)->data)))))) : 1);
+ ( (__builtin_expect(!!(((&arr)->capacity) != ((&arr)->size)), 1)) ? ((private_jarr_realloc((void **)&((&arr)->data), ((&arr)->size) * (sizeof(*((&arr)->data)))))) : 1 );
+ (void)( ((&arr)->data) && ((void)( free((&arr)->data), (void)( ((&arr)->capacity) = 0, ((&arr)->size) = 0, ((&arr)->data) = ((void *)0), 0 ), 0 ), 0) );
 }
 int main() {
-  f();
-  return 0;
+ f();
+ return 0;
 }
