@@ -161,13 +161,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		?                                                                                                      \
 		((private_jarr_grow_cap_while_lt_size((((jarr_ptr)->size) + (src_arr_size)), &((jarr_ptr)->capacity)), \
 		jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity)))                                                \
-		&& (memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr))),                           \
-		(((jarr_ptr)->size) += (src_arr_size)),                                                                \
-		1)                                                                                                     \
+		&& (memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                            \
+		((jarr_ptr)->size) += (src_arr_size), 1)                                                               \
 		:                                                                                                      \
 		(memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                               \
-		(((jarr_ptr)->size) += (src_arr_size)),                                                                \
-		1)                                                                                                     \
+		((jarr_ptr)->size) += (src_arr_size), 1)                                                               \
 )
 
 #define private_jarr_cat_noalloc(jarr_ptr, argc, ...)                      \
