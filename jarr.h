@@ -254,7 +254,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	default: 0                          \
 	)
 
-static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t size)
+ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t size)
 {
 	void *tmp;
 	if (likely(tmp = realloc(*jarr, size))) {
@@ -264,7 +264,7 @@ static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t size)
 	return 0;
 }
 
-static ALWAYS_INLINE void private_jarr_grow_cap_while_lt_size(size_t size, size_t *RESTRICT cap)
+ALWAYS_INLINE void private_jarr_grow_cap_while_lt_size(size_t size, size_t *RESTRICT cap)
 {
 	do { *cap *= 2; } while (size > *cap);
 }
