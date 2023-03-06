@@ -117,7 +117,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_new_alloc(jarr_ptr, cap)                                                               \
 (                                                                                                   \
-	((jarr_ptr)->capacity) = MAX(cap, JARR_MIN_CAP),                                                \
+	((jarr_ptr)->capacity) = MAX(cap, JARR_MIN_CAP),                                            \
 	(likely(((jarr_ptr)->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) ? 1 : 0 \
 )
 
@@ -205,13 +205,13 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_cat_noalloc(jarr_ptr, ...) define_cat(private_jarr_cat_noalloc, jarr_ptr, __VA_ARGS__)
 #define jarr_cat_nocheck(jarr_ptr, ...) define_cat(private_jarr_cat_nocheck, jarr_ptr, __VA_ARGS__)
 
-#define private_jarr_new(jarr_ptr, cap, ...)                                                      \
-(                                                                                                 \
+#define private_jarr_new(jarr_ptr, cap, ...)                                                       \
+(                                                                                                  \
 	(((jarr_ptr)->size) = 0,                                                                   \
-	((jarr_ptr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                      \
+	((jarr_ptr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                       \
 	(likely(((jarr_ptr)->data) = malloc((((jarr_ptr)->capacity)) * JARR_SIZEOF_T(jarr_ptr))))) \
-		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1)                       \
-		: (jarr_init(jarr_ptr), 0)                                                        \
+		? (private_jarr_cat_noalloc(jarr_ptr, cap, __VA_ARGS__), 1)                        \
+		: (jarr_init(jarr_ptr), 0)                                                         \
 )
 
 #define jarr_new(jarr_ptr, cap, ...) private_jarr_new(jarr_ptr, cap, __VA_ARGS__)
