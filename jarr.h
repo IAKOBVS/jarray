@@ -82,19 +82,14 @@
 
 JARR_TEMPLATE_T_t(JARR_STRUCT)
 
-#define jarray_static_init(T, name, capacity)     \
+#define jarr_st_init(T, name, capacity)            \
 	struct {                                  \
 		T data[JARR_NEAR_POW2(capacity)]; \
 		size_t size;                      \
-	} name
+	} name = { .size = 0 }
 
 #define jarr_st_get_capacity(jarr_st)\
 	(sizeof(jarr_st)/sizeof(*jarr_st))
-
-#define jarr_st_init(jarr_st)  \
-(void)(                        \
-	((jarr_st)->size) = 0, \
-)
 
 #define jarr_init(jarr_ptr)          \
 (void)(                              \
@@ -221,6 +216,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_nocheck(jarr_dest, jarr_src)
+#define jarr_st_cmp(jarr_st)
 
 #define jarr_foreach_index(elem, jarr_ptr)               \
 	for (size_t elem = 0, size = ((jarr_ptr)->size); \
