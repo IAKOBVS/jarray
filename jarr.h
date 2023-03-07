@@ -252,7 +252,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t size)
 {
-	void *tmp;
+	void *RESTRICT tmp;
 	if (likely(tmp = realloc(*jarr, size))) {
 		*jarr = tmp;
 		return 1;
