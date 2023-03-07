@@ -124,7 +124,7 @@ JARR_TEMPLATE_T_t(JARR_CAT)
 #ifdef JARR_DEBUG
 
 #include <assert.h>
-static int debug()
+static ALWAYS_INLINE int debug()
 {
 	int ret;
 	char a[100];
