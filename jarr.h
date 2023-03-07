@@ -158,17 +158,17 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_st_push_back(jarr_st, value)\
 	(jarr_push_back_noalloc(jarr_st, value))
 
-#define jarr_append(jarr_ptr, src_arr, src_arr_size)                                                                     \
-(                                                                                                                        \
-	(((jarr_ptr)->size) + (src_arr_size) > ((jarr_ptr)->capacity))                                                   \
-		?                                                                                                        \
+#define jarr_append(jarr_ptr, src_arr, src_arr_size)                                                                                      \
+(                                                                                                                                         \
+	(((jarr_ptr)->size) + (src_arr_size) > ((jarr_ptr)->capacity))                                                                    \
+		?                                                                                                                         \
 		((private_jarr_grow_cap((void *)&((jarr_ptr)->data), (void *)&((jarr_ptr)->capacity), ((jarr_ptr)->size) + src_arr_size), \
-		jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity)))                                                  \
-		&& (memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                              \
-		((jarr_ptr)->size) += (src_arr_size), 1))                                                                \
-		:                                                                                                        \
-		(memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                                 \
-		((jarr_ptr)->size) += (src_arr_size), 1)                                                                 \
+		jarr_reserve_nocheck(jarr_ptr, ((jarr_ptr)->capacity)))                                                                   \
+		&& (memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                                               \
+		((jarr_ptr)->size) += (src_arr_size), 1))                                                                                 \
+		:                                                                                                                         \
+		(memcpy(((jarr_ptr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                                                  \
+		((jarr_ptr)->size) += (src_arr_size), 1)                                                                                  \
 )
 
 #define private_jarr_cat_noalloc(jarr_ptr, argc, ...)                      \
