@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define JARR_TEMPLATES
+/* #define JARR_TEMPLATES */
 
 #ifdef JARR_TEMPLATES
 
@@ -99,7 +99,7 @@ JARR_TEMPLATE_T_t(JARR_CAT_NOCHECK)
 #define JARR_CAT(T, t)                                                                              \
 ALWAYS_INLINE int jarr_cat_##T(T *RESTRICT jarr_ptr, int argc, ...)                                 \
 {                                                                                                   \
-	if (jarr_ptr->size + argc > jarr_ptr->capacity) {                                          \
+	if (jarr_ptr->size + argc > jarr_ptr->capacity) {                                           \
 		do { jarr_ptr->capacity *= 2; } while (jarr_ptr->size + argc > jarr_ptr->capacity); \
 		if (unlikely(jarr_reserve_nocheck_##T(jarr_ptr, jarr_ptr->capacity))) {             \
 			jarr_ptr->capacity = 0;                                                     \
@@ -124,7 +124,7 @@ JARR_TEMPLATE_T_t(JARR_CAT)
 #ifdef JARR_DEBUG
 
 #include <assert.h>
-static ALWAYS_INLINE int debug()
+static int debug()
 {
 	int ret;
 	char a[100];
