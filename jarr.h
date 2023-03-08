@@ -221,27 +221,27 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_pop_back(jarr_ptr) --((jarr_ptr)->size)
 
-#define jarr_pop_front(jarr_ptr)                                                          \
-	JARR_MACRO_START                                                                  \
-		typeof(((jarr_ptr)->data)) end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
-		typeof(((jarr_ptr)->data)) start = ((jarr_ptr)->data);                    \
-		for ( ; start < end; ++start)                                             \
-			*(start) = *(start + 1);                                          \
-		--((jarr_ptr)->size);                                                     \
+#define jarr_pop_front(jarr_ptr)                                                                     \
+	JARR_MACRO_START                                                                             \
+		typeof(*((jarr_ptr)->data)) *RESTRICT end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
+		typeof(*((jarr_ptr)->data)) *RESTRICT start = ((jarr_ptr)->data);                    \
+		for ( ; start < end; ++start)                                                        \
+			*(start) = *(start + 1);                                                     \
+		--((jarr_ptr)->size);                                                                \
 	JARR_MACRO_END
 
-#define jarr_push_front(jarr_ptr, value)                                                  \
-	JARR_MACRO_START                                                                  \
-		if (unlikely(((jarr_ptr)->capacity) == ((jarr_ptr)->size)))               \
-			if (unlikely(jarr_reserve_2x(jarr_ptr)))                          \
-				return 0;                                                 \
-		typeof(((jarr_ptr)->data)) end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
-		typeof(((jarr_ptr)->data)) start = ((jarr_ptr)->data);                    \
-		for ( ; start < end; --end)                                               \
-			*end = *(end - 1);                                                \
-		*start = value;                                                           \
-		++((jarr_ptr)->size);                                                     \
-		1;                                                                        \
+#define jarr_push_front(jarr_ptr, value)                                                             \
+	JARR_MACRO_START                                                                             \
+		if (unlikely(((jarr_ptr)->capacity) == ((jarr_ptr)->size)))                          \
+			if (unlikely(jarr_reserve_2x(jarr_ptr)))                                     \
+				return 0;                                                            \
+		typeof(*((jarr_ptr)->data)) *RESTRICT end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
+		typeof(*((jarr_ptr)->data)) *RESTRICT start = ((jarr_ptr)->data);                    \
+		for ( ; start < end; --end)                                                          \
+			*end = *(end - 1);                                                           \
+		*start = value;                                                                      \
+		++((jarr_ptr)->size);                                                                \
+		1;                                                                                   \
 	JARR_MACRO_END
 
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
