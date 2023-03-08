@@ -36,6 +36,14 @@
 	#include <stdlib.h>
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+	#define JARR_MACRO_START ({
+	#define JARR_MACRO_END })
+#else
+	#define JARR_MACRO_START do {
+	#define JARR_MACRO_END } while (0)
+#endif
+
 #define JARR_MIN_CAP 8
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -214,12 +222,21 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_pop_back(jarr_ptr) --((jarr_ptr)->size)
 
 #define jarr_pop_front(jarr_ptr)                                                          \
-	do {                                                                              \
+	JARR_MACRO_START                                                                  \
 		typeof(((jarr_ptr)->data)) end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
 		typeof(((jarr_ptr)->data)) start = ((jarr_ptr)->data);                    \
 		for ( ; start < end; ++start)                                             \
 			*(start) = *(start + 1);                                          \
-	} while (0)
+	JARR_MACRO_END
+
+#define jarr_push_front(jarr_ptr, value)                                                  \
+	JARR_MACRO_START                                                                  \
+		typeof(((jarr_ptr)->data)) end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
+		typeof(((jarr_ptr)->data)) start = ((jarr_ptr)->data);                    \
+		for ( ; start < end; --end)                                               \
+			*end = *(end - 1);                                                \
+		*start = value;                                                           \
+	JARR_MACRO_END
 
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_nocheck(jarr_dest, jarr_src))
