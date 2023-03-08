@@ -13,7 +13,7 @@
    i.e., it asserts that jarray has enough capacity.
 */
 
-/* #define JARR_RELEASE */
+#define JARR_RELEASE
 #define JARR_INCLUDE
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
@@ -82,7 +82,7 @@
 
 JARR_TEMPLATE_T_t(JARR_STRUCT)
 
-#define jarr_st_init(T, name, capacity)            \
+#define jarr_st_init(T, name, capacity)           \
 	struct {                                  \
 		T data[JARR_NEAR_POW2(capacity)]; \
 		size_t size;                      \
