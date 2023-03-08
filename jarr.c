@@ -129,7 +129,6 @@ JARR_TEMPLATE_T_t(JARR_CAT)
 /* 		*(start) = *(start + 1); */
 /* } */
 
-#define JARR_DEBUG
 #ifdef JARR_DEBUG
 
 #include <assert.h>

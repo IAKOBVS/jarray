@@ -233,7 +233,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_push_front(jarr_ptr, value)                                                             \
 	JARR_MACRO_START                                                                             \
 		if (unlikely(((jarr_ptr)->capacity) == ((jarr_ptr)->size)))                          \
-			if (unlikely(jarr_reserve_2x(jarr_ptr)))                                     \
+			if (unlikely(!jarr_reserve_2x(jarr_ptr)))                                    \
 				return 0;                                                            \
 		typeof(*((jarr_ptr)->data)) *RESTRICT end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
 		typeof(*((jarr_ptr)->data)) *RESTRICT start = ((jarr_ptr)->data);                    \
