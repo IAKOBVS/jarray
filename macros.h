@@ -5,7 +5,7 @@
 #elif defined(_MSC_VER)
 # define RESTRICT __restrict
 #else
-# define RESTRICT
+#define RESTRICT
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)

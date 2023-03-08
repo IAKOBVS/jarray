@@ -213,8 +213,16 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_pop_back(jarr_ptr) --((jarr_ptr)->size)
 
+#define jarr_pop_front(jarr_ptr)                                                          \
+	do {                                                                              \
+		typeof(((jarr_ptr)->data)) end = ((jarr_ptr)->data) + ((jarr_ptr)->size); \
+		typeof(((jarr_ptr)->data)) start = ((jarr_ptr)->data);                    \
+		for ( ; start < end; ++start)                                             \
+			*(start) = *(start + 1);                                          \
+	} while (0)
+
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
-#define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_nocheck(jarr_dest, jarr_src)
+#define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_nocheck(jarr_dest, jarr_src))
 #define jarr_st_cmp(jarr_st)
 
 #define jarr_foreach_index(elem, jarr_ptr)               \
