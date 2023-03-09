@@ -121,14 +121,7 @@ JARR_TEMPLATE_T_t(JARR_CAT)
 
 #endif // end of JARR_TEMPLATES
 
-/* ALWAYS_INLINE void jarr_pop_front(jarray_int_t *jarr_ptr) */
-/* { */
-/* 	int* end = jarr_ptr->data + jarr_ptr->size; */ 
-/* 	int* start = jarr_ptr->data; */
-/* 	for ( ; start < end; ++start) */
-/* 		*(start) = *(start + 1); */
-/* } */
-
+#define JARR_DEBUG
 #ifdef JARR_DEBUG
 
 #include <assert.h>
