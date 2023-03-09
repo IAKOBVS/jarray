@@ -1,3 +1,5 @@
+#ifndef JARR_GENERIC_DEF_H
+
 #define JARR_TEMPLATE_T(F)             \
 	F(jarray_int_t)                \
 	F(jarray_unsigned_int_t)       \
@@ -164,3 +166,5 @@ unsigned short: jarray_unsigned_short_t,
 char: jarray_char_t,
 *jarray_unsigned_char_t: jarray_unsigned_char_t,
 */
+
+#endif

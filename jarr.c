@@ -15,8 +15,6 @@ JARR_TEMPLATE_T(JARR_INIT)
 
 #define f_jarr_init(jarr_ptr) JARR_GENERIC(jarr_init, jarr_ptr, )
 
-#define f_jarr_delete_nocheck(jarr_ptr) JARR_GENERIC(jarr_delete_nocheck, jarr_ptr, )
-
 #define JARR_DELETE(T)                                   \
 ALWAYS_INLINE void jarr_delete_##T(T *RESTRICT jarr_ptr) \
 {                                                        \
@@ -40,15 +38,20 @@ JARR_TEMPLATE_T(JARR_NEW_ALLOC)
 #define JARR_PUSH_FRONT(T, t)                                        \
 ALWAYS_INLINE int jarr_push_front_##T(T *RESTRICT jarr_ptr, t value) \
 {                                                                    \
-	return jarr_push_front(jarr_ptr, value);                     \
+	if (unlikely(jarr_ptr->capacity == jarr_ptr->size))          \
+		if (unlikely(!jarr_reserve_2x(jarr_ptr)))            \
+			return 0;                                    \
+	private_jarr_push_front(&(jarr_ptr->data), jarr_ptr->size);  \
+	*jarr_ptr->data = value;                                     \
+	++jarr_ptr->size;                                            \
 }
 
 JARR_TEMPLATE_T_t(JARR_PUSH_FRONT)
 
-#define JARR_POP_FRONT(T, t)                               \
-ALWAYS_INLINE int jarr_pop_front_##T(T *RESTRICT jarr_ptr) \
-{                                                          \
-	return jarr_pop_front(jarr_ptr);                   \
+#define JARR_POP_FRONT(T, t)                                           \
+ALWAYS_INLINE int jarr_pop_front_##T(T *RESTRICT jarr_ptr)             \
+{                                                                      \
+	return private_jarr_pop_front(jarr_ptr->data, jarr_ptr->size); \
 }
 
 JARR_TEMPLATE_T_t(JARR_POP_FRONT)
@@ -89,14 +92,13 @@ static ALWAYS_INLINE int debug()
 	jarray_int_t arr;
 	jarr_init(&arr);
 	assert(jarr_new_auto(&arr, 1, 2, 3));
-	/* assert(jarr_append(&arr, a, 10)); */
+	assert(jarr_append(&arr, a, 10));
 	assert(jarr_cat(&arr, 4, 5, 6));
 	assert(jarr_push_back(&arr, 7));
 	assert(jarr_reserve(&arr, 100));
 	assert(jarr_shrink(&arr));
 	jarr_pop_front(&arr);
-
-	jarr_push_front(&arr, 99);
+	assert(jarr_push_front(&arr, 99));
 	jarr_foreach(i, &arr) {
 		pp_cout(*i);
 	}

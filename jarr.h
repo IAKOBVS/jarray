@@ -218,11 +218,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	(private_jarr_pop_front(&((jarr_ptr)->data), ((jarr_ptr)->size))) \
 )
 
-#define jarr_push_front_noalloc(jarr_ptr, value)                         \
-(void)(                                                                  \
-	private_jarr_push_front(((jarr_ptr)->data), ((jarr_ptr)->size)), \
-	(*(((jarr_ptr)->data)) = value),                                 \
-	++((jarr_ptr)->size), 0                                          \
+#define jarr_push_front_noalloc(jarr_ptr, value)                          \
+(void)(                                                                   \
+	private_jarr_push_front(&((jarr_ptr)->data), ((jarr_ptr)->size)), \
+	(*(((jarr_ptr)->data)) = value),                                  \
+	(++((jarr_ptr)->size), 0)                                         \
 )
 
 #define jarr_push_front_nocheck(jarr_ptr, value)         \
@@ -237,12 +237,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	?                                                        \
 		jarr_push_front_nocheck(jarr_ptr, value)         \
 	:                                                        \
-		(jarr_push_front_noalloc(jarr_ptr, value), 0)    \
+		(jarr_push_front_noalloc(jarr_ptr, value), 1)    \
 )
 
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_nocheck(jarr_dest, jarr_src))
-#define jarr_st_cmp(jarr_st)
 
 #define jarr_foreach_index(elem, jarr_ptr)               \
 	for (size_t elem = 0, size = ((jarr_ptr)->size); \
@@ -314,9 +313,9 @@ JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_POP_FRONT)
 #define PRIVATE_JARR_PUSH_FRONT(typename, t)                                                 \
 static ALWAYS_INLINE void private_jarr_push_front_##typename(void **RESTRICT p, size_t size) \
 {                                                                                            \
-	t *RESTRICT start = *(t **)*p;                                                       \
+	t *RESTRICT start = *(t **)p;                                                        \
 	t *RESTRICT end = start + size;                                                      \
-	for ( ; start < end; ++start)                                                        \
+	for ( ; start < end; --end)                                                          \
 		*(end) = *(end - 1);                                                         \
 }
 
