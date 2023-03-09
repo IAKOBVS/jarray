@@ -288,8 +288,9 @@ static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t cap)
 static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RESTRICT cap, size_t size)
 {
 	size_t tmp_cap = *cap * 2;
-	while (size > tmp_cap)
+	do {
 		tmp_cap *= 2;
+	while (size > tmp_cap);
 	if (likely(private_jarr_realloc(data, tmp_cap))) {
 		*cap = tmp_cap;
 		return 1;
