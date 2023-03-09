@@ -3,7 +3,6 @@
 	F(jarray_unsigned_int_t)       \
 	F(jarray_long_t)               \
 	F(jarray_long_long_t)          \
-	F(jarray_unsigned_long_t)      \
 	F(jarray_unsigned_long_long_t) \
 	F(jarray_size_t_t)             \
 	F(jarray_double_t)             \
@@ -19,7 +18,6 @@
 	F(unsigned_int, unsigned int)             \
 	F(long, long)                             \
 	F(long_long, long long)                   \
-	F(unsigned_long, unsigned long)           \
 	F(unsigned_long_long, unsigned long long) \
 	F(size_t, size_t)                         \
 	F(double, double)                         \
@@ -35,7 +33,6 @@
 	F(jarray_unsigned_int_t, unsigned int)             \
 	F(jarray_long_t, long)                             \
 	F(jarray_long_long_t, long long)                   \
-	F(jarray_unsigned_long_t, unsigned long)           \
 	F(jarray_unsigned_long_long_t, unsigned long long) \
 	F(jarray_size_t_t, size_t)                         \
 	F(jarray_double_t, double)                         \
@@ -46,38 +43,50 @@
 	F(jarray_char_t, char)                             \
 	F(jarray_unsigned_char_t, unsigned char)           \
 
-#define JARR_GENERIC_T(F, T, ...) _Generic((T),                                              \
-	*jarray_int_t: F##_jarray_int_t(jarr_ptr, __VA_ARGS__),                              \
-	*jarray_unsigned_int_t: F##_jarray_unsigned_int_t(jarr_ptr, __VA_ARGS__),            \
-	*jarray_long_t F##_jarray_long_t(jarr_ptr, __VA_ARGS__),                             \
-	*jarray_long_long_t: F##_jarray_long_long_t(jarr_ptr, __VA_ARGS__),                  \
-	*jarray_unsigned_long_t: F##_jarray_unsigned_long_t(jarr_ptr, __VA_ARGS__),          \
-	*jarray_unsigned_long_long_t F##_jarray_unsigned_long_long_t(jarr_ptr, __VA_ARGS__), \
-	*jarray_size_t_t: F##_jarray_size_t_t(jarr_ptr, __VA_ARGS__),                        \
-	*jarray_double_t: F##_jarray_double_t(jarr_ptr, __VA_ARGS__),                        \
-	*jarray_long_double_t: F##_jarray_long_double_t(jarr_ptr, __VA_ARGS__),              \
-	*jarray_float_t: F##_jarray_float_t(jarr_ptr, __VA_ARGS__),                          \
-	*jarray_short: F##_jarray_short_t(jarr_ptr, __VA_ARGS__),                            \
-	*jarray_unsigned_short_t F##_jarray_unsigned_short_t(jarr_ptr, __VA_ARGS__),         \
-	*jarray_char_t: F##_jarray_char_t(jarr_ptr, __VA_ARGS__),                            \
-	*jarray_unsigned_char_t: F##_jarray_unsigned_char_t(jarr_ptr, __VA_ARGS__)           \
+#define JARR_GENERIC_T(F, T, ...) _Generic((T),                                        \
+	jarray_int_t*: F##_jarray_int_t(T, __VA_ARGS__),                               \
+	jarray_unsigned_int_t*: F##_jarray_unsigned_int_t(T, __VA_ARGS__),             \
+	jarray_long_t F##_jarray_long_t(T, __VA_ARGS__),                               \
+	jarray_long_long_t*: F##_jarray_long_long_t(T, __VA_ARGS__),                   \
+	jarray_unsigned_long_long_t*: F##_jarray_unsigned_long_long_t(T, __VA_ARGS__), \
+	jarray_size_t_t*: F##_jarray_size_t_t(T, __VA_ARGS__),                         \
+	jarray_double_t*: F##_jarray_double_t(T, __VA_ARGS__),                         \
+	jarray_long_double_t*: F##_jarray_long_double_t(T, __VA_ARGS__),               \
+	jarray_float_t*: F##_jarray_float_t(T, __VA_ARGS__),                           \
+	jarray_short*: F##_jarray_short_t(T, __VA_ARGS__),                             \
+	jarray_unsigned_short_t F##_jarray_unsigned_short_t(T, __VA_ARGS__),           \
+	jarray_char_t*: F##_jarray_char_t(T, __VA_ARGS__),                             \
+	jarray_unsigned_char_t*: F##_jarray_unsigned_char_t(T, __VA_ARGS__)            \
 		)
 
-#define JARR_GENERIC_t(F, t, ...) _Generic((t),                              \
-	*int_t: F##_int(jarr_ptr, __VA_ARGS__),                              \
-	*unsigned_int_t: F##_unsigned_int(jarr_ptr, __VA_ARGS__),            \
-	*long_t F##_long(jarr_ptr, __VA_ARGS__),                             \
-	*long_long_t: F##_long_long(jarr_ptr, __VA_ARGS__),                  \
-	*unsigned_long_t: F##_unsigned_long(jarr_ptr, __VA_ARGS__),          \
-	*unsigned_long_long_t F##_unsigned_long_long(jarr_ptr, __VA_ARGS__), \
-	*size_t_t: F##_size_t(jarr_ptr, __VA_ARGS__),                        \
-	*double_t: F##_double(jarr_ptr, __VA_ARGS__),                        \
-	*long_double_t: F##_long_double(jarr_ptr, __VA_ARGS__),              \
-	*float_t: F##_float(jarr_ptr, __VA_ARGS__),                          \
-	*short: F##_short(jarr_ptr, __VA_ARGS__),                            \
-	*unsigned_short_t F##_unsigned_short(jarr_ptr, __VA_ARGS__),         \
-	*char_t: F##_char(jarr_ptr, __VA_ARGS__),                            \
-	*unsigned_char_t: F##_unsigned_char(jarr_ptr, __VA_ARGS__)           \
+#define JARR_GENERIC_t(F, t, ...) _Generic((t),                                    \
+	int*: F##_int((void *)t, __VA_ARGS__),                                     \
+	unsigned int*: F##_unsigned_int((void *)t, __VA_ARGS__),                   \
+	long*: F##_long((void *)t, __VA_ARGS__),                                   \
+	long long*: F##_long_long((void *)t, __VA_ARGS__),                         \
+	unsigned long long*: F##_unsigned_long_long((void *)t, __VA_ARGS__),       \
+	size_t*: F##_size_t((void *)t, __VA_ARGS__),                               \
+	double*: F##_double((void *)t, __VA_ARGS__),                               \
+	long double*: F##_long_double((void *)t, __VA_ARGS__),                     \
+	float*: F##_float((void *)t, __VA_ARGS__),                                 \
+	short*: F##_short((void *)t, __VA_ARGS__),                                 \
+	unsigned short*: F##_unsigned_short((void *)t, __VA_ARGS__),               \
+	char*: F##_char((void *)t, __VA_ARGS__),                                   \
+	unsigned char*: F##_unsigned_char((void *)t, __VA_ARGS__),                 \
+                                                                                   \
+	int**: F##_int((void **)t, __VA_ARGS__),                                   \
+	unsigned int**: F##_unsigned_int((void **)t, __VA_ARGS__),                 \
+	long: F##_long((void **)t, __VA_ARGS__),                                   \
+	long long**: F##_long_long((void **)t, __VA_ARGS__),                       \
+	unsigned long long**: F##_unsigned_long_long((void **)t, __VA_ARGS__),     \
+	size_t**: F##_size_t((void **)t, __VA_ARGS__),                             \
+	double**: F##_double((void **)t, __VA_ARGS__),                             \
+	long double**: F##_long_double((void **)t, __VA_ARGS__),                   \
+	float**: F##_float((void **)t, __VA_ARGS__),                               \
+	short**: F##_short((void **)t, __VA_ARGS__),                               \
+	unsigned short**: F##_unsigned_short((void **)t, __VA_ARGS__),             \
+	char**: F##_char((void **)t, __VA_ARGS__),                                 \
+	unsigned char**: F##_unsigned_char((void **)t, __VA_ARGS__)                \
 		)
 
 /* jarray_type type */

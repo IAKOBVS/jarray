@@ -137,7 +137,7 @@ static ALWAYS_INLINE int debug()
 	assert(jarr_push_back(&arr, 7));
 	assert(jarr_reserve(&arr, 100));
 	assert(jarr_shrink(&arr));
-	/* jarr_pop_front(&arr); */
+	jarr_pop_front(&arr);
 
 	jarr_push_front(&arr, 99);
 	jarr_foreach(i, &arr) {

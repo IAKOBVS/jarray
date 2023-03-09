@@ -36,14 +36,6 @@
 	#include <stdlib.h>
 #endif
 
-#if defined(__GNUC__) || defined(__clang__)
-	#define JARR_MACRO_START ({
-	#define JARR_MACRO_END })
-#else
-	#define JARR_MACRO_START do {
-	#define JARR_MACRO_END } while (0)
-#endif
-
 #define JARR_MIN_CAP 8
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -221,21 +213,23 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_pop_back(jarr_ptr) --((jarr_ptr)->size)
 
-#define jarr_pop_front(jarr_ptr)                                                             \
-(void)(                                                                                           \
-	(private_jarr_pop_front(&((jarr_ptr)->data), ((jarr_ptr)->data) + ((jarr_ptr)->size)), 0) \
+#define jarr_pop_front(jarr_ptr)                                          \
+(void)(                                                                   \
+	(private_jarr_pop_front(&((jarr_ptr)->data), ((jarr_ptr)->size))) \
 )
 
-#define jarr_push_front_noalloc(jarr_ptr, value)                                                 \
-(void)(                                                                                          \
-	private_jarr_push_front(((jarr_ptr)->data), &(((jarr_ptr)->data) + ((jarr_ptr)->size))), \
-	(((jarr_ptr)->data) = value),                                                            \
-	++((jarr_ptr)->size), 0                                                                  \
+#define jarr_push_front_noalloc(jarr_ptr, value)                         \
+(void)(                                                                  \
+	private_jarr_push_front(((jarr_ptr)->data), ((jarr_ptr)->size)), \
+	(*(((jarr_ptr)->data)) = value),                                 \
+	++((jarr_ptr)->size), 0                                          \
 )
 
-#define jarr_push_front_nocheck(jarr_ptr, value) \
-	(likely(jarr_reserve_2x(jarr_ptr)))      \
-	&& jarr_push_front_noalloc
+#define jarr_push_front_nocheck(jarr_ptr, value)         \
+(                                                        \
+	(likely(jarr_reserve_2x(jarr_ptr)))              \
+	&& (jarr_push_front_noalloc(jarr_ptr, value), 1) \
+)
 
 #define jarr_push_front(jarr_ptr, value)                         \
 (                                                                \
@@ -304,22 +298,26 @@ ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RESTRICT c
 	return 0;
 }
 
-#define PRIVATE_JARR_POP_FRONT(typename, t)                             \
-ALWAYS_INLINE void private_jarr_pop_front_##typename(t **start, t *end) \
-{                                                                       \
-	for ( ; *start < end; ++*start)                                 \
-		**(start) = **(start + 1);                              \
+#define PRIVATE_JARR_POP_FRONT(typename, t)                                 \
+ALWAYS_INLINE void private_jarr_pop_front_##typename(void **p, size_t size) \
+{                                                                           \
+	t *start = *(t **)p;                                                \
+	t *end = start + size;                                              \
+	for ( ; start < end; ++start)                                       \
+		*(start) = *(start + 1);                                    \
 }
 
 JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_POP_FRONT)
+	
+#define private_jarr_pop_front(start, end) JARR_GENERIC_t(private_jarr_pop_front, start, end)
 
-#define private_jarr_push_front(start, end) JARR_GENERIC_t(private_jarr_push_front, start, end)
-
-#define PRIVATE_JARR_PUSH_FRONT(typename, t)                             \
-ALWAYS_INLINE void private_jarr_push_front_##typename(t *start, t **end) \
-{                                                                        \
-	for ( ; start < *end; --*end)                                    \
-		**(end) = **(end - 1);                                   \
+#define PRIVATE_JARR_PUSH_FRONT(typename, t)                                 \
+ALWAYS_INLINE void private_jarr_push_front_##typename(void **p, size_t size) \
+{                                                                            \
+	t *start = *(t **)*p;                                                \
+	t *end = start + size;                                               \
+	for ( ; start < end; ++start)                                        \
+		*(end) = *(end - 1);                                         \
 }
 
 JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_PUSH_FRONT)
