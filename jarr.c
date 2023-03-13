@@ -81,7 +81,7 @@ JARR_TEMPLATE_T_t(JARR_CAT)
 
 #endif // end of JARR_TEMPLATES
 
-#define JARR_DEBUG
+/* #define JARR_DEBUG */
 #ifdef JARR_DEBUG
 
 #include <assert.h>
