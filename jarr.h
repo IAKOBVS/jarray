@@ -116,7 +116,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	(likely(((jarr_ptr)->data) = malloc(jarr_ptr->capacity * JARR_SIZEOF_T(jarr_ptr)))) ? 1 : 0 \
 )
 
-#define jarr_reserve_nocheck(jarr_ptr, cap) (private_jarr_realloc((void **)&((jarr_ptr)->data), cap * JARR_SIZEOF_T(jarr_ptr)))
+#define jarr_reserve_nocheck(jarr_ptr, cap)                                                                        \
+(                                                                                                                  \
+	 private_jarr_realloc((void **)&((jarr_ptr)->data), cap * JARR_SIZEOF_T(jarr_ptr))                         \
+	 && ((((jarr_ptr)->capacity) = cap), 1)                                                                    \
+)
 
 #define jarr_reserve(jarr_ptr, cap) (((cap) > ((jarr_ptr)->capacity)) ? (jarr_reserve_nocheck(jarr_ptr, cap)) : 1)
 
