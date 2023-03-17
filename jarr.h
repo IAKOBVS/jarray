@@ -256,7 +256,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		elem < end; ++elem)
 
 #define jarr_foreach_arr(elem, arr)                                                                     \
-	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&(JARR_SIZEOF_ARR(arr) - 1])); \
+	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *RESTRICT end = (&(JARR_SIZEOF_ARR(arr) - 1)); \
 		elem < end; ++elem)
 
 #define jarr_foreach_cout(elem, jarr_ptr)\
