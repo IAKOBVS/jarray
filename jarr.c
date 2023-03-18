@@ -56,23 +56,24 @@ ALWAYS_INLINE int jarr_pop_front_##T(T *RESTRICT jarr_ptr)             \
 
 JARR_TEMPLATE_T_t(JARR_POP_FRONT)
 
-#define JARR_CAT(T, t)                                                                              \
-ALWAYS_INLINE int jarr_cat_##T(T *RESTRICT jarr_ptr, int argc, ...)                                 \
-{                                                                                                   \
-	if (jarr_ptr->size + argc > jarr_ptr->capacity) {                                           \
-		do { jarr_ptr->capacity *= 2; } while (jarr_ptr->size + argc > jarr_ptr->capacity); \
-		if (unlikely(jarr_reserve_nocheck_##T(jarr_ptr, jarr_ptr->capacity))) {             \
-			jarr_ptr->capacity = 0;                                                     \
-			return 0;                                                                   \
-		}                                                                                   \
-	}                                                                                           \
-	va_list ap;                                                                                 \
-	va_start(ap, argc);                                                                         \
-	t *RESTRICT tmpJarr = jarr_ptr->data;                                                       \
-	for (void *RESTRICT argv = va_arg(ap, void *); argv; argv = va_arg(ap, void *))             \
-		*tmpJarr++ = *(t*)argv;                                                             \
-	va_end(ap);                                                                                 \
-	return 1;                                                                                   \
+#define JARR_CAT(T, t)                                                                  \
+ALWAYS_INLINE int jarr_cat_##T(T *RESTRICT jarr_ptr, int argc, ...)                     \
+{                                                                                       \
+	if (jarr_ptr->size + argc > jarr_ptr->capacity) {                               \
+		size_t tmp_cap = jarr->capacity * 2;                                    \
+		while (tmp_cap > jarr_ptr->capacity);                                   \
+			tmp_cap *= 2;                                                   \
+		if (unlikely(jarr_reserve_nocheck_##T(jarr_ptr, jarr_ptr->capacity))) { \
+			return 0;                                                       \
+		}                                                                       \
+	}                                                                               \
+	va_list ap;                                                                     \
+	va_start(ap, argc);                                                             \
+	t *RESTRICT tmpJarr = jarr_ptr->data;                                           \
+	for (void *RESTRICT argv = va_arg(ap, void *); argv; argv = va_arg(ap, void *)) \
+		*tmpJarr++ = *(t*)argv;                                                 \
+	va_end(ap);                                                                     \
+	return 1;                                                                       \
 }
 
 JARR_TEMPLATE_T_t(JARR_CAT)
