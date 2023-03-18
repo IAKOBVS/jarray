@@ -300,26 +300,26 @@ static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RES
 	return 0;
 }
 
-#define PRIVATE_JARR_POP_FRONT(typename, t)                                                 \
-static ALWAYS_INLINE void private_jarr_pop_front_##typename(void **RESTRICT p, size_t size) \
-{                                                                                           \
-	t *RESTRICT start = *(t **)p;                                                       \
-	t *RESTRICT end = start + size;                                                     \
-	for ( ; start < end; ++start)                                                       \
-		*(start) = *(start + 1);                                                    \
+#define PRIVATE_JARR_POP_FRONT(typename, t)                                              \
+static ALWAYS_INLINE void private_jarr_pop_front_##typename(t **RESTRICT p, size_t size) \
+{                                                                                        \
+	t *RESTRICT start = *p;                                                          \
+	t *RESTRICT end = start + size;                                                  \
+	for ( ; start < end; ++start)                                                    \
+		*start = *(start + 1);                                                   \
 }
 
 JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_POP_FRONT)
 	
 #define private_jarr_pop_front(start, end) JARR_GENERIC_t(private_jarr_pop_front, start, end)
 
-#define PRIVATE_JARR_PUSH_FRONT(typename, t)                                                 \
-static ALWAYS_INLINE void private_jarr_push_front_##typename(void **RESTRICT p, size_t size) \
-{                                                                                            \
-	t *RESTRICT start = *(t **)p;                                                        \
-	t *RESTRICT end = start + size;                                                      \
-	for ( ; start < end; --end)                                                          \
-		*(end) = *(end - 1);                                                         \
+#define PRIVATE_JARR_PUSH_FRONT(typename, t)                                              \
+static ALWAYS_INLINE void private_jarr_push_front_##typename(t **RESTRICT p, size_t size) \
+{                                                                                         \
+	t *RESTRICT start = *p;                                                           \
+	t *RESTRICT end = start + size;                                                   \
+	for ( ; start < end; --end)                                                       \
+		*end = *(end - 1);                                                        \
 }
 
 JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_PUSH_FRONT)
