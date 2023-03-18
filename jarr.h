@@ -316,7 +316,7 @@ JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_POP_FRONT)
 #define PRIVATE_JARR_PUSH_FRONT(typename, t)                                             \
 static ALWAYS_INLINE void private_jarr_push_front_##typename(t *RESTRICT p, size_t size) \
 {                                                                                        \
-	t const *RESTRICT const start = p;                                               \
+	const t *RESTRICT const start = p;                                               \
 	p += size;                                                                       \
 	for ( ; start < p; --p)                                                          \
 		*p = *(p - 1);                                                           \
