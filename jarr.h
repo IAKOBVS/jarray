@@ -279,11 +279,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	default: 0                          \
 	)
 
-static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT jarr, size_t cap)
+static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT data, size_t cap)
 {
 	void *RESTRICT tmp;
-	if (likely(tmp = realloc(*jarr, cap))) {
-		*jarr = tmp;
+	if (likely(tmp = realloc(*data, cap))) {
+		*data = tmp;
 		return 1;
 	}
 	return 0;
