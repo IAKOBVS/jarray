@@ -282,11 +282,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT data, size_t cap)
 {
 	void *RESTRICT tmp;
-	if (likely(tmp = realloc(*data, cap))) {
-		*data = tmp;
-		return 1;
-	}
-	return 0;
+	if (unlikely(!(tmp = realloc(*data, cap))))
+		return 0;
+	*data = tmp;
+	return 1;
 }
 
 static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RESTRICT cap, size_t size)
@@ -294,11 +293,10 @@ static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RES
 	size_t tmp_cap = *cap * 2;
 	while (size > tmp_cap)
 		tmp_cap *= 2;
-	if (likely(private_jarr_realloc(data, tmp_cap))) {
-		*cap = tmp_cap;
-		return 1;
-	}
-	return 0;
+	if (unlikely(!private_jarr_realloc(data, tmp_cap)))
+		return 0;
+	*cap = tmp_cap;
+	return 1;
 }
 
 #define PRIVATE_JARR_POP_FRONT(typename, t)                                             \
