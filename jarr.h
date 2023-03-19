@@ -278,7 +278,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	default: 0                          \
 	)
 
-static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT data, size_t const cap)
+static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT data, const size_t cap)
 {
 	void *RESTRICT tmp;
 	if (unlikely(!(tmp = realloc(*data, cap))))
