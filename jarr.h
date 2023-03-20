@@ -112,7 +112,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_new_alloc(this_jarr, cap)                                                                 \
 (                                                                                                      \
-	((this_jarr)->capacity) = MAX(cap, JARR_MIN_CAP),                                              \
+	((this_jarr)->capacity) = MAX(JARR_NEAR_POW2(cap), JARR_MIN_CAP),                              \
 	(likely(((this_jarr)->data) = malloc(this_jarr->capacity * JARR_SIZEOF_T(this_jarr)))) ? 1 : 0 \
 )
 
