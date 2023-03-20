@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c11 -Winvalid-pch
+CFLAGS = -Winvalid-pch
 PCH = /home/james/c/macros/vargc.h types.h macros.h generic.h
 OPTFLAGS =
 HEADER_FILES = $(wildcard *.h)
