@@ -216,7 +216,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define private_jarr_new(this_jarr, cap, ...)                                                         \
 (                                                                                                     \
-	(((this_jarr)->size) = 0,                                                                     \
+	((((this_jarr)->size) = 0),                                                                  \
 	((this_jarr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                         \
 	(likely(((this_jarr)->data) = malloc((((this_jarr)->capacity)) * JARR_SIZEOF_T(this_jarr))))) \
 		? (private_jarr_cat_noalloc(this_jarr, cap, __VA_ARGS__), 1)                          \
@@ -236,7 +236,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_push_front_noalloc(this_jarr, value)                                     \
 (void)(                                                                               \
 	memmove(((this_jarr)->data) + 1, ((this_jarr)->data), ((this_jarr)->size)++), \
-	(*(((this_jarr)->data) = value)), 0                                           \
+	(*(((this_jarr)->data)) = value), 0                                           \
 )
 
 #define jarr_push_front_nocheck(this_jarr, value)         \

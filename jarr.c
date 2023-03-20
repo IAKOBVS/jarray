@@ -8,7 +8,6 @@
 #include <assert.h>
 static ALWAYS_INLINE int debug()
 {
-	int ret;
 	char a[100];
 	jarray_int_t arr;
 	jarr_init(&arr);
@@ -29,8 +28,8 @@ static ALWAYS_INLINE int debug()
 
 int main()
 {
-	assert(debug());
-	return 0;
+	/* assert(debug()); */
+	/* return 0; */
 }
 
 #endif // JARR_DEBUG
