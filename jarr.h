@@ -133,14 +133,25 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_reserve_32x(this_jarr) private_jarr_reserve_x(this_jarr, 32)
 #define jarr_reserve_64x(this_jarr) private_jarr_reserve_x(this_jarr, 64)
 
-#define jarr_shrink_nocheck(this_jarr)                         \
+#define jarr_shrink_to_fitnocheck(this_jarr)                   \
 	(jarr_reserve_nocheck(this_jarr, ((this_jarr)->size)))
 
-#define jarr_shrink(this_jarr)                                   \
+#define jarr_shrink_to_fit(this_jarr)                            \
 (                                                                \
 	(likely(((this_jarr)->capacity) != ((this_jarr)->size))) \
 		? (jarr_shrink_nocheck(this_jarr))               \
 		: (1)                                            \
+)
+
+#define jarr_shrink_nocheck(this_jarr, size) \
+(void)(                                      \
+	(((this_jarr)->size) = size), 0      \
+)
+
+#define jarr_shrink(this_jarr, size)                 \
+(void)(                                              \
+	(likely(size < ((this_jarr)->size)))         \
+	&& (jarr_shrink_nocheck(this_jarr, size), 0) \
 )
 
 #define jarr_push_back_noalloc(this_jarr, value)                        \
