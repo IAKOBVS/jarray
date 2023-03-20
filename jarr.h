@@ -236,7 +236,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_push_front_noalloc(this_jarr, value)                                     \
 (void)(                                                                               \
 	memmove(((this_jarr)->data) + 1, ((this_jarr)->data), ((this_jarr)->size)++), \
-	(((this_jarr)->data) = value), 0                                              \
+	(*(((this_jarr)->data) = value)), 0                                           \
 )
 
 #define jarr_push_front_nocheck(this_jarr, value)         \
