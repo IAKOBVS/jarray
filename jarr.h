@@ -22,7 +22,7 @@
 	#undef JARR_DEBUG
 #else
 	#define JARR_DEBUG
-#endif
+#endif // JARR_RELEASE
 
 #include <stddef.h>
 #include "/home/james/c/macros/vargc.h" // gch
@@ -34,7 +34,7 @@
 	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
-#endif
+#endif // JARR_INCLUDE
 
 #define JARR_MIN_CAP 8
 
@@ -139,8 +139,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_shrink_to_fit(this_jarr)                            \
 (                                                                \
 	(likely(((this_jarr)->capacity) != ((this_jarr)->size))) \
-		? (jarr_shrink_nocheck(this_jarr))               \
-		: (1)                                            \
+		? (jarr_shrink_to_fitnocheck(this_jarr))         \
+		: 1                                              \
 )
 
 #define jarr_shrink_nocheck(this_jarr, size) \
@@ -228,16 +228,15 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_pop_back(this_jarr) --((this_jarr)->size)
 
-#define jarr_pop_front(this_jarr)                                           \
-(void)(                                                                     \
-	(private_jarr_pop_front(&((this_jarr)->data), ((this_jarr)->size))) \
+#define jarr_pop_front(this_jarr)                                                       \
+(void)(                                                                                 \
+	memmove(((this_jarr)->data), ((this_jarr)->data + 1), --((this_jarr)->size)), 0 \
 )
 
-#define jarr_push_front_noalloc(this_jarr, value)                           \
-(void)(                                                                     \
-	private_jarr_push_front(&((this_jarr)->data), ((this_jarr)->size)), \
-	(*(((this_jarr)->data)) = value),                                   \
-	(++((this_jarr)->size), 0)                                          \
+#define jarr_push_front_noalloc(this_jarr, value)                                     \
+(void)(                                                                               \
+	memmove(((this_jarr)->data) + 1, ((this_jarr)->data), ((this_jarr)->size)++), \
+	(((this_jarr)->data) = value), 0                                              \
 )
 
 #define jarr_push_front_nocheck(this_jarr, value)         \
@@ -309,29 +308,6 @@ static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RES
 	return 1;
 }
 
-#define PRIVATE_JARR_POP_FRONT(typename, t)                                                   \
-static ALWAYS_INLINE void private_jarr_pop_front_##typename(t *RESTRICT p, const size_t size) \
-{                                                                                             \
-	const t *RESTRICT const end = p + size;                                               \
-	for ( ; p < end; ++p)                                                                 \
-		*p = *(p + 1);                                                                \
-}
-
-JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_POP_FRONT)
-	
-#define private_jarr_pop_front(start, end) JARR_GENERIC_t(private_jarr_pop_front, start, end)
-
-#define PRIVATE_JARR_PUSH_FRONT(typename, t)                                                   \
-static ALWAYS_INLINE void private_jarr_push_front_##typename(t *RESTRICT p, const size_t size) \
-{                                                                                              \
-	const t *RESTRICT const start = p;                                                     \
-	p += size;                                                                             \
-	for ( ; start < p; --p)                                                                \
-		*p = *(p - 1);                                                                 \
-}
-
-JARR_TEMPLATE_TYPENAME_t(PRIVATE_JARR_PUSH_FRONT)
-
 #define private_jarr_push_front(start, end) JARR_GENERIC_t(private_jarr_push_front, start, end)
 
-#endif
+#endif // JARR_H_DEF
