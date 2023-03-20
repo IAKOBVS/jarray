@@ -2,7 +2,7 @@
 #define JARR_H_DEF
 
 /*
-   you shall check nonnoalloc macros for non-zero value
+   you shall check non-noalloc macros for non-zero value
    and decide how to error-handle malloc or realloc failures.
 
    _nocheck macros will not error check user input,
@@ -299,12 +299,12 @@ static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT data, const size_t
 
 static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RESTRICT cap, const size_t size)
 {
-	size_t tmp_cap = *cap * 2;
-	while (size > tmp_cap)
-		tmp_cap *= 2;
-	if (unlikely(!private_jarr_realloc(data, tmp_cap)))
+	size_t tmp = *cap * 2;
+	while (size > tmp)
+		tmp *= 2;
+	if (unlikely(!private_jarr_realloc(data, tmp)))
 		return 0;
-	*cap = tmp_cap;
+	*cap = tmp;
 	return 1;
 }
 
