@@ -22,10 +22,3 @@ clean-gch:
 	-@rm -f $(GCH)
 
 rebuild: clean-gch clean all
-
-build.ninja: CMakeLists.txt
-	cmake -GNinja -Bbuild
-
-.PHONY: ninja
-ninja: build.ninja
-	ninja -C build
