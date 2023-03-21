@@ -167,4 +167,4 @@ char: jarray_char_t,
 *jarray_unsigned_char_t: jarray_unsigned_char_t,
 */
 
-#endif
+#endif // JARR_GENERIC_DEF_H

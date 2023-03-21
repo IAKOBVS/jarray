@@ -264,11 +264,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		elem < jarr_size__; ++elem)
 
 #define jarr_foreach(elem, this_jarr)                                                                                                                       \
-	for (typeof(*((this_jarr)->data)) *RESTRICT elem = ((this_jarr)->data), *const RESTRICT jarr_end__ = ((this_jarr)->data) + ((this_jarr)->size) - 1; \
+	for (typeof(*((this_jarr)->data)) *elem = ((this_jarr)->data), *const RESTRICT jarr_end__ = ((this_jarr)->data) + ((this_jarr)->size) - 1; \
 		elem <= jarr_end__; ++elem)
 
 #define jarr_foreach_arr(elem, arr)                                                                                 \
-	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr) - 1)); \
+	for (typeof(arr[0]) *elem = &(arr[0]), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr) - 1)); \
 		elem <= jarr_end__; ++elem)
 
 #define jarr_foreach_cout(elem, this_jarr)\
