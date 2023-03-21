@@ -38,36 +38,34 @@
 
 #define JARR_MIN_CAP 8
 
-#if defined(__GNUC__) || defined(__clang__)
-	#define JARR_NEAR_POW2_32(x)                                          \
-		((x) ? 1 : 1UL << (sizeof((x)) * 8 - __builtin_clz((x) - 1)))
-	#define JARR_NEAR_POW2_64(x)                                             \
-		((x) ? 1 : 1ULL << (sizeof((x)) * 8 - __builtin_clzll((x) - 1)))
-#else
-	#define JARR_NEAR_POW2_32(x) \
-		(x--,                \
-		x |= x >> 1,         \
-		x |= x >> 2,         \
-		x |= x >> 4,         \
-		x |= x >> 8,         \
-		x |= x >> 16,        \
-		++x)
-	#define JARR_NEAR_POW2_64(x) \
-		(x--,                \
-		x |= x >> 1,         \
-		x |= x >> 2,         \
-		x |= x >> 4,         \
-		x |= x >> 8,         \
-		x |= x >> 16,        \
-		x |= x >> 32,        \
-		++x)
-#endif // GNU || CLANG
+CONST ALWAYS_INLINE static size_t private_jarr_next_pow2_32(size_t x)
+{
+	--x;
+	x |= x >> 1;
+	x |= x >> 2;
+	x |= x >> 4;
+	x |= x >> 8;
+	x |= x >> 16;
+	return ++x;
+}
+
+CONST ALWAYS_INLINE static size_t private_jarr_next_pow2_64(size_t x)
+{
+	--x;
+	x |= x >> 1;
+	x |= x >> 2;
+	x |= x >> 4;
+	x |= x >> 8;
+	x |= x >> 16;
+	x |= x >> 32;
+	return ++x;
+}
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 	#ifdef JARR_64_BIT
-		#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_64(x)
+		#define JARR_NEAR_POW2(x) private_jarr_next_pow2_64(x)
 	#elif JARR_32_BIT
-		#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_32(x)
+		#define JARR_NEAR_POW2(x) private_jarr_next_pow2_32(x)
 	#else
 		#define JARR_NEAR_POW2(x) (x)
 	#endif // JARR_64_BIT
@@ -110,10 +108,12 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	&& (jarr_delete_nocheck(this_jarr), 0) \
 )                                              \
 
-#define jarr_new_alloc(this_jarr, cap)                                                                 \
-(                                                                                                      \
-	((this_jarr)->capacity) = MAX(JARR_NEAR_POW2(cap), JARR_MIN_CAP),                              \
-	(likely(((this_jarr)->data) = malloc(this_jarr->capacity * JARR_SIZEOF_T(this_jarr)))) ? 1 : 0 \
+#define jarr_new_alloc(this_jarr, cap)                                                         \
+(                                                                                              \
+	(((this_jarr)->capacity) = MAX(JARR_NEAR_POW2(2 * cap), JARR_MIN_CAP)),                \
+	(likely(((this_jarr)->data) = malloc(this_jarr->capacity * JARR_SIZEOF_T(this_jarr)))) \
+		? ((((this_jarr)->size) = 0), 1)                                               \
+		: (jarr_init(this_jarr), 0)                                                    \
 )
 
 #define jarr_reserve_nocheck(this_jarr, cap)                                                 \
@@ -216,11 +216,13 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define private_jarr_new(this_jarr, cap, ...)                                                         \
 (                                                                                                     \
-	((((this_jarr)->size) = 0),                                                                  \
-	((this_jarr)->capacity) = MAX(2 * JARR_NEAR_POW2(cap), JARR_MIN_CAP),                         \
+	((((this_jarr)->capacity) = MAX(JARR_NEAR_POW2(2 * cap), JARR_MIN_CAP)),                      \
 	(likely(((this_jarr)->data) = malloc((((this_jarr)->capacity)) * JARR_SIZEOF_T(this_jarr))))) \
-		? (private_jarr_cat_noalloc(this_jarr, cap, __VA_ARGS__), 1)                          \
-		: (jarr_init(this_jarr), 0)                                                           \
+	?                                                                                             \
+		((PP_LOOP_FROM(((this_jarr)->data), 0, __VA_ARGS__)),                                 \
+		(((this_jarr)->size) = PP_NARG(__VA_ARGS__)), 1)                                      \
+	:                                                                                             \
+		(jarr_init(this_jarr), 0)                                                             \
 )
 
 #define jarr_new(this_jarr, cap, ...) private_jarr_new(this_jarr, cap, __VA_ARGS__)
