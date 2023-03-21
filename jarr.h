@@ -250,10 +250,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_push_front(this_jarr, value)                          \
 (                                                                  \
 	(unlikely(((this_jarr)->capacity) == ((this_jarr)->size))) \
-	?                                                          \
-		jarr_push_front_nocheck(this_jarr, value)          \
-	:                                                          \
-		(jarr_push_front_noalloc(this_jarr, value), 1)     \
+	? jarr_push_front_nocheck(this_jarr, value)          \
+	: (jarr_push_front_noalloc(this_jarr, value), 1)     \
 )
 
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
