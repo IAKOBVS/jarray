@@ -61,7 +61,7 @@
 		x |= x >> 16,        \
 		x |= x >> 32,        \
 		++x)
-#endif
+#endif // GNU || CLANG
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 	#ifdef JARR_64_BIT
@@ -70,8 +70,8 @@
 		#define JARR_NEAR_POW2(x) JARR_NEAR_POW2_32(x)
 	#else
 		#define JARR_NEAR_POW2(x) (x)
-	#endif
-#endif
+	#endif // JARR_64_BIT
+#endif // JARR_ALIGN_POWER_OF_TWO
 
 #define JARR_STRUCT(T, t)        \
 	typedef struct T {       \
@@ -257,17 +257,17 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_nocheck(jarr_dest, jarr_src))
 
-#define jarr_foreach_index(elem, this_jarr)               \
-	for (size_t elem = 0, size = ((this_jarr)->size); \
-		elem < size; ++elem)
+#define jarr_foreach_index(elem, this_jarr)                      \
+	for (size_t elem = 0, jarr_size__ = ((this_jarr)->size); \
+		elem < jarr_size__; ++elem)
 
-#define jarr_foreach(elem, this_jarr)                                                                                                            \
-	for (typeof(*((this_jarr)->data)) *RESTRICT elem = ((this_jarr)->data), *const RESTRICT end = ((this_jarr)->data) + ((this_jarr)->size); \
-		elem < end; ++elem)
+#define jarr_foreach(elem, this_jarr)                                                                                                                       \
+	for (typeof(*((this_jarr)->data)) *RESTRICT elem = ((this_jarr)->data), *const RESTRICT jarr_end__ = ((this_jarr)->data) + ((this_jarr)->size) - 1; \
+		elem <= jarr_end__; ++elem)
 
-#define jarr_foreach_arr(elem, arr)                                                                          \
-	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *const RESTRICT end = (&(JARR_SIZEOF_ARR(arr) - 1)); \
-		elem < end; ++elem)
+#define jarr_foreach_arr(elem, arr)                                                                                 \
+	for (typeof(arr[0]) *RESTRICT elem = &(arr[0]), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr) - 1)); \
+		elem <= jarr_end__; ++elem)
 
 #define jarr_foreach_cout(elem, this_jarr)\
 	jarr_foreach(elem, this_jarr) pp_cout(*(elem))

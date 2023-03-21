@@ -28,8 +28,8 @@ static ALWAYS_INLINE int debug()
 
 int main()
 {
-	/* assert(debug()); */
-	/* return 0; */
+	assert(debug());
+	return 0;
 }
 
 #endif // JARR_DEBUG
