@@ -27,9 +27,7 @@ static ALWAYS_INLINE int debug()
 
 int main()
 {
-	/* assert(debug()); */
-	if (__has_builtin(__builtin_clzll))
-		puts("true");
+	assert(debug());
 	return 0;
 }
 

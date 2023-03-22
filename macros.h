@@ -1,7 +1,6 @@
 #ifndef JARR_MACROS_H_DEF
 #define JARR_MACROS_H_DEF
 
-
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 	#define RESTRICT restrict
 #elif defined(__GNUC__) || defined(__clang__)
@@ -69,13 +68,13 @@
 #if defined(__GNUC__) || defined(__clang__)
 	#include <stdint.h>
 	#if __has_builtin(__builtin_clzll)
-		CONST ALWAYS_INLINE static uint64_t private_jarr_next_pow2_u64(uint64_t x)
+		CONST ALWAYS_INLINE static uint64_t private_jarr_next_pow2_64(uint64_t x)
 		{
 			return 1ull << (64 - __builtin_clzll(x - 1));
 		}
 	#endif // __has_builtin(__builtin_clzll)
 	#if __has_builtin(__builtin_clz)
-		CONST ALWAYS_INLINE static uint32_t private_jarr_next_pow2_u32(uint32_t x)
+		CONST ALWAYS_INLINE static uint32_t private_jarr_next_pow2_32(uint32_t x)
 		{
 			return 1 << (32 - __builtin_clz(x - 1));
 		}
@@ -84,14 +83,14 @@
 	#include <stdint.h>
 	#include <intrin.h>
 	#pragma intrinsic(_BitScanReverse64)
-	CONST ALWAYS_INLINE static uint32_t private_jarr_next_pow2_u32(uint32_t x)
+	CONST ALWAYS_INLINE static uint32_t private_jarr_next_pow2_32(uint32_t x)
 	{
 		unsigned long index;
 		_BitScanReverse(&index, x - 1);
 		return 1 << (index + 1);
 	}
 
-	CONST ALWAYS_INLINE static uint64_t private_jarr_next_pow2_u64(uint64_t x)
+	CONST ALWAYS_INLINE static uint64_t private_jarr_next_pow2_64(uint64_t x)
 	{
 		unsigned long index;
 		_BitScanReverse64(&index, x - 1);
