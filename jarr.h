@@ -38,29 +38,6 @@
 
 #define JARR_MIN_CAP 8
 
-CONST ALWAYS_INLINE static size_t private_jarr_next_pow2_32(size_t x)
-{
-	--x;
-	x |= x >> 1;
-	x |= x >> 2;
-	x |= x >> 4;
-	x |= x >> 8;
-	x |= x >> 16;
-	return ++x;
-}
-
-CONST ALWAYS_INLINE static size_t private_jarr_next_pow2_64(size_t x)
-{
-	--x;
-	x |= x >> 1;
-	x |= x >> 2;
-	x |= x >> 4;
-	x |= x >> 8;
-	x |= x >> 16;
-	x |= x >> 32;
-	return ++x;
-}
-
 #ifdef JARR_ALIGN_POWER_OF_TWO
 	#ifdef JARR_64_BIT
 		#define JARR_NEAR_POW2(x) private_jarr_next_pow2_64(x)

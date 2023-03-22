@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#define JARR_DEBUG
 #ifdef JARR_DEBUG
 
 #include <assert.h>
@@ -26,7 +27,9 @@ static ALWAYS_INLINE int debug()
 
 int main()
 {
-	assert(debug());
+	/* assert(debug()); */
+	if (__has_builtin(__builtin_clzll))
+		puts("true");
 	return 0;
 }
 
