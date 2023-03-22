@@ -40,11 +40,11 @@
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 	#ifdef JARR_64_BIT
-		#define JARR_NEAR_POW2(x) private_jarr_next_pow2_64(x)
+		#define JARR_NEXT_POW2(x) private_jarr_next_pow2_64(x)
 	#elif JARR_32_BIT
-		#define JARR_NEAR_POW2(x) private_jarr_next_pow2_32(x)
+		#define JARR_NEXT_POW2(x) private_jarr_next_pow2_32(x)
 	#else
-		#define JARR_NEAR_POW2(x) (x)
+		#define JARR_NEXT_POW2(x) (x)
 	#endif // JARR_64_BIT
 #endif // JARR_ALIGN_POWER_OF_TWO
 
@@ -59,7 +59,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_st_init(T, name, capacity)           \
 	struct {                                  \
-		T data[JARR_NEAR_POW2(capacity)]; \
+		T data[JARR_NEXT_POW2(capacity)]; \
 		size_t size;                      \
 	} name = { .size = 0 }
 
@@ -87,7 +87,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_new_alloc(this_jarr, cap)                                                         \
 (                                                                                              \
-	(((this_jarr)->capacity) = MAX(JARR_NEAR_POW2(2 * cap), JARR_MIN_CAP)),                \
+	(((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                \
 	(likely(((this_jarr)->data) = malloc(this_jarr->capacity * JARR_SIZEOF_T(this_jarr)))) \
 		? ((((this_jarr)->size) = 0), 1)                                               \
 		: (jarr_init(this_jarr), 0)                                                    \
@@ -193,7 +193,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define private_jarr_new(this_jarr, cap, ...)                                                         \
 (                                                                                                     \
-	((((this_jarr)->capacity) = MAX(JARR_NEAR_POW2(2 * cap), JARR_MIN_CAP)),                      \
+	((((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                      \
 	(likely(((this_jarr)->data) = malloc((((this_jarr)->capacity)) * JARR_SIZEOF_T(this_jarr))))) \
 	?                                                                                             \
 		((PP_LOOP_FROM(((this_jarr)->data), 0, __VA_ARGS__)),                                 \
@@ -238,11 +238,11 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	for (size_t elem = 0, jarr_size__ = ((this_jarr)->size); \
 		elem < jarr_size__; ++elem)
 
-#define jarr_foreach(elem, this_jarr)                                                                                                                       \
+#define jarr_foreach(elem, this_jarr)                                                                                                              \
 	for (typeof(*((this_jarr)->data)) *elem = ((this_jarr)->data), *const RESTRICT jarr_end__ = ((this_jarr)->data) + ((this_jarr)->size) - 1; \
 		elem <= jarr_end__; ++elem)
 
-#define jarr_foreach_arr(elem, arr)                                                                                 \
+#define jarr_foreach_arr(elem, arr)                                                                        \
 	for (typeof(arr[0]) *elem = &(arr[0]), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr) - 1)); \
 		elem <= jarr_end__; ++elem)
 
