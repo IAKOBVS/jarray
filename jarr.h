@@ -76,7 +76,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_delete(this_jarr)   \
 (void)(                          \
 	free((this_jarr)->data), \
-	jarr_init(this_jarr)     \
+	jarr_init(this_jarr), 0  \
 )                                \
 
 #define jarr_new_alloc(this_jarr, cap)                                                         \
