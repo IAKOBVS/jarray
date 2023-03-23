@@ -6,7 +6,7 @@
 #ifdef JARR_DEBUG
 
 #include <assert.h>
-static ALWAYS_INLINE int debug()
+ALWAYS_INLINE static int debug()
 {
 	jarray_int_t arr;
 	jarr_new(&arr, 10, 1, 2);
