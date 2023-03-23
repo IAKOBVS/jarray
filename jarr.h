@@ -66,17 +66,17 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_st_get_capacity(jarr_st)\
 	(sizeof(jarr_st)/sizeof(*jarr_st))
 
-#define jarr_init(this_jarr)          \
-(void)(                               \
-	((this_jarr)->capacity) = 0,  \
-	((this_jarr)->size) = 0,      \
-	((this_jarr)->data) = NULL, 0 \
+#define jarr_init(this_jarr)         \
+(void)(                              \
+	((this_jarr)->capacity) = 0, \
+	((this_jarr)->size) = 0,     \
+	((this_jarr)->data) = NULL   \
 )
 
 #define jarr_delete(this_jarr)   \
 (void)(                          \
 	free((this_jarr)->data), \
-	jarr_init(this_jarr), 0  \
+	jarr_init(this_jarr)     \
 )                                \
 
 #define jarr_new_alloc(this_jarr, cap)                                                         \
@@ -116,7 +116,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_shrink_nocheck(this_jarr, size) \
 (void)(                                      \
-	(((this_jarr)->size) = size), 0      \
+	((this_jarr)->size) = size           \
 )
 
 #define jarr_shrink(this_jarr, size)                 \
@@ -125,8 +125,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	&& (jarr_shrink_nocheck(this_jarr, size), 0) \
 )
 
-#define jarr_push_back_noalloc(this_jarr, value)                        \
-	(void)((((this_jarr)->data)[((this_jarr)->size)++] = value), 0)
+#define jarr_push_back_noalloc(this_jarr, value)             \
+(void)(                                                      \
+	(((this_jarr)->data)[((this_jarr)->size)++] = value) \
+)
 
 #define jarr_push_back_nocheck(this_jarr, value)                       \
 (                                                                      \
@@ -201,15 +203,15 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_pop_back(this_jarr) --((this_jarr)->size)
 
-#define jarr_pop_front(this_jarr)                                                       \
-(void)(                                                                                 \
-	memmove(((this_jarr)->data), ((this_jarr)->data + 1), --((this_jarr)->size)), 0 \
+#define jarr_pop_front(this_jarr)                                                    \
+(void)(                                                                              \
+	memmove(((this_jarr)->data), ((this_jarr)->data + 1), --((this_jarr)->size)) \
 )
 
 #define jarr_push_front_noalloc(this_jarr, value)                                     \
 (void)(                                                                               \
 	memmove(((this_jarr)->data) + 1, ((this_jarr)->data), ((this_jarr)->size)++), \
-	(*(((this_jarr)->data)) = value), 0                                           \
+	(*(((this_jarr)->data)) = value)                                              \
 )
 
 #define jarr_push_front_nocheck(this_jarr, value)         \
