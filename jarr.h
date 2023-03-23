@@ -242,8 +242,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	for (typeof(*((this_jarr)->data)) *elem = ((this_jarr)->data), *const RESTRICT jarr_end__ = ((this_jarr)->data) + ((this_jarr)->size) - 1; \
 		elem <= jarr_end__; ++elem)
 
-#define jarr_foreach_arr(elem, arr)                                                                        \
-	for (typeof(arr[0]) *elem = &(arr[0]), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr) - 1)); \
+#define jarr_st_foreach(elem, arr)                                                                       \
+	for (typeof(*arr) *elem = &(arr[0]), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr) - 1)); \
 		elem <= jarr_end__; ++elem)
 
 #define jarr_foreach_cout(elem, this_jarr)\
@@ -284,7 +284,5 @@ static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RES
 	*cap = tmp;
 	return 1;
 }
-
-#define private_jarr_push_front(start, end) JARR_GENERIC_t(private_jarr_push_front, start, end)
 
 #endif // JARR_H_DEF
