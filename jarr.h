@@ -265,7 +265,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	default: 0                          \
 	)
 
-static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT data, const size_t cap)
+ALWAYS_INLINE static int private_jarr_realloc(void **RESTRICT data, const size_t cap)
 {
 	void *RESTRICT tmp;
 	if (unlikely(!(tmp = realloc(*data, cap))))
@@ -274,7 +274,7 @@ static ALWAYS_INLINE int private_jarr_realloc(void **RESTRICT data, const size_t
 	return 1;
 }
 
-static ALWAYS_INLINE int private_jarr_grow_cap(void **RESTRICT data, size_t *RESTRICT cap, const size_t size)
+ALWAYS_INLINE static int private_jarr_grow_cap(void **RESTRICT data, size_t *RESTRICT cap, const size_t size)
 {
 	size_t tmp = *cap * 2;
 	while (size > tmp)
