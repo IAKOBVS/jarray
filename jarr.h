@@ -81,10 +81,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_new_alloc(this_jarr, cap)                                                         \
 (                                                                                              \
+	((this_jarr)->size) = 0,                                                               \
 	(((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                \
 	(likely(((this_jarr)->data) = malloc(this_jarr->capacity * JARR_SIZEOF_T(this_jarr)))) \
-		? ((((this_jarr)->size) = 0), 1)                                               \
-		: (jarr_init(this_jarr), 0)                                                    \
+	|| (jarr_init(this_jarr), 0)                                                           \
 )
 
 #define jarr_reserve_nocheck_exact(this_jarr, cap)                                                                             \
