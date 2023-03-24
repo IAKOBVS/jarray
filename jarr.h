@@ -151,10 +151,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	(((this_jarr)->data)[((this_jarr)->size)++] = value) \
 )
 
-#define jarr_push_back_nocheck(this_jarr, value)                       \
-(                                                                      \
-	(jarr_reserve_nocheck(this_jarr, ((this_jarr)->capacity) * 2)) \
-	&& (jarr_push_back_noalloc(this_jarr, value), 1)               \
+#define jarr_push_back_nocheck(this_jarr, value)                             \
+(                                                                            \
+	(jarr_reserve_nocheck_exact(this_jarr, ((this_jarr)->capacity) * 2)) \
+	&& (jarr_push_back_noalloc(this_jarr, value), 1)                     \
 )
 
 #define jarr_push_back(this_jarr, value)                           \
@@ -171,7 +171,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 (                                                                                            \
 	(((this_jarr)->size) + (src_arr_size) > ((this_jarr)->capacity))                     \
 	?                                                                                    \
-		(jarr_reserve_nocheck(this_jarr, ((this_jarr)->capacity))                    \
+		(jarr_reserve_nocheck(this_jarr, ((this_jarr)->size) + (src_arr_size))       \
 		&& (memcpy(((this_jarr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)), \
 		((this_jarr)->size) += (src_arr_size), 1))                                   \
 	:                                                                                    \
