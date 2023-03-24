@@ -76,7 +76,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_delete(this_jarr)   \
 (void)(                          \
 	free((this_jarr)->data), \
-	jarr_init(this_jarr), 0  \
+	jarr_init(this_jarr)     \
 )                                \
 
 #define jarr_new_alloc(this_jarr, cap)                                                         \
@@ -119,10 +119,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	((this_jarr)->size) = size           \
 )
 
-#define jarr_shrink(this_jarr, size)                 \
-(void)(                                              \
-	(likely(size < ((this_jarr)->size)))         \
-	&& (jarr_shrink_nocheck(this_jarr, size), 0) \
+#define jarr_shrink(this_jarr, size)              \
+(void)(                                           \
+	(likely(size < ((this_jarr)->size)))      \
+	&& (jarr_shrink_nocheck(this_jarr, size)) \
 )
 
 #define jarr_push_back_noalloc(this_jarr, value)             \
@@ -162,7 +162,7 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define private_jarr_cat_noalloc(this_jarr, argc, ...)                       \
 (void)(                                                                      \
 	PP_LOOP_FROM(((this_jarr)->data), ((this_jarr)->size), __VA_ARGS__), \
-	((((this_jarr)->size) += argc), 0)                                   \
+	(((this_jarr)->size) += argc)                                        \
 )
 
 #define jarr_st_cat(jarr_st, ...)                                            \
