@@ -59,7 +59,7 @@
 	jarray_unsigned_short_t F##_jarray_unsigned_short_t(T, __VA_ARGS__),           \
 	jarray_char_t*: F##_jarray_char_t(T, __VA_ARGS__),                             \
 	jarray_unsigned_char_t*: F##_jarray_unsigned_char_t(T, __VA_ARGS__)            \
-		)
+	)
 
 #define JARR_GENERIC_t(F, t, ...) _Generic((t),                                    \
 	int*: F##_int((void *)t, __VA_ARGS__),                                     \
@@ -89,7 +89,7 @@
 	unsigned short**: F##_unsigned_short((void **)t, __VA_ARGS__),             \
 	char**: F##_char((void **)t, __VA_ARGS__),                                 \
 	unsigned char**: F##_unsigned_char((void **)t, __VA_ARGS__)                \
-		)
+	)
 
 /* jarray_type type */
 
