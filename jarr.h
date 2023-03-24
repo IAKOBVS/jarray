@@ -19,9 +19,9 @@
 #define JARR_64_BIT
 
 #ifdef JARR_RELEASE
-	#undef JARR_DEBUG
+#	undef JARR_DEBUG
 #else
-	#define JARR_DEBUG
+#	define JARR_DEBUG
 #endif // JARR_RELEASE
 
 #include <stddef.h>
@@ -31,21 +31,21 @@
 #include "generic.h" // gch
 
 #ifdef JARR_INCLUDE
-	#include <stdio.h>
-	#include <string.h>
-	#include <stdlib.h>
+#	include <stdio.h>
+#	include <string.h>
+#	include <stdlib.h>
 #endif // JARR_INCLUDE
 
 #define JARR_MIN_CAP 8
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
-	#ifdef JARR_64_BIT
-		#define JARR_NEXT_POW2(x) private_jarr_next_pow2_64(x)
-	#elif JARR_32_BIT
-		#define JARR_NEXT_POW2(x) private_jarr_next_pow2_32(x)
-	#else
-		#define JARR_NEXT_POW2(x) (x)
-	#endif // JARR_64_BIT
+#	ifdef JARR_64_BIT
+#		define JARR_NEXT_POW2(x) private_jarr_next_pow2_64(x)
+#	elif JARR_32_BIT
+#		define JARR_NEXT_POW2(x) private_jarr_next_pow2_32(x)
+#	else
+#		define JARR_NEXT_POW2(x) (x)
+#	endif // JARR_64_BIT
 #endif // JARR_ALIGN_POWER_OF_TWO
 
 #define JARR_STRUCT(T, t)        \
