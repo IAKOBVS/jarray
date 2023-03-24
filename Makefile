@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Winvalid-pch
-PCH = /home/james/c/macros/vargc.h types.h macros.h generic.h
+PCH = /home/james/c/pp_macros/pp_va_args_macros.h types.h macros.h generic.h
 OPTFLAGS =
 HEADER_FILES = $(wildcard *.h)
 GCH = $(patsubst %.h,%.h.gch,$(HEADER_FILES))

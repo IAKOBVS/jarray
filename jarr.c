@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-/* #define JARR_DEBUG */
+#define JARR_DEBUG
 #ifdef JARR_DEBUG
 
 #include <assert.h>
@@ -16,11 +16,12 @@ ALWAYS_INLINE static int debug()
 	assert(jarr_shrink_to_fit(&arr));
 	jarr_pop_front(&arr);
 	assert(jarr_push_front(&arr, 99));
+	assert(jarr_shrink_to_fit(&arr));
+	assert(arr.capacity == arr.size);
 	jarr_delete(&arr);
 	assert(!arr.data);
 	assert(!arr.size);
 	assert(!arr.capacity);
-	pp_cout(arr.size);
 	return 1;
 }
 
