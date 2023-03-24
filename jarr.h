@@ -13,6 +13,7 @@
    i.e., it asserts that jarray has enough capacity.
 */
 
+#include <cstdlib>
 #define JARR_RELEASE
 #define JARR_INCLUDE
 #define JARR_ALIGN_POWER_OF_TWO
@@ -87,10 +88,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 		: (jarr_init(this_jarr), 0)                                                    \
 )
 
-#define jarr_reserve_nocheck(this_jarr, cap)                                                 \
-(                                                                                            \
-	 private_jarr_realloc((void **)&((this_jarr)->data), cap * JARR_SIZEOF_T(this_jarr)) \
-	 && ((((this_jarr)->capacity) = cap), 1)                                             \
+#define jarr_reserve_nocheck(this_jarr, cap)                                                \
+(                                                                                           \
+	 private_jarr_realloc((void **)&((this_jarr)->data), &((this_jarr)->capacity), cap) \
+	 && ((((this_jarr)->capacity) = cap), 1)                                            \
 )
 
 #define jarr_reserve(this_jarr, cap) (((cap) > ((this_jarr)->capacity)) ? (jarr_reserve_nocheck(this_jarr, cap)) : 1)
@@ -146,17 +147,17 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_st_push_back(jarr_st, value)\
 	(jarr_push_back_noalloc(jarr_st, value))
 
-#define jarr_append(this_jarr, src_arr, src_arr_size)                                                                                        \
-(                                                                                                                                            \
-	(((this_jarr)->size) + (src_arr_size) > ((this_jarr)->capacity))                                                                     \
-	?                                                                                                                                    \
-		((private_jarr_grow_cap((void *)&((this_jarr)->data), (void *)&((this_jarr)->capacity), ((this_jarr)->size) + src_arr_size), \
-		jarr_reserve_nocheck(this_jarr, ((this_jarr)->capacity)))                                                                    \
-		&& (memcpy(((this_jarr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                                                 \
-		((this_jarr)->size) += (src_arr_size), 1))                                                                                   \
-	:                                                                                                                                    \
-		(memcpy(((this_jarr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                                                    \
-		((this_jarr)->size) += (src_arr_size), 1)                                                                                    \
+#define jarr_append(this_jarr, src_arr, src_arr_size)                                                                                \
+(                                                                                                                                    \
+	(((this_jarr)->size) + (src_arr_size) > ((this_jarr)->capacity))                                                             \
+	?                                                                                                                            \
+		((private_jarr_realloc((void **)&((this_jarr)->data), &((this_jarr)->capacity), ((this_jarr)->size) + src_arr_size), \
+		jarr_reserve_nocheck(this_jarr, ((this_jarr)->capacity)))                                                            \
+		&& (memcpy(((this_jarr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                                         \
+		((this_jarr)->size) += (src_arr_size), 1))                                                                           \
+	:                                                                                                                            \
+		(memcpy(((this_jarr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),                                            \
+		((this_jarr)->size) += (src_arr_size), 1)                                                                            \
 )
 
 #define private_jarr_cat_noalloc(this_jarr, argc, ...)                       \
@@ -168,10 +169,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 #define jarr_st_cat(jarr_st, ...)                                            \
 	private_jarr_cat_noalloc(jarr_st, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define private_jarr_cat_nocheck(this_jarr, argc, ...)                                                                    \
-(                                                                                                                         \
-	private_jarr_grow_cap((void *)&((this_jarr)->data), (void *)&((this_jarr)->capacity), ((this_jarr)->size) + argc) \
-	&& (private_jarr_cat_noalloc(this_jarr, (argc), __VA_ARGS__), 1)                                                  \
+#define private_jarr_cat_nocheck(this_jarr, argc, ...)                                                           \
+(                                                                                                                 \
+	private_jarr_realloc((void **)&((this_jarr)->data), &((this_jarr)->capacity), ((this_jarr)->size) + argc) \
+	&& (private_jarr_cat_noalloc(this_jarr, (argc), __VA_ARGS__), 1)                                          \
 )
 
 #define private_jarr_cat(this_jarr, argc, ...)                                  \
@@ -261,23 +262,15 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	default: 0                          \
 	)
 
-ALWAYS_INLINE static int private_jarr_realloc(void **RESTRICT data, const size_t cap)
+ALWAYS_INLINE static int private_jarr_realloc(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap)
 {
+	size_t tmp_cap = *cap * 2;
+	while (tmp_cap < target_cap)
+		tmp_cap *= 2;
 	void *RESTRICT tmp;
-	if (unlikely(!(tmp = realloc(*data, cap))))
+	if (unlikely(!(tmp = realloc(*data, tmp_cap))))
 		return 0;
-	*data = tmp;
-	return 1;
-}
-
-ALWAYS_INLINE static int private_jarr_grow_cap(void **RESTRICT data, size_t *RESTRICT cap, const size_t size)
-{
-	size_t tmp = *cap * 2;
-	while (size > tmp)
-		tmp *= 2;
-	if (unlikely(!private_jarr_realloc(data, tmp)))
-		return 0;
-	*cap = tmp;
+	*cap = tmp_cap;
 	return 1;
 }
 
