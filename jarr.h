@@ -50,9 +50,9 @@
 
 #define JARR_STRUCT(T, t)        \
 	typedef struct T {       \
-		t *data;         \
 		size_t size;     \
 		size_t capacity; \
+		t *data;         \
 	} T;
 
 JARR_TEMPLATE_T_t(JARR_STRUCT)
