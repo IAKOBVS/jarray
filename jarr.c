@@ -10,11 +10,6 @@ ALWAYS_INLINE static int debug()
 {
 	jarray_int_t arr;
 	jarr_new(&arr, 10, 1, 2);
-	printf("size %zu\n", arr.size);
-	printf("cap %zu\n", arr.capacity);
-	jarr_foreach(i, &arr) {
-		pp_cout(*i);
-	}
 	assert(jarr_cat(&arr, 4, 5, 6));
 	assert(jarr_push_back(&arr, 7));
 	assert(jarr_reserve(&arr, 100));
@@ -22,6 +17,10 @@ ALWAYS_INLINE static int debug()
 	jarr_pop_front(&arr);
 	assert(jarr_push_front(&arr, 99));
 	jarr_delete(&arr);
+	assert(!arr.data);
+	assert(!arr.size);
+	assert(!arr.capacity);
+	pp_cout(arr.size);
 	return 1;
 }
 
