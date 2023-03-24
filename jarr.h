@@ -59,8 +59,8 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 
 #define jarr_st_init(T, name, capacity)           \
 	struct {                                  \
-		T data[JARR_NEXT_POW2(capacity)]; \
 		size_t size;                      \
+		T data[JARR_NEXT_POW2(capacity)]; \
 	} name = { .size = 0 }
 
 #define jarr_st_get_capacity(jarr_st)\
