@@ -97,8 +97,10 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	private_jarr_realloc_grow((void **)&((this_jarr).data), &((this_jarr).capacity), cap, sizeof(*((this_jarr).data))) \
 )
 
-#define jarr_reserve(this_jarr, cap)                                                     \
-	(((cap) > ((this_jarr).capacity)) ? (jarr_reserve_nocheck(this_jarr, cap)) : 1)
+#define jarr_reserve(this_jarr, cap)                                                  \
+(                                                                                     \
+	((cap) > ((this_jarr).capacity)) ? (jarr_reserve_nocheck(this_jarr, cap)) : 1 \
+)
 
 #define private_jarr_reserve_x(this_jarr, multiplier)                                   \
 	jarr_reserve_nocheck_exact(this_jarr, ((multiplier) * ((this_jarr).capacity)))
