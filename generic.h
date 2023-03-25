@@ -94,6 +94,7 @@
 /* jarray_type type */
 
 /*
+
 jarray_int_t, int
 jarray_unsigned_int_t, unsigned int
 jarray_long_t, long
@@ -108,11 +109,13 @@ jarray_short_t, short
 jarray_unsigned_short_t, unsigned short
 jarray_char_t, char
 jarray_unsigned_char_t, unsigned char
+
 */
 
 /* jarray_type */
 
 /*
+
 jarray_int_t
 jarray_unsigned_int_t
 jarray_long_t
@@ -127,11 +130,13 @@ jarray_short_t
 jarray_unsigned_short_t
 jarray_char_t
 jarray_unsigned_char_t
+
 */
 
 /* type */
 
 /*
+
 int
 unsigned int
 long
@@ -146,11 +151,13 @@ short
 unsigned short
 char
 unsigned char
+
 */
 
 /* type: jarray */
 
 /*
+
 int: jarray_int_t,
 unsigned int: jarray_unsigned_int_t,
 long: jarray_long_t,
@@ -165,6 +172,7 @@ short: jarray_short_t,
 unsigned short: jarray_unsigned_short_t,
 char: jarray_char_t,
 *jarray_unsigned_char_t: jarray_unsigned_char_t,
+
 */
 
 #endif // JARR_GENERIC_DEF_H
