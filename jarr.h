@@ -256,22 +256,22 @@ JARR_TEMPLATE_T_t(JARR_STRUCT)
 	for (size_t elem = 0, jarr_size__ = ((this_jarr).size); \
 		elem < jarr_size__; ++elem)
 
-#define jarr_foreach(elem, this_jarr)                                                                                                          \
-	for (typeof(*((this_jarr).data)) *elem = ((this_jarr).data), *const RESTRICT jarr_end__ = ((this_jarr).data) + ((this_jarr).size) - 1; \
-		elem <= jarr_end__; ++elem)
+#define jarr_foreach(elem, this_jarr)                                                                                                      \
+	for (typeof(*((this_jarr).data)) *elem = ((this_jarr).data), *const RESTRICT jarr_end__ = ((this_jarr).data) + ((this_jarr).size); \
+		elem < jarr_end__; ++elem)
 
-#define jarr_st_foreach(elem, arr)                                                                 \
-	for (typeof(*arr) *elem = arr, *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr) - 1)); \
-		elem <= jarr_end__; ++elem)
+#define jarr_st_foreach(elem, arr)                                                             \
+	for (typeof(*arr) *elem = arr, *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr))); \
+		elem < jarr_end__; ++elem)
 
 #define jarr_foreach_cout(elem, this_jarr)             \
 	jarr_foreach(elem, this_jarr) pp_cout(*(elem))
 
-#define jarr_end(this_jarr) (*(((this_jarr).data) + ((this_jarr).size) - 1))
-#define jarr_start(this_jarr) (*(((this_jarr).data)))
-
 #define jarr_typeof_elem(this_jarr) typeof(*((this_jarr).data))
 #define jarr_typeof(this_jarr) typeof((*(this_jarr)))
+
+#define jarr_begin(this_jarr) ((this_jarr).data)
+#define jarr_end(this_jarr) (((this_jarr).data) + ((this_jarr).size))
 
 #define JARR_SAME_TYPE(x, y) _Generic((x), \
 	typeof(y): 1,                      \
