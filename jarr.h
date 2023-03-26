@@ -256,8 +256,10 @@
 	: (jarr_push_front_noalloc(this_jarr, value), 1)         \
 )
 
-#define jarr_cmp_nocheck(jarr_dest, jarr_src) (memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
-#define jarr_cmp(jarr_dest, jarr_src) ((((jarr_dest).size) != ((jarr_src).size)) || jarr_cmp_nocheck(jarr_dest, jarr_src))
+#define jarr_cmp_nocheck(jarr_dest, jarr_src)                               \
+	(memcmp(((jarr_dest).data), ((jarr_src).data), ((jarr_dest).size)))
+#define jarr_cmp(jarr_dest, jarr_src)                                                        \
+	((((jarr_dest).size) != ((jarr_src).size)) || jarr_cmp_nocheck(jarr_dest, jarr_src))
 
 #define jarr_foreach_index(elem, this_jarr)                     \
 	for (size_t elem = 0, jarr_size__ = ((this_jarr).size); \
