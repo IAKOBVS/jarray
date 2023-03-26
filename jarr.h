@@ -27,8 +27,8 @@
 #include <stddef.h>
 #include "/home/james/c/pp_macros/pp_va_args_macros.h" // gch
 #include "macros.h" // gch
-#include "types.h" // gch
-#include "generic.h" // gch
+/* #include "types.h" // gch */
+/* #include "generic.h" // gch */
 
 #ifdef JARR_INCLUDE
 #	include <stdio.h>
@@ -61,7 +61,7 @@
 		T data[JARR_NEXT_POW2(capacity)]; \
 	}
 
-#define jarr_st_get_capacity(jarr_st)\
+#define jarr_st_get_capacity(jarr_st)      \
 	(sizeof(jarr_st)/sizeof(*jarr_st))
 
 #define jarr_init(this_jarr)        \
