@@ -217,7 +217,7 @@
 #define jarr_new_auto(this_jarr, ...)                                  \
 (                                                                      \
 	private_jarr_new(this_jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
-)                                                                      \
+)
 
 #define private_jarr_new(this_jarr, cap, ...)                                                       \
 (                                                                                                   \
@@ -229,9 +229,6 @@
 	:                                                                                           \
 		(jarr_init(this_jarr), 0)                                                           \
 )
-
-/* #define jarr_new(this_jarr, cap, ...) private_jarr_new(this_jarr, cap, __VA_ARGS__) */
-/* #define jarr_new_auto(this_jarr, ...) private_jarr_new(this_jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__) */
 
 #define jarr_pop_back(this_jarr) --((this_jarr).size)
 

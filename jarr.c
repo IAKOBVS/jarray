@@ -35,7 +35,7 @@
 /* 	return 1; */
 /* } */
 
-/* #define JARR_DEBUG */
+#define JARR_DEBUG
 #ifdef JARR_DEBUG
 
 #include <assert.h>
