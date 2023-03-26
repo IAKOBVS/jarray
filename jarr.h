@@ -77,7 +77,7 @@
 	jarr_init(this_jarr)    \
 )                               \
 
-#define jarr_new_alloc(this_jarr, cap)                                                       \
+#define private_jarr_new_alloc(this_jarr, cap)                                                       \
 (                                                                                            \
 	((this_jarr).size) = 0,                                                              \
 	(((this_jarr).capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),               \
@@ -210,7 +210,7 @@
 #define jarr_new(this_jarr, ...)                                                                     \
 (                                                                                                    \
 	(PP_NARG(__VA_ARGS__) == 1)                                                                  \
-		? jarr_new_alloc(this_jarr, PP_FIRST_ARG(__VA_ARGS__))                               \
+		? private_jarr_new_alloc(this_jarr, PP_FIRST_ARG(__VA_ARGS__))                               \
 		: private_jarr_new(this_jarr, PP_FIRST_ARG(__VA_ARGS__), PP_OTHER_ARGS(__VA_ARGS__)) \
 )
 
