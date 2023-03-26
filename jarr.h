@@ -207,24 +207,17 @@
 #define jarr_cat_noalloc(this_jarr, ...) private_cat(private_jarr_cat_noalloc, this_jarr, __VA_ARGS__)
 #define jarr_cat_nocheck(this_jarr, ...) private_cat(private_jarr_cat_nocheck, this_jarr, __VA_ARGS__)
 
-int private_jarr_new_alloc(const size_t new_size, void** data, size_t *size, size_t *capacity, const size_t sizeof_data);
-int private_jarr_new_cat(const size_t new_size, void** data, size_t *size, size_t *capacity, const size_t sizeof_data, ...);
-
-#define jarr_new(this_jarr, ...)                                                                                                                                                                                             \
-(                                                                                                                                                                                                                            \
-	(PP_NARG(__VA_ARGS__) == 1)                                                                                                                                                                                          \
-		? jarr_new_alloc(this_jarr, PP_FIRST_ARG(__VA_ARGS__))                                                                                                                                                       \
-		: private_jarr_new(this_jarr, PP_FIRST_ARG(__VA_ARGS__), PP_OTHER_ARGS(__VA_ARGS__))                                                                                                                         \
+#define jarr_new(this_jarr, ...)                                                                     \
+(                                                                                                    \
+	(PP_NARG(__VA_ARGS__) == 1)                                                                  \
+		? jarr_new_alloc(this_jarr, PP_FIRST_ARG(__VA_ARGS__))                               \
+		: private_jarr_new(this_jarr, PP_FIRST_ARG(__VA_ARGS__), PP_OTHER_ARGS(__VA_ARGS__)) \
 )
-		/* ? private_jarr_new_alloc(PP_FIRST_ARG(__VA_ARGS__), (void **)&((this_jarr).data), &((this_jarr).size), &((this_jarr).capacity), sizeof(*((this_jarr).data)))                                         \ */
-		/* : (private_jarr_new_alloc(PP_FIRST_ARG(__VA_ARGS__), (void **)&((this_jarr).data), &((this_jarr).size), &((this_jarr).capacity), sizeof(*((this_jarr).data)))                                        \ */
-		/* 	&& (PP_LOOP_FROM(((this_jarr).data), 0, PP_OTHER_ARGS(__VA_ARGS__)), ((this_jarr).size) = PP_NARG(PP_OTHER_ARGS(__VA_ARGS__)), 1))                                                           \ */
-/* ) */
 
-/* #define jarr_new_auto(this_jarr, ...)                                                                                                                               \ */
-/* (                                                                                                                                                                   \ */
-/* 	(private_jarr_new_alloc(PP_FIRST_ARG(__VA_ARGS__), (void **)&((this_jarr).data), &((this_jarr).size), &((this_jarr).capacity), sizeof(*((this_jarr).data))) \ */
-/* )                                                                                                                                                                   \ */
+#define jarr_new_auto(this_jarr, ...)                                  \
+(                                                                      \
+	private_jarr_new(this_jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+)                                                                      \
 
 #define private_jarr_new(this_jarr, cap, ...)                                                       \
 (                                                                                                   \
