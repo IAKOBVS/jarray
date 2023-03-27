@@ -24,7 +24,6 @@
 #	define JARR_DEBUG
 #endif // JARR_RELEASE
 
-#include <stddef.h>
 #include "/home/james/c/pp_macros/pp_va_args_macros.h" // gch
 #include "macros.h" // gch
 /* #include "types.h" // gch */

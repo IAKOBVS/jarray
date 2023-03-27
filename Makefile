@@ -5,10 +5,10 @@ OPTFLAGS =
 HEADER_FILES = $(wildcard *.h)
 GCH = $(patsubst %.h,%.h.gch,$(HEADER_FILES))
 
-all: jarr
+all: t
 
-jarr: jarr.c $(GCH)
-	$(CC) $(OPTFLAGS) $(CFLAGS) -include $(PCH) -o $@ jarr.c
+t: t.c $(GCH)
+	$(CC) $(OPTFLAGS) $(CFLAGS) -include $(PCH) -o $@ t.c
 
 %.h.gch: %.h
 	$(CC) $(OPTFLAGS) $(CFLAGS) -MMD -MF $(patsubst %.h.gch,%.d,$@) -MT $@ -o $@ -c $<
@@ -16,7 +16,7 @@ jarr: jarr.c $(GCH)
 .PHONY: clean clean-gch rebuild
 
 clean:
-	-@rm -f jarr
+	-@rm -f t
 
 clean-gch:
 	-@rm -f $(GCH)

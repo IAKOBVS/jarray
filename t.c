@@ -1,4 +1,4 @@
-#include "jarr.h"
+#include "jarr.h" // .c
 #include <assert.h>
 ALWAYS_INLINE static int debug()
 {
