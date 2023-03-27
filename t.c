@@ -1,4 +1,8 @@
 #include "jarr.h" // .c
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+
 #include <assert.h>
 ALWAYS_INLINE static int debug()
 {
@@ -22,12 +26,5 @@ ALWAYS_INLINE static int debug()
 int main()
 {
 	assert(debug());
-	jarray(int) arr;
-	jarr_new(arr, 10, 3, 9, 3, 8, 99, 100);
-	jarr_foreach(i, arr) {
-
-	}
-	jarr_delete(arr);
 	return 0;
 }
-
