@@ -76,7 +76,7 @@
 	jarr_init(this_jarr)    \
 )                               \
 
-#define private_jarr_new_alloc(this_jarr, cap)                                                       \
+#define private_jarr_new_alloc(this_jarr, cap)                                               \
 (                                                                                            \
 	((this_jarr).size) = 0,                                                              \
 	(((this_jarr).capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),               \
