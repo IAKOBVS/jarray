@@ -47,6 +47,8 @@
 #	endif // JARR_64_BIT
 #endif // JARR_ALIGN_POWER_OF_TWO
 
+#define JARR_IS_TYPE_SAFE(x, y) _Static_assert(JARR_SAME_TYPE(x, y) , "wrong type used!")
+
 #define jarray(T)                \
 	struct {                 \
 		size_t size;     \
