@@ -114,7 +114,7 @@
 	}
 #endif // __GNUC__ || __clang__
 
-#define JARR_SIZEOF_T(var) (sizeof(*((var).data)))
+#define JARR_SIZEOF_T(var) (sizeof(*((var)->data)))
 #define JARR_SIZEOF_ARR(arr) (sizeof(arr)/sizeof(*(arr)))
 
 #define MAX(a,b) ((a)>(b)?(a):(b))
