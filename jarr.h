@@ -1,5 +1,5 @@
-#ifndef JARR_H_DEF
-#define JARR_H_DEF
+#ifndef JARR_H_DEF__
+#define JARR_H_DEF__
 
 /*
    you shall check non-noalloc macros for non-zero value
@@ -320,4 +320,4 @@ ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t 
 	return 1;
 }
 
-#endif // JARR_H_DEF
+#endif // JARR_H_DEF__

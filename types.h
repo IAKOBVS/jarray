@@ -1,5 +1,5 @@
-#ifndef JARR_TYPES_H_DEF
-#define JARR_TYPES_H_DEF
+#ifndef JARR_TYPES_H_DEF__
+#define JARR_TYPES_H_DEF__
 
 /* #define JARR_T_JARRAY_INT_T 1 */
 /* #define JARR_T_JARRAY_UNSIGNED_INT_T 2 */
@@ -438,4 +438,4 @@
 	char(*)[]: (sizeof(src_arr)/sizeof((src_arr)[0]))                      \
 	)
 
-#endif // JARR_TYPES_H_DEF
+#endif // JARR_TYPES_H_DEF__

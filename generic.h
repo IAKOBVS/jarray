@@ -1,4 +1,5 @@
-#ifndef JARR_GENERIC_DEF_H
+#ifndef JARR_GENERIC_DEF_H__
+#define JARR_GENERIC_DEF_H__
 
 #define JARR_TEMPLATE_T(F)             \
 	F(jarray_int_t)                \
@@ -175,4 +176,4 @@ char: jarray_char_t,
 
 */
 
-#endif // JARR_GENERIC_DEF_H
+#endif // JARR_GENERIC_DEF_H__

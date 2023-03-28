@@ -1,5 +1,5 @@
-#ifndef JARR_MACROS_H_DEF
-#define JARR_MACROS_H_DEF
+#ifndef JARR_MACROS_H_DEF__
+#define JARR_MACROS_H_DEF__
 
 #if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && (__clang_major__ >= 3))
 #	define JARR_HAS_TYPEOF
@@ -185,4 +185,4 @@
 
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
-#endif // JARR_MACROS_H_DEF
+#endif // JARR_MACROS_H_DEF__
