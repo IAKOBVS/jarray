@@ -40,6 +40,9 @@
 
 #define JARR_MIN_CAP 8
 
+ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
+ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
+
 #define jarray(T)                \
 	struct {                 \
 		size_t size;     \

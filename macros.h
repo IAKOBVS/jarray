@@ -1,6 +1,14 @@
 #ifndef JARR_MACROS_H_DEF__
 #define JARR_MACROS_H_DEF__
 
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) || defined(__GNUC__) && (__GNUC__ >= 4 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+#	define JARR_WARN_UNUSED __attribute__((warn_unused_result))
+#elif defined(__attribute_warn_unused_result__)
+#	define JARR_WARN_UNUSED __attribute_warn_unused_result__
+#else
+#	define JARR_WARN_UNUSED
+#endif // __attribute__unused
+
 #if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && (__clang_major__ >= 3))
 #	define JARR_HAS_TYPEOF
 #endif // JARR_HAS_TYPEOF
@@ -23,9 +31,9 @@
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 #	ifdef JARR_64_BIT
-#		define JARR_NEXT_POW2(x) private_jarr_next_pow2_64(x)
+#		define JARR_NEXT_POW2(x) private_jstr_next_pow2_64(x)
 #	elif JARR_32_BIT
-#		define JARR_NEXT_POW2(x) private_jarr_next_pow2_32(x)
+#		define JARR_NEXT_POW2(x) private_jstr_next_pow2_32(x)
 #	else
 #		define JARR_NEXT_POW2(x) (x)
 #	endif // JARR_64_BIT
@@ -91,13 +99,13 @@
 #if defined(__GNUC__) || defined(__clang__)
 #	include <stdint.h>
 #	if __has_builtin(__builtin_clzll)
-		CONST ALWAYS_INLINE static uint64_t private_jarr_next_pow2_64(uint64_t x)
+		CONST ALWAYS_INLINE uint64_t private_jstr_next_pow2_64(uint64_t x)
 		{
 			return 1ull << (64 - __builtin_clzll(x - 1));
 		}
 #	endif // __has_builtin(__builtin_clzll)
 #	if __has_builtin(__builtin_clz)
-		CONST ALWAYS_INLINE static uint32_t private_jarr_next_pow2_32(uint32_t x)
+		CONST ALWAYS_INLINE uint32_t private_jstr_next_pow2_32(uint32_t x)
 		{
 			return 1 << (32 - __builtin_clz(x - 1));
 		}
@@ -106,21 +114,21 @@
 #	include <stdint.h>
 #	include <intrin.h>
 #	pragma intrinsic(_BitScanReverse64)
-	CONST ALWAYS_INLINE static uint32_t private_jarr_next_pow2_32(uint32_t x)
+	CONST ALWAYS_INLINE uint32_t private_jstr_next_pow2_32(uint32_t x)
 	{
 		unsigned long index;
 		_BitScanReverse(&index, x - 1);
 		return 1 << (index + 1);
 	}
 
-	CONST ALWAYS_INLINE static uint64_t private_jarr_next_pow2_64(uint64_t x)
+	CONST ALWAYS_INLINE uint64_t private_jstr_next_pow2_64(uint64_t x)
 	{
 		unsigned long index;
 		_BitScanReverse64(&index, x - 1);
 		return 1ull << (index + 1);
 	}
 #else
-	CONST ALWAYS_INLINE static size_t private_jarr_next_pow2_32(size_t x)
+	CONST ALWAYS_INLINE size_t private_jstr_next_pow2_32(size_t x)
 	{
 		--x;
 		x |= x >> 1;
@@ -131,7 +139,7 @@
 		return x + 1;
 	}
 
-	CONST ALWAYS_INLINE static size_t private_jarr_next_pow2_64(size_t x)
+	CONST ALWAYS_INLINE size_t private_jstr_next_pow2_64(size_t x)
 	{
 		--x;
 		x |= x >> 1;
@@ -143,9 +151,6 @@
 		return x + 1;
 	}
 #endif // __GNUC__ || __clang__
-
-#define JARR_SIZEOF_T(var) (sizeof(*((var)->data)))
-#define JARR_SIZEOF_ARR(arr) (sizeof(arr)/sizeof(*(arr)))
 
 #if defined(JARR_HAS_TYPEOF) && defined(JARR_HAS_GENERIC)
 #	define JARR_SAME_TYPE(x, y) _Generic((x), \
@@ -160,29 +165,41 @@
 
 #if defined(__GNUC__) || defined(__clang__)
 #	ifdef JARR_HAS_GENERIC
-#		define JARR_IS_SIZE(expr) _Generic((expr),           \
-					int: 1,                      \
-					unsigned int: 1,             \
-					size_t: 1,                   \
-					long: 1,                     \
-					long long: 1,                \
-					unsigned long long: 1,       \
-                                                                     \
-					const int: 1,                \
-					const unsigned int: 1,       \
-					const size_t: 1,             \
-					const long: 1,               \
-					const long long: 1,          \
-					const unsigned long long: 1, \
-					default: 0)
+#		define JARR_GENERIC_CASE_SIZE(expr)        \
+			int: expr,                         \
+			unsigned int: expr,                \
+			size_t: expr,                      \
+			long: expr,                        \
+			long long: expr,                   \
+			unsigned long long: expr,          \
+						           \
+			const int: expr,                   \
+			const unsigned int: expr,          \
+			const size_t: expr,                \
+			const long: expr,                  \
+			const long long: expr,             \
+			const unsigned long long: expr
+
+#		define JARR_GENERIC_CASE_STR(expr) \
+			char *: expr,              \
+			const char *: expr
+
+#		define JARR_GENERIC_CASE_CHAR(expr) \
+			char: expr,                 \
+			const char: expr
+
+#		define JARR_IS_SIZE(expr) _Generic((expr), \
+			JARR_GENERIC_CASE_SIZE(1),         \
+			default: 0)
+
 #		define JARR_IS_STR(expr) _Generic((expr), \
-					char *: 1,        \
-					const char *: 1,  \
+			JARR_GENERIC_CASE_STR(1),         \
 					default: 0)
+
 #		define JARR_IS_CHAR(expr) _Generic((expr), \
-					const char: 1,     \
-					char: 1,           \
+			JARR_GENERIC_CASE_CHAR(1),         \
 					default: 0)
+
 #		define JARR_ASSERT_SIZE(expr)                                                              \
 			JARR_ASSERT(JARR_IS_SIZE(expr), "Not using a number where a number is required!");
 #		define JARR_ASSERT_STR(expr)                                                              \
@@ -202,6 +219,15 @@
 #	define JARR_MACRO_END )
 #endif // __GNUC__ || __clang__
 
-#define MAX(a,b) ((a)>(b)?(a):(b))
+#ifndef MAX
+#	define MAX(a,b) ((a)>(b)?(a):(b))
+#endif // MAX
+
+#ifndef MIN
+#	define MIN(a,b) ((a)<(b)?(a):(b))
+#endif // MIN
+
+#define JARR_SIZEOF_T(var) (sizeof(*((var)->data)))
+#define JARR_SIZEOF_ARR(arr) (sizeof(arr)/sizeof(*(arr)))
 
 #endif // JARR_MACROS_H_DEF__
