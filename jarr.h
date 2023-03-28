@@ -262,8 +262,11 @@ JARR_MACRO_START                                                      \
 	((this_jarr)->capacity) ^= ((other_jarr)->capacity)           \
 JARR_MACRO_END
 
-#define jarr_swap(this_jarr)                                                                                                                                                                \
-	private_jarr_swap((void **)&((this_jarr)->data), &((this_jarr)->capacity), &((this_jarr)->size), (void **)&((other_jarr)->data), &((other_jarr)->capacity), &((other_jarr)->size));
+#define jarr_swap(this_jarr, other_jar)                                                                                                                                                    \
+JARR_MACRO_START                                                                                                                                                                           \
+	JARR_ASSERT_RIGHT_TYPE(this_jarr, *((other_jarr)->data))                                                                                                                           \
+	private_jarr_swap((void **)&((this_jarr)->data), &((this_jarr)->capacity), &((this_jarr)->size), (void **)&((other_jarr)->data), &((other_jarr)->capacity), &((other_jarr)->size)) \
+JARR_MACRO_END
 
 #define jarr_pop_back(this_jarr) --((this_jarr)->size)
 
