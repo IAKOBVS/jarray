@@ -1,9 +1,10 @@
-#include "jarr.h" /* .c */
+#include "jarr.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 
 #include <assert.h>
+
 ALWAYS_INLINE static int debug()
 {
 	jarray(int) arr;
