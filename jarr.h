@@ -190,7 +190,8 @@ JARR_MACRO_END
 #define private_jarr_cat_noalloc(this_jarr, argc, ...)                       \
 (void)                                                                       \
 JARR_MACRO_START                                                             \
-	JARR_ASSERT_SIZE(argc)                                                \
+	JARR_ASSERT_SIZE(argc)                                               \
+	JARR_ASSERT_RIGHT_TYPE(this_jarr, PP_FIRST_ARG(__VA_ARGS__))         \
 	PP_LOOP_FROM(((this_jarr)->data), ((this_jarr)->size), __VA_ARGS__), \
 	(((this_jarr)->size) += argc)                                        \
 JARR_MACRO_END
@@ -232,6 +233,7 @@ JARR_MACRO_END
 #define private_jarr_new(this_jarr, cap, ...)                                                         \
 JARR_MACRO_START                                                                                      \
 	JARR_ASSERT_SIZE(cap)                                                                         \
+	JARR_ASSERT_RIGHT_TYPE(this_jarr, PP_FIRST_ARG(__VA_ARGS__))                                  \
 	((((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                      \
 	(likely(((this_jarr)->data) = malloc((((this_jarr)->capacity)) * JARR_SIZEOF_T(this_jarr))))) \
 	?                                                                                             \
