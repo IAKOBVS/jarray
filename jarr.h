@@ -125,8 +125,8 @@ JARR_MACRO_START                                                 \
 JARR_MACRO_END
 
 #define jarr_shrink_to_size_nocheck(this_jarr, size) \
-(void)\
-JARR_MACRO_START\
+(void)                                               \
+JARR_MACRO_START                                     \
 	((this_jarr)->size) = size                   \
 JARR_MACRO_END
 
