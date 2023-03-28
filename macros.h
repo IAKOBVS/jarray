@@ -160,16 +160,35 @@
 
 #if defined(__GNUC__) || defined(__clang__)
 #	ifdef JARR_HAS_GENERIC
-#		define JARR_IS_SIZE(expr) _Generic((expr),     \
-					int: 1,                \
-					unsigned int: 1,       \
-					size_t: 1,             \
-					long: 1,               \
-					long long: 1,          \
-					unsigned long long: 1, \
+#		define JARR_IS_SIZE(expr) _Generic((expr),           \
+					int: 1,                      \
+					unsigned int: 1,             \
+					size_t: 1,                   \
+					long: 1,                     \
+					long long: 1,                \
+					unsigned long long: 1,       \
+                                                                     \
+					const int: 1,                \
+					const unsigned int: 1,       \
+					const size_t: 1,             \
+					const long: 1,               \
+					const long long: 1,          \
+					const unsigned long long: 1, \
+					default: 0)
+#		define JARR_IS_STR(expr) _Generic((expr), \
+					char *: 1,        \
+					const char *: 1,  \
+					default: 0)
+#		define JARR_IS_CHAR(expr) _Generic((expr), \
+					const char: 1,     \
+					char: 1,           \
 					default: 0)
 #		define JARR_ASSERT_SIZE(expr)                                                              \
 			JARR_ASSERT(JARR_IS_SIZE(expr), "Not using a number where a number is required!");
+#		define JARR_ASSERT_STR(expr)                                                              \
+			JARR_ASSERT(JARR_IS_STR(expr), "Not using a char * where a char * is required!");
+#		define JARR_ASSERT_CHAR(expr)                                                          \
+			JARR_ASSERT(JARR_IS_CHAR(expr), "Not using a char where a char is required!");
 #		define JARR_ASSERT_TYPECHECK(Texpr, expr) JARR_ASSERT(JARR_SAME_TYPE(Texpr, expr), "Passing the wrong data type!");
 #	else
 #		define JARR_IS_SIZE(expr)
