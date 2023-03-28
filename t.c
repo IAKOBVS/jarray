@@ -1,4 +1,5 @@
 #include "jarr.h"
+#include "macros.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -24,9 +25,9 @@
 /* 	return 1; */
 /* } */
 
-int debug();
 int main()
 {
-	assert(debug());
-	return 0;
+	jarray(int) a;
+	jarray(int) b;
+	jarr_swap(&a, &b);
 }

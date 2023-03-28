@@ -246,6 +246,25 @@ JARR_MACRO_START                                                                
 		(jarr_init(this_jarr), 0)                                                             \
 JARR_MACRO_END
 
+#define jarr_swap_xor(this_jarr, other_jarr)                          \
+JARR_MACRO_START                                                      \
+	JARR_ASSERT_RIGHT_TYPE(this_jarr, *((other_jarr)->data))      \
+	*((this_jarr)->data) ^= *((other_jarr)->data),                \
+	*((this_jarr)->data) ^= *((other_jarr)->data),                \
+	*((this_jarr)->data) ^= *((other_jarr)->data),                \
+                                                                      \
+	((this_jarr)->size) ^= ((other_jarr)->size),                  \
+	((this_jarr)->size) ^= ((other_jarr)->size),                  \
+	((this_jarr)->size) ^= ((other_jarr)->size),                  \
+                                                                      \
+	((this_jarr)->capacity) ^= ((other_jarr)->capacity),          \
+	((this_jarr)->capacity) ^= ((other_jarr)->capacity),          \
+	((this_jarr)->capacity) ^= ((other_jarr)->capacity)           \
+JARR_MACRO_END
+
+#define jarr_swap(this_jarr)                                                                                                                                                                \
+	private_jarr_swap((void **)&((this_jarr)->data), &((this_jarr)->capacity), &((this_jarr)->size), (void **)&((other_jarr)->data), &((other_jarr)->capacity), &((other_jarr)->size));
+
 #define jarr_pop_back(this_jarr) --((this_jarr)->size)
 
 #define jarr_pop_front(this_jarr)                                                    \
@@ -321,6 +340,19 @@ ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t 
 		return 0;
 	*cap = tmp_cap;
 	return 1;
+}
+
+ALWAYS_INLINE static void private_jarr_swap(void **RESTRICT data, size_t *RESTRICT cap, size_t *RESTRICT size, void **RESTRICT other_data, size_t *RESTRICT other_cap, size_t *RESTRICT other_size)
+{
+	const size_t tmp_size = *size;
+	size_t tmp_cap = *cap;
+	void *RESTRICT tmp_data = *data;
+	*size = *other_size;
+	*cap = *other_cap;
+	*data = *other_data;
+	*other_size = tmp_size;
+	*other_cap = tmp_cap;
+	*other_data = tmp_data;
 }
 
 #endif // JARR_H_DEF__
