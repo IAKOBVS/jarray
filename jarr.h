@@ -71,7 +71,7 @@
 
 #define private_jarr_new_alloc(this_jarr, cap)                                                     \
 JARR_MACRO_START                                                                                   \
-	JARR_ASSERT_NUM(cap)                                                                       \
+	JARR_ASSERT_SIZE(cap)                                                                      \
 	((this_jarr)->size) = 0,                                                                   \
 	(((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                    \
 	(likely(((this_jarr)->data) = malloc(((this_jarr)->capacity) * JARR_SIZEOF_T(this_jarr)))) \
@@ -80,25 +80,25 @@ JARR_MACRO_END
 
 #define jarr_reserve_nocheck_exact(this_jarr, cap)                                                                             \
 JARR_MACRO_START                                                                                                               \
-	JARR_ASSERT_NUM(cap)                                                                                                   \
+	JARR_ASSERT_SIZE(cap)                                                                                                  \
 	private_jarr_realloc_exact((void **)&((this_jarr)->data), &((this_jarr)->capacity), cap, sizeof(*((this_jarr)->data))) \
 JARR_MACRO_END
 
 #define jarr_reserve_nocheck(this_jarr, cap)                                                                                  \
 JARR_MACRO_START                                                                                                              \
-	JARR_ASSERT_NUM(cap)                                                                                                  \
+	JARR_ASSERT_SIZE(cap)                                                                                                 \
 	private_jarr_realloc_grow((void **)&((this_jarr)->data), &((this_jarr)->capacity), cap, sizeof(*((this_jarr)->data))) \
 JARR_MACRO_END
 
 #define jarr_reserve(this_jarr, cap)                                                   \
 JARR_MACRO_START                                                                       \
-	JARR_ASSERT_NUM(cap)                                                           \
+	JARR_ASSERT_SIZE(cap)                                                          \
 	((cap) > ((this_jarr)->capacity)) ? (jarr_reserve_nocheck(this_jarr, cap)) : 1 \
 JARR_MACRO_END
 
 #define private_jarr_reserve_x(this_jarr, multiplier)                                   \
 JARR_MACRO_START                                                                        \
-	JARR_ASSERT_NUM(multiplier)                                                     \
+	JARR_ASSERT_SIZE(multiplier)                                                    \
 	jarr_reserve_nocheck_exact(this_jarr, ((multiplier) * ((this_jarr)->capacity))) \
 JARR_MACRO_END
 
@@ -175,7 +175,7 @@ JARR_MACRO_END
 
 #define jarr_append(this_jarr, src_arr, src_arr_size)                                        \
 JARR_MACRO_START                                                                             \
-	JARR_ASSERT_NUM(src_arr_size)                                                        \
+	JARR_ASSERT_SIZE(src_arr_size)                                                        \
 	JARR_ASSERT_RIGHT_TYPE(this_jarr, *src_arr)                                          \
 	(((this_jarr)->size) + (src_arr_size) > ((this_jarr)->capacity))                     \
 	?                                                                                    \
@@ -190,7 +190,7 @@ JARR_MACRO_END
 #define private_jarr_cat_noalloc(this_jarr, argc, ...)                       \
 (void)                                                                       \
 JARR_MACRO_START                                                             \
-	JARR_ASSERT_NUM(argc)                                                \
+	JARR_ASSERT_SIZE(argc)                                                \
 	PP_LOOP_FROM(((this_jarr)->data), ((this_jarr)->size), __VA_ARGS__), \
 	(((this_jarr)->size) += argc)                                        \
 JARR_MACRO_END
@@ -231,7 +231,7 @@ JARR_MACRO_END
 
 #define private_jarr_new(this_jarr, cap, ...)                                                         \
 JARR_MACRO_START                                                                                      \
-	JARR_ASSERT_NUM(cap)                                                                          \
+	JARR_ASSERT_SIZE(cap)                                                                         \
 	((((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                      \
 	(likely(((this_jarr)->data) = malloc((((this_jarr)->capacity)) * JARR_SIZEOF_T(this_jarr))))) \
 	?                                                                                             \

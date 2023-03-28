@@ -160,21 +160,25 @@
 
 #if defined(__GNUC__) || defined(__clang__)
 #	ifdef JARR_HAS_GENERIC
-#		define JARR_IS_NUM(expr) _Generic((expr), \
-					int: 1,           \
-					size_t: 1,        \
+#		define JARR_IS_SIZE(expr) _Generic((expr),     \
+					int: 1,                \
+					unsigned int: 1,       \
+					size_t: 1,             \
+					long: 1,               \
+					long long: 1,          \
+					unsigned long long: 1, \
 					default: 0)
-#		define JARR_ASSERT_NUM(expr)                                                              \
-			JARR_ASSERT(JARR_IS_NUM(expr), "Not using a number where a number is required!");
+#		define JARR_ASSERT_SIZE(expr)                                                              \
+			JARR_ASSERT(JARR_IS_SIZE(expr), "Not using a number where a number is required!");
 #		define JARR_ASSERT_TYPECHECK(Texpr, expr) JARR_ASSERT(JARR_SAME_TYPE(Texpr, expr), "Passing the wrong data type!");
 #	else
-#		define JARR_IS_NUM(expr)
-#		define JARR_ASSERT_NUM(expr)
+#		define JARR_IS_SIZE(expr)
+#		define JARR_ASSERT_SIZE(expr)
 #	endif // JARR_HAS_GENERIC
 #	define JARR_MACRO_START ({
 #	define JARR_MACRO_END ;})
 #else
-#	define JARR_IS_NUM(val)
+#	define JARR_IS_SIZE(val)
 #	define JARR_MACRO_START (
 #	define JARR_MACRO_END )
 #endif // __GNUC__ || __clang__

@@ -26,6 +26,14 @@ ALWAYS_INLINE static int debug()
 
 int main()
 {
-	assert(debug());
+	_Generic(1,
+	int: 1,
+	unsigned int: 1,
+	size_t: 1,
+	long: 1,
+	long long: 1,
+	unsigned long: 1,
+	unsigned long long: 1,
+	)
 	return 0;
 }
