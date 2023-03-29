@@ -296,7 +296,7 @@ JARR_MACRO_END
 		elem < jarr_end__; ++elem)
 
 #define jarr_st_foreach(elem, arr)                                                             \
-	for (typeof(*(arr)) *elem = (arr), *const RESTRICT j(arr)_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
+	for (typeof(*(arr)) *elem = (arr), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
 		elem < j(arr)_end__; ++elem)
 
 #define jarr_foreach_cout(elem, this_jarr)             \
@@ -309,8 +309,8 @@ JARR_MACRO_END
 #ifdef JARR_HAS_TYPEOF
 #	define jarr_typeof_data(this_jarr) typeof(((this_jarr)->data))
 #	define jarr_typeof(this_jarr) typeof(((this_jarr)))
-#	define jarr_cbegin(this_jarr) ((const typeof((this_jarr)->data))((this_jarr)->data))
-#	define jarr_cend(this_jarr) ((const typeof((this_jarr)->data))(((this_jarr)->data) + ((this_jarr)->size)))
+/* #	define jarr_cbegin(this_jarr) ((const typeof((this_jarr)->data))((this_jarr)->data)) */
+/* #	define jarr_cend(this_jarr) ((const typeof((this_jarr)->data))(((this_jarr)->data) + ((this_jarr)->size))) */
 #endif // JARR_HAS_TYPEOF
 
 ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)

@@ -34,5 +34,5 @@ const int *f(int *p)
 int main()
 {
 	jarray(int) arr;
-	int *p = jarr_cbegin(&arr);
+	printf("%p\n", arr.data);
 }
