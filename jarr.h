@@ -42,7 +42,6 @@
 
 ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
 ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
-ALWAYS_INLINE static void private_jarr_swap(void **RESTRICT data, size_t *RESTRICT cap, size_t *RESTRICT size, void **RESTRICT other_data, size_t *RESTRICT other_cap, size_t *RESTRICT other_size);
 
 #define jarray(T)                \
 	struct {                 \
@@ -308,6 +307,11 @@ JARR_MACRO_END
 
 #define jarr_begin(this_jarr) ((this_jarr)->data)
 #define jarr_end(this_jarr) (((this_jarr)->data) + ((this_jarr)->size))
+
+#ifdef JARR_HAS_TYPEOF
+#	define jarr_cbegin(this_jarr) (const typeof((this_jarr)->data))((this_jarr)->data)
+#	define jarr_cend(this_jarr) (const typeof((this_jarr)->data))(((this_jarr)->data) + ((this_jarr)->size))
+#endif // JARR_HAS_TYPEOF
 
 ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
 {
