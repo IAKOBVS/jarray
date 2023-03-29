@@ -176,8 +176,8 @@ JARR_MACRO_START                                 \
 	jarr_push_back_noalloc(this_jarr, value) \
 JARR_MACRO_END
 
-#define jarr_append(dest, src_arr)                                 \
-	(PP_NARG(__VA_ARGS__) == 2)                                \
+#define jarr_append(dest, src_arr)                                         \
+	(PP_NARG(__VA_ARGS__) == 2)                                        \
 		? jarr_append_arr(dest, src_arr, JARR_SIZEOF_ARR(src_arr)) \
 		: jarr_append_arr(dest, src_arr, )
 
