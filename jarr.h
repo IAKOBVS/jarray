@@ -176,18 +176,36 @@ JARR_MACRO_START                                 \
 	jarr_push_back_noalloc(this_jarr, value) \
 JARR_MACRO_END
 
-#define jarr_append(this_jarr, src_arr, src_arr_size)                                        \
-JARR_MACRO_START                                                                             \
-	JARR_ASSERT_SIZE(src_arr_size)                                                        \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, *src_arr)                                          \
-	(((this_jarr)->size) + (src_arr_size) > ((this_jarr)->capacity))                     \
-	?                                                                                    \
-		(jarr_reserve_nocheck(this_jarr, ((this_jarr)->size) + (src_arr_size))       \
-		&& (memcpy(((this_jarr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)), \
-		((this_jarr)->size) += (src_arr_size), 1))                                   \
-	:                                                                                    \
-		(memcpy(((this_jarr)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),    \
-		((this_jarr)->size) += (src_arr_size), 1)                                    \
+#define jarr_append(dest, src_arr)                                 \
+	(PP_NARG(__VA_ARGS__) == 2)                                \
+		? jarr_append_arr(dest, src_arr, JARR_SIZEOF_ARR(src_arr)) \
+		: jarr_append_arr(dest, src_arr, )
+
+#define jarr_append_arr(dest, src_arr, src_arr_size)                                    \
+JARR_MACRO_START                                                                        \
+	JARR_ASSERT_SIZE(src_arr_size)                                                  \
+	JARR_ASSERT_RIGHT_TYPE(dest, *src_arr)                                          \
+	(((dest)->size) + (src_arr_size) > ((dest)->capacity))                          \
+	?                                                                               \
+		(jarr_reserve_nocheck(dest, ((dest)->size) + (src_arr_size))            \
+		&& (memcpy(((dest)->data), src_arr, (src_arr_size) * sizeof(*src_arr)), \
+		((dest)->size) += (src_arr_size), 1))                                   \
+	:                                                                               \
+		(memcpy(((dest)->data), src_arr, (src_arr_size) * sizeof(*src_arr)),    \
+		((dest)->size) += (src_arr_size), 1)                                    \
+JARR_MACRO_END
+
+#define jarr_append_jarr(dest, src)                                                                \
+JARR_MACRO_START                                                                                   \
+	JARR_ASSERT_TYPECHECK(dest, src)                                                           \
+	(((dest)->size) + ((src)->size) > ((dest)->capacity))                                      \
+	?                                                                                          \
+		(jarr_reserve_nocheck(dest, ((dest)->size) + ((src)->size))                        \
+		&& (memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data))), \
+		((dest)->size) += ((src)->size), 1))                                               \
+	:                                                                                          \
+		(memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*src)),              \
+		((dest)->size) += ((src)->size), 1)                                                \
 JARR_MACRO_END
 
 #define private_jarr_cat_noalloc(this_jarr, argc, ...)                       \

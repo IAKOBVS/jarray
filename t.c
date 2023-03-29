@@ -34,5 +34,6 @@ const int *f(int *p)
 int main()
 {
 	jarray(int) arr;
-	int *p = (const typeof(arr.data))arr.data;
+	jarray(int) arr2;
+	jarr_append(&arr, &arr2);
 }
