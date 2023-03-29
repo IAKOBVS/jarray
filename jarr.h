@@ -13,21 +13,12 @@
    i.e., it asserts that jarray has enough capacity.
 */
 
-#define JARR_RELEASE
 #define JARR_INCLUDE
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
 
-#ifdef JARR_RELEASE
-#	undef JARR_DEBUG
-#else
-#	define JARR_DEBUG
-#endif // JARR_RELEASE
-
-#include "/home/james/c/pp_macros/pp_va_args_macros.h" // gch
-#include "macros.h" // gch
-/* #include "types.h" // gch */
-/* #include "generic.h" // gch */
+#include "/home/james/c/pp_macros/pp_va_args_macros.h" // .gch
+#include "macros.h" // .gch
 
 #define JARR_ASSERT_RIGHT_TYPE(T, expr) JARR_ASSERT_TYPECHECK(*((T)->data), expr)
 
