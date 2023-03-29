@@ -42,6 +42,7 @@
 
 ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
 ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
+ALWAYS_INLINE static void private_jarr_swap(void **RESTRICT data, size_t *RESTRICT cap, size_t *RESTRICT size, void **RESTRICT other_data, size_t *RESTRICT other_cap, size_t *RESTRICT other_size);
 
 #define jarray(T)                \
 	struct {                 \
@@ -124,17 +125,17 @@ JARR_MACRO_START                                                 \
 		: 1                                              \
 JARR_MACRO_END
 
-#define jarr_shrink_to_size_nocheck(this_jarr, size) \
-(void)                                               \
-JARR_MACRO_START                                     \
-	((this_jarr)->size) = size                   \
+#define jarr_shrink_to_size_nocheck(this_jarr, size__) \
+(void)                                                 \
+JARR_MACRO_START                                       \
+	((this_jarr)->size) = size__                   \
 JARR_MACRO_END
 
-#define jarr_shrink_to_size(this_jarr, size)                 \
-(void)                                                       \
-JARR_MACRO_START                                             \
-	(size < ((this_jarr)->size))                         \
-	&& (jarr_shrink_to_size_nocheck(this_jarr, size), 0) \
+#define jarr_shrink_to_size(this_jarr, size__)                 \
+(void)                                                         \
+JARR_MACRO_START                                               \
+	(size__ < ((this_jarr)->size))                         \
+	&& (jarr_shrink_to_size_nocheck(this_jarr, size__), 0) \
 JARR_MACRO_END
 
 #define jarr_shrink_to_nocheck(this_jarr, cap)     \
@@ -246,23 +247,7 @@ JARR_MACRO_START                                                                
 		(jarr_init(this_jarr), 0)                                                             \
 JARR_MACRO_END
 
-#define jarr_swap_xor(this_jarr, other_jarr)                          \
-JARR_MACRO_START                                                      \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, *((other_jarr)->data))      \
-	*((this_jarr)->data) ^= *((other_jarr)->data),                \
-	*((this_jarr)->data) ^= *((other_jarr)->data),                \
-	*((this_jarr)->data) ^= *((other_jarr)->data),                \
-                                                                      \
-	((this_jarr)->size) ^= ((other_jarr)->size),                  \
-	((this_jarr)->size) ^= ((other_jarr)->size),                  \
-	((this_jarr)->size) ^= ((other_jarr)->size),                  \
-                                                                      \
-	((this_jarr)->capacity) ^= ((other_jarr)->capacity),          \
-	((this_jarr)->capacity) ^= ((other_jarr)->capacity),          \
-	((this_jarr)->capacity) ^= ((other_jarr)->capacity)           \
-JARR_MACRO_END
-
-#define jarr_swap(this_jarr, other_jar)                                                                                                                                                    \
+#define jarr_swap(this_jarr, other_jarr)                                                                                                                                                    \
 JARR_MACRO_START                                                                                                                                                                           \
 	JARR_ASSERT_RIGHT_TYPE(this_jarr, *((other_jarr)->data))                                                                                                                           \
 	private_jarr_swap((void **)&((this_jarr)->data), &((this_jarr)->capacity), &((this_jarr)->size), (void **)&((other_jarr)->data), &((other_jarr)->capacity), &((other_jarr)->size)) \
@@ -312,8 +297,8 @@ JARR_MACRO_END
 		elem < jarr_end__; ++elem)
 
 #define jarr_st_foreach(elem, arr)                                                             \
-	for (typeof(*arr) *elem = arr, *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR(arr))); \
-		elem < jarr_end__; ++elem)
+	for (typeof(*(arr)) *elem = (arr), *const RESTRICT j(arr)_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
+		elem < j(arr)_end__; ++elem)
 
 #define jarr_foreach_cout(elem, this_jarr)             \
 	jarr_foreach(elem, this_jarr) pp_cout(*(elem))

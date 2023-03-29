@@ -165,28 +165,19 @@
 
 #if defined(__GNUC__) || defined(__clang__)
 #	ifdef JARR_HAS_GENERIC
-#		define JARR_GENERIC_CASE_SIZE(expr)        \
-			int: expr,                         \
-			unsigned int: expr,                \
-			size_t: expr,                      \
-			long: expr,                        \
-			long long: expr,                   \
-			unsigned long long: expr,          \
-						           \
-			const int: expr,                   \
-			const unsigned int: expr,          \
-			const size_t: expr,                \
-			const long: expr,                  \
-			const long long: expr,             \
-			const unsigned long long: expr
+#		define JARR_GENERIC_CASE_SIZE(expr) \
+			int: expr,                  \
+			unsigned int: expr,         \
+			size_t: expr,               \
+			long: expr,                 \
+			long long: expr,            \
+			unsigned long long: expr    \
 
 #		define JARR_GENERIC_CASE_STR(expr) \
 			char *: expr,              \
-			const char *: expr
 
 #		define JARR_GENERIC_CASE_CHAR(expr) \
 			char: expr,                 \
-			const char: expr
 
 #		define JARR_IS_SIZE(expr) _Generic((expr), \
 			JARR_GENERIC_CASE_SIZE(1),         \
