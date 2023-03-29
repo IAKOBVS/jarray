@@ -34,5 +34,5 @@ const int *f(int *p)
 int main()
 {
 	jarray(int) arr;
-	printf("%p\n", arr.data);
+	int *p = (const typeof(arr.data))arr.data;
 }

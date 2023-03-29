@@ -318,6 +318,7 @@ ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t
 	void *RESTRICT tmp;
 	if (unlikely(!(tmp = realloc(*data, target_cap * sizeof_data))))
 		return 0;
+	*data = tmp;
 	*cap = target_cap;
 	return 1;
 }
@@ -330,6 +331,7 @@ ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t 
 	void *RESTRICT tmp;
 	if (unlikely(!(tmp = realloc(*data, tmp_cap * sizeof_data))))
 		return 0;
+	*data = tmp;
 	*cap = tmp_cap;
 	return 1;
 }
@@ -337,7 +339,7 @@ ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t 
 ALWAYS_INLINE static void private_jarr_swap(void **RESTRICT data, size_t *RESTRICT cap, size_t *RESTRICT size, void **RESTRICT other_data, size_t *RESTRICT other_cap, size_t *RESTRICT other_size)
 {
 	const size_t tmp_size = *size;
-	size_t tmp_cap = *cap;
+	const size_t tmp_cap = *cap;
 	void *RESTRICT tmp_data = *data;
 	*size = *other_size;
 	*cap = *other_cap;
