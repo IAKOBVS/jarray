@@ -309,6 +309,7 @@ JARR_MACRO_END
 #ifdef JARR_HAS_TYPEOF
 #	define jarr_typeof_data(this_jarr) typeof(((this_jarr)->data))
 #	define jarr_typeof(this_jarr) typeof(((this_jarr)))
+// TOODO: make const ptr give a warning if assigned to non-const
 /* #	define jarr_cbegin(this_jarr) ((const typeof((this_jarr)->data))((this_jarr)->data)) */
 /* #	define jarr_cend(this_jarr) ((const typeof((this_jarr)->data))(((this_jarr)->data) + ((this_jarr)->size))) */
 #endif // JARR_HAS_TYPEOF
