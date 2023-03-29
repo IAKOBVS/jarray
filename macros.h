@@ -174,10 +174,10 @@
 			unsigned long long: expr    \
 
 #		define JARR_GENERIC_CASE_STR(expr) \
-			char *: expr,              \
+			char *: expr               \
 
 #		define JARR_GENERIC_CASE_CHAR(expr) \
-			char: expr,                 \
+			char: expr                  \
 
 #		define JARR_IS_SIZE(expr) _Generic((expr), \
 			JARR_GENERIC_CASE_SIZE(1),         \
