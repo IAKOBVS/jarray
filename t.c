@@ -3,9 +3,8 @@
 
 ALWAYS_INLINE static int debug()
 {
-	jarray(int) arr;
-	jarray(int) tmp;
-	jarr_init(&arr);
+	jarray(int, arr);
+	jarray(int, tmp);
 		assert(!arr.data);
 		assert(!arr.size);
 		assert(!arr.capacity);
@@ -25,11 +24,6 @@ ALWAYS_INLINE static int debug()
 		assert(!arr.size);
 		assert(!arr.capacity);
 	return 1;
-}
-
-const int *f(int *p)
-{
-	return p;
 }
 
 int main()
