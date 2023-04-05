@@ -55,147 +55,137 @@ ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t 
 #define jarr_st_get_capacity(jarr_st)      \
 	(sizeof(jarr_st)/sizeof(*jarr_st))
 
-#define jarr_init(this_jarr)         \
-(void)(                              \
-	((this_jarr)->capacity) = 0, \
-	((this_jarr)->size) = 0,     \
-	((this_jarr)->data) = NULL   \
-)
-
-#define jarr_delete(this_jarr)   \
+#define jarr_init(this_)         \
 (void)(                          \
-	free((this_jarr)->data), \
-	jarr_init(this_jarr)     \
+	((this_)->capacity) = 0, \
+	((this_)->size) = 0,     \
+	((this_)->data) = NULL   \
 )
 
-#define private_jarr_new_alloc(this_jarr, cap)                                                     \
-JARR_MACRO_START                                                                                   \
-	JARR_ASSERT_SIZE(cap)                                                                      \
-	((this_jarr)->size) = 0,                                                                   \
-	(((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                    \
-	(likely(((this_jarr)->data) = malloc(((this_jarr)->capacity) * JARR_SIZEOF_T(this_jarr)))) \
-	|| (jarr_init(this_jarr), 0)                                                               \
+#define jarr_delete(this_)   \
+(void)(                      \
+	free((this_)->data), \
+	jarr_init(this_)     \
+)
+
+#define private_jarr_new_alloc(this_, cap)                                             \
+JARR_MACRO_START                                                                       \
+	JARR_ASSERT_SIZE(cap)                                                          \
+	((this_)->size) = 0,                                                           \
+	(((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),            \
+	(likely(((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)))) \
+	|| (jarr_init(this_), 0)                                                       \
 JARR_MACRO_END
 
-#define jarr_reserve_f_exact(this_jarr, cap)                                                                                   \
-JARR_MACRO_START                                                                                                               \
-	JARR_ASSERT_SIZE(cap)                                                                                                  \
-	private_jarr_realloc_exact((void **)&((this_jarr)->data), &((this_jarr)->capacity), cap, sizeof(*((this_jarr)->data))) \
+#define jarr_reserve_f_exact(this_, cap)                                                                           \
+JARR_MACRO_START                                                                                                   \
+	JARR_ASSERT_SIZE(cap)                                                                                      \
+	private_jarr_realloc_exact((void **)&((this_)->data), &((this_)->capacity), cap, sizeof(*((this_)->data))) \
 JARR_MACRO_END
 
-#define jarr_reserve_f(this_jarr, cap)                                                                                        \
-JARR_MACRO_START                                                                                                              \
-	JARR_ASSERT_SIZE(cap)                                                                                                 \
-	private_jarr_realloc_grow((void **)&((this_jarr)->data), &((this_jarr)->capacity), cap, sizeof(*((this_jarr)->data))) \
+#define jarr_reserve_f(this_, cap)                                                                                \
+JARR_MACRO_START                                                                                                  \
+	JARR_ASSERT_SIZE(cap)                                                                                     \
+	private_jarr_realloc_grow((void **)&((this_)->data), &((this_)->capacity), cap, sizeof(*((this_)->data))) \
 JARR_MACRO_END
 
-#define jarr_reserve(this_jarr, cap)                                             \
-JARR_MACRO_START                                                                 \
-	JARR_ASSERT_SIZE(cap)                                                    \
-	((cap) > ((this_jarr)->capacity)) ? (jarr_reserve_f(this_jarr, cap)) : 1 \
+#define jarr_reserve(this_, cap)                                         \
+JARR_MACRO_START                                                         \
+	JARR_ASSERT_SIZE(cap)                                            \
+	((cap) > ((this_)->capacity)) ? (jarr_reserve_f(this_, cap)) : 1 \
 JARR_MACRO_END
 
-#define private_jarr_reserve_x(this_jarr, multiplier)                             \
+#define private_jarr_reserve_x(this_, multiplier)                             \
 JARR_MACRO_START                                                                  \
 	JARR_ASSERT_SIZE(multiplier)                                              \
-	jarr_reserve_f_exact(this_jarr, ((multiplier) * ((this_jarr)->capacity))) \
+	jarr_reserve_f_exact(this_, ((multiplier) * ((this_)->capacity))) \
 JARR_MACRO_END
 
-#define jarr_reserve_2x(this_jarr) private_jarr_reserve_x(this_jarr, 2)
-#define jarr_reserve_4x(this_jarr) private_jarr_reserve_x(this_jarr, 4)
-#define jarr_reserve_8x(this_jarr) private_jarr_reserve_x(this_jarr, 8)
-#define jarr_reserve_16x(this_jarr) private_jarr_reserve_x(this_jarr, 16)
-#define jarr_reserve_32x(this_jarr) private_jarr_reserve_x(this_jarr, 32)
-#define jarr_reserve_64x(this_jarr) private_jarr_reserve_x(this_jarr, 64)
+#define jarr_reserve_2x(this_) private_jarr_reserve_x(this_, 2)
+#define jarr_reserve_4x(this_) private_jarr_reserve_x(this_, 4)
+#define jarr_reserve_8x(this_) private_jarr_reserve_x(this_, 8)
+#define jarr_reserve_16x(this_) private_jarr_reserve_x(this_, 16)
+#define jarr_reserve_32x(this_) private_jarr_reserve_x(this_, 32)
+#define jarr_reserve_64x(this_) private_jarr_reserve_x(this_, 64)
 
-#define jarr_shrink_to_fit_f(this_jarr)                      \
-JARR_MACRO_START                                             \
-	jarr_reserve_f_exact(this_jarr, ((this_jarr)->size)) \
-JARR_MACRO_END
-
-#define jarr_shrink_to_fit(this_jarr)                            \
-JARR_MACRO_START                                                 \
-	(likely(((this_jarr)->capacity) != ((this_jarr)->size))) \
-		? (jarr_shrink_to_fit_f(this_jarr))              \
-		: 1                                              \
-JARR_MACRO_END
-
-#define jarr_shrink_to_size_f(this_jarr, size__) \
-(void)                                           \
-JARR_MACRO_START                                 \
-	((this_jarr)->size) = size__             \
-JARR_MACRO_END
-
-#define jarr_shrink_to_size(this_jarr, size__)           \
-(void)                                                   \
-JARR_MACRO_START                                         \
-	(size__ < ((this_jarr)->size))                   \
-	&& (jarr_shrink_to_size_f(this_jarr, size__), 0) \
-JARR_MACRO_END
-
-#define jarr_shrink_to_f(this_jarr, cap)     \
-JARR_MACRO_START                             \
-	jarr_reserve_f_exact(this_jarr, cap) \
-	&& (((this_jarr)->size) = cap, 1)    \
-JARR_MACRO_END
-
-#define jarr_shrink_to(this_jarr, cap)               \
+#define jarr_shrink_to_fit_f(this_)                  \
 JARR_MACRO_START                                     \
-	(cap < ((this_jarr)->size))                  \
-		? (jarr_shrink_to_f(this_jarr, cap)) \
-		: 1                                  \
+	jarr_reserve_f_exact(this_, ((this_)->size)) \
 JARR_MACRO_END
 
-#define jarr_push_back_u(this_jarr, value)                   \
-(void)                                                       \
-JARR_MACRO_START                                             \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, value)             \
-	(((this_jarr)->data)[((this_jarr)->size)++] = value) \
+#define jarr_shrink_to_fit(this_)                        \
+JARR_MACRO_START                                         \
+	(likely(((this_)->capacity) != ((this_)->size))) \
+		? (jarr_shrink_to_fit_f(this_))          \
+		: 1                                      \
 JARR_MACRO_END
 
-#define jarr_push_back_f(this_jarr, value)                             \
-JARR_MACRO_START                                                       \
-	(jarr_reserve_f_exact(this_jarr, ((this_jarr)->capacity) * 2)) \
-	&& (jarr_push_back_u(this_jarr, value), 1)                     \
+#define jarr_shrink_to_size_f(this_, size__) \
+(void)                                       \
+JARR_MACRO_START                             \
+	((this_)->size) = size__             \
 JARR_MACRO_END
 
-#define jarr_push_back(this_jarr, value)                     \
-JARR_MACRO_START                                             \
-	 (((this_jarr)->capacity) > ((this_jarr)->size))     \
-		 ? ((jarr_push_back_u(this_jarr, value)), 1) \
-		 : (jarr_push_back_f(this_jarr, value))      \
+#define jarr_shrink_to_size(this_, size__)           \
+(void)                                               \
+JARR_MACRO_START                                     \
+	(size__ < ((this_)->size))                   \
+	&& (jarr_shrink_to_size_f(this_, size__), 0) \
 JARR_MACRO_END
 
-#define jarr_st_push_back(this_jarr, value)      \
+#define jarr_shrink_to_f(this_, cap)     \
+JARR_MACRO_START                         \
+	jarr_reserve_f_exact(this_, cap) \
+	&& (((this_)->size) = cap, 1)    \
+JARR_MACRO_END
+
+#define jarr_shrink_to(this_, cap)               \
 JARR_MACRO_START                                 \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, value) \
-	jarr_push_back_u(this_jarr, value)       \
+	(cap < ((this_)->size))                  \
+		? (jarr_shrink_to_f(this_, cap)) \
+		: 1                              \
 JARR_MACRO_END
 
-#define jarr_append(dest, ...)                                                                                 \
-	(PP_NARG(__VA_ARGS__) == 2)                                                                            \
-		? jarr_append_arr(dest, __VA_ARGS__, (size_t)0)                                                \
-		: jarr_append_arr(dest, PP_FIRST_ARG(__VA_ARGS__), JARR_SIZEOF_ARR(PP_FIRST_ARG(__VA_ARGS__))) \
+#define jarr_push_back_u(this_, value)               \
+(void)                                               \
+JARR_MACRO_START                                     \
+	JARR_ASSERT_RIGHT_TYPE(this_, value)         \
+	(((this_)->data)[((this_)->size)++] = value) \
+JARR_MACRO_END
 
-#define jarr_append_arr(dest, src_arr, src_arr_size, ...)                    \
-JARR_MACRO_START                                                             \
-	JARR_ASSERT_SIZE(src_arr_size)                                       \
-	(((dest)->size) + (src_arr_size) > ((dest)->capacity))               \
-	?                                                                    \
+#define jarr_push_back_f(this_, value)                         \
+JARR_MACRO_START                                               \
+	(jarr_reserve_f_exact(this_, ((this_)->capacity) * 2)) \
+	&& (jarr_push_back_u(this_, value), 1)                 \
+JARR_MACRO_END
+
+#define jarr_push_back(this_, value)                     \
+JARR_MACRO_START                                         \
+	 (((this_)->capacity) > ((this_)->size))         \
+		 ? ((jarr_push_back_u(this_, value)), 1) \
+		 : (jarr_push_back_f(this_, value))      \
+JARR_MACRO_END
+
+#define jarr_st_push_back(this_, value)      \
+JARR_MACRO_START                             \
+	JARR_ASSERT_RIGHT_TYPE(this_, value) \
+	jarr_push_back_u(this_, value)       \
+JARR_MACRO_END
+
+#define jarr_append_arr(dest, src_arr, src_arr_size)                   \
+JARR_MACRO_START                                                       \
+	JARR_ASSERT_SIZE(src_arr_size)                                 \
+	(((dest)->size) + (src_arr_size) > ((dest)->capacity))         \
+	?                                                              \
 		(jarr_reserve_f(dest, ((dest)->size) + (src_arr_size)) \
-		&& (memcpy(((dest)->data), src_arr, sizeof(src_arr)),        \
-		((dest)->size) += (src_arr_size), 1))                        \
-	:                                                                    \
-		(memcpy(((dest)->data), src_arr, sizeof(src_arr)),           \
-		((dest)->size) += (src_arr_size), 1)                         \
+		&& (memcpy(((dest)->data), src_arr, sizeof(src_arr)),  \
+		((dest)->size) += (src_arr_size), 1))                  \
+	:                                                              \
+		(memcpy(((dest)->data), src_arr, sizeof(src_arr)),     \
+		((dest)->size) += (src_arr_size), 1)                   \
 JARR_MACRO_END
 
-#define jarr_append_jarr(dest, ...)                                         \
-	(PP_NARG(__VA_ARGS__) == 1)                                         \
-		? private_jarr_append_jarr(dest, PP_FIRST_ARG(__VA_ARGS__)) \
-		: private_jarr_append_njarr(dest, __VA_ARGS__, 0)
-
-#define private_jarr_append_jarr(dest, src)                                                        \
+#define jarr_append_jarr(dest, src)                                                                \
 JARR_MACRO_START                                                                                   \
 	JARR_ASSERT_TYPECHECK(((dest)->data), ((dest)->src))                                       \
 	(((dest)->size) + ((src)->size) > ((dest)->capacity))                                      \
@@ -208,141 +198,131 @@ JARR_MACRO_START                                                                
 		((dest)->size) += ((src)->size), 1)                                                \
 JARR_MACRO_END
 
-#define private_jarr_append_njarr(dest, src, ...)                                        \
-JARR_MACRO_START                                                                         \
-	JARR_ASSERT_TYPECHECK(((dest)->data), ((dest)->src))                             \
-	(((dest)->size) + (n) > ((dest)->capacity))                                      \
-	?                                                                                \
-		(jarr_reserve_f(dest, ((dest)->size) + (n))                              \
-		&& (memcpy(((dest)->data), ((src)->data), (n) * sizeof(*((src)->data))), \
-		((dest)->size) += (n), 1))                                               \
-	:                                                                                \
-		(memcpy(((dest)->data), ((src)->data), (n) * sizeof(*((src)->data))),    \
-		((dest)->size) += (n), 1)                                                \
+#define private_jarr_cat_u(this_, argc, ...)                         \
+(void)                                                               \
+JARR_MACRO_START                                                     \
+	JARR_ASSERT_SIZE(argc)                                       \
+	JARR_ASSERT_RIGHT_TYPE(this_, PP_FIRST_ARG(__VA_ARGS__))     \
+	PP_LOOP_FROM(((this_)->data), ((this_)->size), __VA_ARGS__), \
+	(((this_)->size) += argc)                                    \
 JARR_MACRO_END
 
-#define private_jarr_cat_u(this_jarr, argc, ...)                             \
-(void)                                                                       \
-JARR_MACRO_START                                                             \
-	JARR_ASSERT_SIZE(argc)                                               \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, PP_FIRST_ARG(__VA_ARGS__))         \
-	PP_LOOP_FROM(((this_jarr)->data), ((this_jarr)->size), __VA_ARGS__), \
-	(((this_jarr)->size) += argc)                                        \
-JARR_MACRO_END
-
-#define jarr_st_cat(jarr_st, ...)                                            \
+#define jarr_st_cat(jarr_st, ...)                                      \
 	private_jarr_cat_u(jarr_st, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define private_jarr_cat_f(this_jarr, argc, ...)                   \
-JARR_MACRO_START                                                   \
-	jarr_reserve_f(this_jarr, ((this_jarr)->size) + (argc))    \
-	&& (private_jarr_cat_u(this_jarr, (argc), __VA_ARGS__), 1) \
+#define private_jarr_cat_f(this_, argc, ...)                   \
+JARR_MACRO_START                                               \
+	jarr_reserve_f(this_, ((this_)->size) + (argc))        \
+	&& (private_jarr_cat_u(this_, (argc), __VA_ARGS__), 1) \
 JARR_MACRO_END
 
-#define private_jarr_cat(this_jarr, argc, ...)                            \
+#define private_jarr_cat(this_, argc, ...)                            \
+JARR_MACRO_START                                                      \
+	(((this_)->size) + argc > ((this_)->capacity))                \
+		? (private_jarr_cat_f(this_, (argc), __VA_ARGS__))    \
+		: (private_jarr_cat_u(this_, (argc), __VA_ARGS__), 1) \
+JARR_MACRO_END
+
+#define private_cat(F, this_, ...) F(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+
+#define jarr_cat(this_, ...) private_cat(private_jarr_cat, this_, __VA_ARGS__)
+#define jarr_cat_u(this_, ...) private_cat(private_jarr_cat_u, this_, __VA_ARGS__)
+#define jarr_cat_f(this_, ...) private_cat(private_jarr_cat_f, this_, __VA_ARGS__)
+
+#define jarr_new(this_, ...)                                                 \
+JARR_MACRO_START                                                             \
+	(PP_NARG(__VA_ARGS__) == 1)                                          \
+		? private_jarr_new_alloc(this_, PP_FIRST_ARG(__VA_ARGS__))   \
+		: private_jarr_new(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+JARR_MACRO_END
+
+#define jarr_new_auto(this_, ...)                                  \
+JARR_MACRO_START                                                   \
+	private_jarr_new(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+JARR_MACRO_END
+
+#define private_jarr_new(this_, cap, ...)                                                 \
+JARR_MACRO_START                                                                          \
+	JARR_ASSERT_SIZE(cap)                                                             \
+	JARR_ASSERT_RIGHT_TYPE(this_, PP_FIRST_ARG(__VA_ARGS__))                          \
+	((((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),              \
+	(likely(((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_))))) \
+	?                                                                                 \
+		((PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__)),                         \
+		(((this_)->size) = PP_NARG(__VA_ARGS__)), 1)                              \
+	:                                                                                 \
+		(jarr_init(this_), 0)                                                     \
+JARR_MACRO_END
+
+#define jarr_swap(this_, other_)                                                                                                                                   \
+JARR_MACRO_START                                                                                                                                                   \
+	JARR_ASSERT_RIGHT_TYPE(this_, *((other_)->data))                                                                                                           \
+	private_jarr_swap((void **)&((this_)->data), &((this_)->capacity), &((this_)->size), (void **)&((other_)->data), &((other_)->capacity), &((other_)->size)) \
+JARR_MACRO_END
+
+#define jarr_pop_back(this_) --((this_)->size)
+
+#define jarr_pop_front(this_)                                            \
+(void)                                                                   \
+JARR_MACRO_START                                                         \
+	memmove(((this_)->data), ((this_)->data + 1), --((this_)->size)) \
+JARR_MACRO_END
+
+#define jarr_push_front_u(this_, value)                                   \
+(void)                                                                    \
 JARR_MACRO_START                                                          \
-	(((this_jarr)->size) + argc > ((this_jarr)->capacity))            \
-		? (private_jarr_cat_f(this_jarr, (argc), __VA_ARGS__))    \
-		: (private_jarr_cat_u(this_jarr, (argc), __VA_ARGS__), 1) \
+	JARR_ASSERT_RIGHT_TYPE(this_, value)                              \
+	memmove(((this_)->data) + 1, ((this_)->data), ((this_)->size)++), \
+	(*(((this_)->data)) = value)                                      \
 JARR_MACRO_END
 
-#define private_cat(F, this_jarr, ...) F(this_jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-
-#define jarr_cat(this_jarr, ...) private_cat(private_jarr_cat, this_jarr, __VA_ARGS__)
-#define jarr_cat_u(this_jarr, ...) private_cat(private_jarr_cat_u, this_jarr, __VA_ARGS__)
-#define jarr_cat_f(this_jarr, ...) private_cat(private_jarr_cat_f, this_jarr, __VA_ARGS__)
-
-#define jarr_new(this_jarr, ...)                                                 \
-JARR_MACRO_START                                                                 \
-	(PP_NARG(__VA_ARGS__) == 1)                                              \
-		? private_jarr_new_alloc(this_jarr, PP_FIRST_ARG(__VA_ARGS__))   \
-		: private_jarr_new(this_jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+#define jarr_push_front_f(this_, value)         \
+JARR_MACRO_START                                \
+	(likely(jarr_reserve_2x(this_)))        \
+	&& (jarr_push_front_u(this_, value), 1) \
 JARR_MACRO_END
 
-#define jarr_new_auto(this_jarr, ...)                                  \
-JARR_MACRO_START                                                       \
-	private_jarr_new(this_jarr, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
+#define jarr_push_front(this_, value)                      \
+JARR_MACRO_START                                           \
+	JARR_ASSERT_RIGHT_TYPE(this_, value)               \
+	(unlikely(((this_)->capacity) == ((this_)->size))) \
+	? jarr_push_front_f(this_, value)                  \
+	: (jarr_push_front_u(this_, value), 1)             \
 JARR_MACRO_END
 
-#define private_jarr_new(this_jarr, cap, ...)                                                         \
-JARR_MACRO_START                                                                                      \
-	JARR_ASSERT_SIZE(cap)                                                                         \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, PP_FIRST_ARG(__VA_ARGS__))                                  \
-	((((this_jarr)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),                      \
-	(likely(((this_jarr)->data) = malloc((((this_jarr)->capacity)) * JARR_SIZEOF_T(this_jarr))))) \
-	?                                                                                             \
-		((PP_LOOP_FROM(((this_jarr)->data), 0, __VA_ARGS__)),                                 \
-		(((this_jarr)->size) = PP_NARG(__VA_ARGS__)), 1)                                      \
-	:                                                                                             \
-		(jarr_init(this_jarr), 0)                                                             \
-JARR_MACRO_END
-
-#define jarr_swap(this_jarr, other_jarr)                                                                                                                                                    \
-JARR_MACRO_START                                                                                                                                                                           \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, *((other_jarr)->data))                                                                                                                           \
-	private_jarr_swap((void **)&((this_jarr)->data), &((this_jarr)->capacity), &((this_jarr)->size), (void **)&((other_jarr)->data), &((other_jarr)->capacity), &((other_jarr)->size)) \
-JARR_MACRO_END
-
-#define jarr_pop_back(this_jarr) --((this_jarr)->size)
-
-#define jarr_pop_front(this_jarr)                                                    \
-(void)                                                                               \
-JARR_MACRO_START                                                                     \
-	memmove(((this_jarr)->data), ((this_jarr)->data + 1), --((this_jarr)->size)) \
-JARR_MACRO_END
-
-#define jarr_push_front_u(this_jarr, value)                                     \
-(void)                                                                                \
-JARR_MACRO_START                                                                      \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, value)                                      \
-	memmove(((this_jarr)->data) + 1, ((this_jarr)->data), ((this_jarr)->size)++), \
-	(*(((this_jarr)->data)) = value)                                              \
-JARR_MACRO_END
-
-#define jarr_push_front_f(this_jarr, value)         \
-JARR_MACRO_START                                    \
-	(likely(jarr_reserve_2x(this_jarr)))        \
-	&& (jarr_push_front_u(this_jarr, value), 1) \
-JARR_MACRO_END
-
-#define jarr_push_front(this_jarr, value)                          \
-JARR_MACRO_START                                                   \
-	JARR_ASSERT_RIGHT_TYPE(this_jarr, value)                   \
-	(unlikely(((this_jarr)->capacity) == ((this_jarr)->size))) \
-	? jarr_push_front_f(this_jarr, value)                      \
-	: (jarr_push_front_u(this_jarr, value), 1)                 \
-JARR_MACRO_END
+#define jarr_push_front_s(this_, value)                            \
+	(likely(this_)->capacity) && jarr_push_front(this_, value)
 
 #define jarr_cmp_f(jarr_dest, jarr_src)                                                  \
 	(memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
 #define jarr_cmp(jarr_dest, jarr_src)                                                    \
 	((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_f(jarr_dest, jarr_src))
 
-#define jarr_foreach_index(elem, this_jarr)                      \
-	for (size_t elem = 0, jarr_size__ = ((this_jarr)->size); \
+#define jarr_foreach_index(elem, this_)                      \
+	for (size_t elem = 0, jarr_size__ = ((this_)->size); \
 		elem < jarr_size__; ++elem)
 
-#define jarr_foreach(elem, this_jarr)                                                                                                          \
-	for (typeof(*((this_jarr)->data)) *elem = ((this_jarr)->data), *const RESTRICT jarr_end__ = ((this_jarr)->data) + ((this_jarr)->size); \
+#define jarr_foreach(elem, this_)                                                                                                          \
+	for (typeof(*((this_)->data)) *elem = ((this_)->data), *const RESTRICT jarr_end__ = ((this_)->data) + ((this_)->size); \
 		elem < jarr_end__; ++elem)
 
 #define jarr_st_foreach(elem, arr)                                                                   \
 	for (typeof(*(arr)) *elem = (arr), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
 		elem < jarr_end__; ++elem)
 
-#define jarr_foreach_cout(elem, this_jarr)             \
-	jarr_foreach(elem, this_jarr) pp_cout(*(elem))
+#define jarr_foreach_cout(elem, this_)             \
+	jarr_foreach(elem, this_) pp_cout(*(elem))
 
 
-#define jarr_begin(this_jarr) ((this_jarr)->data)
-#define jarr_end(this_jarr) (((this_jarr)->data) + ((this_jarr)->size))
+#define jarr_begin(this_) ((this_)->data)
+#define jarr_end(this_) (((this_)->data) + ((this_)->size))
 
 #ifdef JARR_HAS_TYPEOF
-#	define jarr_typeof_data(this_jarr) typeof(((this_jarr)->data))
-#	define jarr_typeof(this_jarr) typeof(((this_jarr)))
+#	define jarr_typeof_data(this_) typeof(((this_)->data))
+#	define jarr_typeof(this_) typeof(((this_)))
 // TOODO: make const ptr give a warning if assigned to non-const
-/* #	define jarr_cbegin(this_jarr) ((const typeof((this_jarr)->data))((this_jarr)->data)) */
-/* #	define jarr_cend(this_jarr) ((const typeof((this_jarr)->data))(((this_jarr)->data) + ((this_jarr)->size))) */
+/* #	define jarr_cbegin(this_) ((const typeof((this_)->data))((this_)->data)) */
+/* #	define jarr_cend(this_) ((const typeof((this_)->data))(((this_)->data) + ((this_)->size))) */
 #endif // JARR_HAS_TYPEOF
 
 ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
