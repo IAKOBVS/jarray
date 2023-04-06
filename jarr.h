@@ -265,9 +265,9 @@ JARR_MACRO_START                                                                
 		(jarr_init(this_), 0)                                                     \
 JARR_MACRO_END
 
-#define jarr_swap(this_, other_)                                                                                                                                    \
-JARR_MACRO_START                                                                                                                                                    \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, *((other_)->data))                                                                                                         \
+#define jarr_swap(this_, other_)                                                                                                                                   \
+JARR_MACRO_START                                                                                                                                                   \
+	JARR_ST_ASSERT_RIGHT_TYPE(this_, *((other_)->data))                                                                                                        \
 	private_jarr_swap((void **)&((this_)->data), &((this_)->capacity), &((this_)->size), (void **)&((other_)->data), &((other_)->capacity), &((other_)->size)) \
 JARR_MACRO_END
 
