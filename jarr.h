@@ -19,9 +19,9 @@
 */
 
 #ifdef JARR_DEBUG
-#	define JARR_ST_ASSERT(x) assert(x),
+#	define JARR_ASSERT(x) assert(x),
 #else
-#	define JARR_ST_ASSERT(x)
+#	define JARR_ASSERT(x)
 #endif // JARR_DEBUG
 
 #define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity)),
@@ -34,7 +34,7 @@
 #include "/home/james/c/pp_macros/pp_va_args_macros.h" // .gch
 #include "macros.h" // .gch
 
-#define JARR_ST_ASSERT_RIGHT_TYPE(T, expr) JARR_ASSERT_TYPECHECK(*((T)->data), expr)
+#define JARR_ST_ASSERT_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr)
 
 #ifdef JARR_INCLUDE
 #	include <stdio.h>
@@ -45,8 +45,10 @@
 
 #define JARR_MIN_CAP 8
 
-ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
-ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
+JARR_INLINE__
+static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
+JARR_INLINE__
+static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
 
 #define jarray(T, name) \
 	struct {                         \
@@ -61,7 +63,7 @@ ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t 
 		T data[JARR_NEXT_POW2(capacity)]; \
 	}
 
-#define jarr_st_get_capacity(jarr_st)      \
+#define jarr_st_get_cap(jarr_st)           \
 	(sizeof(jarr_st)/sizeof(*jarr_st))
 
 #define jarr_init(this_)         \
@@ -337,19 +339,19 @@ JARR_MACRO_END
 #define jarr_foreach_cout(elem, this_)             \
 	jarr_foreach(elem, this_) pp_cout(*(elem))
 
-
 #define jarr_begin(this_) ((this_)->data)
 #define jarr_end(this_) (((this_)->data) + ((this_)->size))
+#define jarr_cbegin(this_) private_jarr_constify(((this_)->data))
+#define jarr_cend(this_) private_jarr_constify(((this_)->data) + ((this_)->size))
 
 #ifdef JARR_HAS_TYPEOF
 #	define jarr_typeof_data(this_) typeof(((this_)->data))
 #	define jarr_typeof(this_) typeof(((this_)))
-// TOODO: make const ptr give a warning if assigned to non-const
-/* #	define jarr_cbegin(this_) ((const typeof((this_)->data))((this_)->data)) */
-/* #	define jarr_cend(this_) ((const typeof((this_)->data))(((this_)->data) + ((this_)->size))) */
 #endif // JARR_HAS_TYPEOF
 
-ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
+JARR_INLINE__
+static
+int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
 {
 	void *RESTRICT tmp;
 	if (unlikely(!(tmp = realloc(*data, target_cap * sizeof_data))))
@@ -359,7 +361,9 @@ ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t
 	return 1;
 }
 
-ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
+JARR_INLINE__
+static
+int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
 {
 	size_t tmp_cap = *cap * 2;
 	while (tmp_cap < target_cap)
@@ -372,7 +376,9 @@ ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t 
 	return 1;
 }
 
-ALWAYS_INLINE static void private_jarr_swap(void **RESTRICT data, size_t *RESTRICT cap, size_t *RESTRICT size, void **RESTRICT other_data, size_t *RESTRICT other_cap, size_t *RESTRICT other_size)
+JARR_INLINE__
+static
+void private_jarr_swap(void **RESTRICT data, size_t *RESTRICT cap, size_t *RESTRICT size, void **RESTRICT other_data, size_t *RESTRICT other_cap, size_t *RESTRICT other_size)
 {
 	const size_t tmp_size = *size;
 	const size_t tmp_cap = *cap;
@@ -384,5 +390,10 @@ ALWAYS_INLINE static void private_jarr_swap(void **RESTRICT data, size_t *RESTRI
 	*other_cap = tmp_cap;
 	*other_data = tmp_data;
 }
+
+JARR_INLINE__
+JARR_CONST__
+static
+const void *private_jarr_constify(const void *data) { return data; }
 
 #endif // JARR_H_DEF__

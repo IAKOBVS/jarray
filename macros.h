@@ -68,44 +68,44 @@
 #endif // __has_builtin(__builtin_expect)
 
 #if defined(__GNUC__) || defined(__clang__)
-#	define ALWAYS_INLINE __attribute__((always_inline)) inline
+#	define JARR_INLINE__ __attribute__((always_inline)) inline
 #	if __has_attribute(pure)
-#		define PURE __attribute__((pure))
+#		define JARR_PURE__ __attribute__((pure))
 #	else
-#		define PURE
-#	endif // PURE
+#		define JARR_PURE__
+#	endif // JARR_PURE__
 #	if __has_attribute(const)
-#		define CONST __attribute__((const))
+#		define JARR_CONST__ __attribute__((const))
 #	else
-#		define CONST
-#	endif // CONST
+#		define JARR_CONST__
+#	endif // JARR_CONST__
 #	if __has_attribute(flatten)
-#		define FLATTEN __attribute__((flatten))
+#		define JARR_FLATTEN__ __attribute__((flatten))
 #	else
-#		define FLATTEN
-#	endif // FLATTEN
+#		define JARR_FLATTEN__
+#	endif // JARR_FLATTEN__
 #elif defined(_MSC_VER)
-#	define ALWAYS_INLINE __forceinline inline
-#	define PURE __declspec(noalias)
-#	define CONST __declspec(restrict)
-#	define FLATTEN
+#	define JARR_INLINE__ __forceinline inline
+#	define JARR_PURE__ __declspec(noalias)
+#	define JARR_CONST__ __declspec(restrict)
+#	define JARR_FLATTEN__
 #else
-#	define ALWAYS_INLINE inline
-#	define PURE
-#	define CONST
-#	define FLATTEN
+#	define JARR_INLINE__ inline
+#	define JARR_PURE__
+#	define JARR_CONST__
+#	define JARR_FLATTEN__
 #endif // __GNUC__ || __clang__ || _MSC_VER
 
 #if defined(__GNUC__) || defined(__clang__)
 #	include <stdint.h>
 #	if __has_builtin(__builtin_clzll)
-		CONST ALWAYS_INLINE uint64_t private_jarr_next_pow2_64(uint64_t x)
+		JARR_CONST__ JARR_INLINE__ uint64_t private_jarr_next_pow2_64(uint64_t x)
 		{
 			return 1ull << (64 - __builtin_clzll(x - 1));
 		}
 #	endif // __has_builtin(__builtin_clzll)
 #	if __has_builtin(__builtin_clz)
-		CONST ALWAYS_INLINE uint32_t private_jarr_next_pow2_32(uint32_t x)
+		JARR_CONST__ JARR_INLINE__ uint32_t private_jarr_next_pow2_32(uint32_t x)
 		{
 			return 1 << (32 - __builtin_clz(x - 1));
 		}
@@ -114,21 +114,21 @@
 #	include <stdint.h>
 #	include <intrin.h>
 #	pragma intrinsic(_BitScanReverse64)
-	CONST ALWAYS_INLINE uint32_t private_jarr_next_pow2_32(uint32_t x)
+	JARR_CONST__ JARR_INLINE__ uint32_t private_jarr_next_pow2_32(uint32_t x)
 	{
 		unsigned long index;
 		_BitScanReverse(&index, x - 1);
 		return 1 << (index + 1);
 	}
 
-	CONST ALWAYS_INLINE uint64_t private_jarr_next_pow2_64(uint64_t x)
+	JARR_CONST__ JARR_INLINE__ uint64_t private_jarr_next_pow2_64(uint64_t x)
 	{
 		unsigned long index;
 		_BitScanReverse64(&index, x - 1);
 		return 1ull << (index + 1);
 	}
 #else
-	CONST ALWAYS_INLINE size_t private_jarr_next_pow2_32(size_t x)
+	JARR_CONST__ JARR_INLINE__ size_t private_jarr_next_pow2_32(size_t x)
 	{
 		--x;
 		x |= x >> 1;
@@ -139,7 +139,7 @@
 		return x + 1;
 	}
 
-	CONST ALWAYS_INLINE size_t private_jarr_next_pow2_64(size_t x)
+	JARR_CONST__ JARR_INLINE__ size_t private_jarr_next_pow2_64(size_t x)
 	{
 		--x;
 		x |= x >> 1;
@@ -193,16 +193,16 @@
 			JARR_GENERIC_CASE_CHAR(1),         \
 					default: 0)
 
-#		define JARR_ASSERT_SIZE(expr)                                                              \
-			JARR_ASSERT(JARR_IS_SIZE(expr), "Not using a number where a number is required!");
-#		define JARR_ASSERT_STR(expr)                                                              \
-			JARR_ASSERT(JARR_IS_STR(expr), "Not using a char * where a char * is required!");
-#		define JARR_ASSERT_CHAR(expr)                                                          \
-			JARR_ASSERT(JARR_IS_CHAR(expr), "Not using a char where a char is required!");
-#		define JARR_ASSERT_TYPECHECK(Texpr, expr) JARR_ASSERT(JARR_SAME_TYPE(Texpr, expr), "Passing the wrong data type!");
+#		define JARR_ST_ASSERT_SIZE(expr)                                                              \
+			JARR_ST_ASSERT(JARR_IS_SIZE(expr), "Not using a number where a number is required!");
+#		define JARR_ST_ASSERT_STR(expr)                                                              \
+			JARR_ST_ASSERT(JARR_IS_STR(expr), "Not using a char * where a char * is required!");
+#		define JARR_ST_ASSERT_CHAR(expr)                                                          \
+			JARR_ST_ASSERT(JARR_IS_CHAR(expr), "Not using a char where a char is required!");
+#		define JARR_ST_ASSERT_TYPECHECK(Texpr, expr) JARR_ST_ASSERT(JARR_SAME_TYPE(Texpr, expr), "Passing the wrong data type!");
 #	else
 #		define JARR_IS_SIZE(expr)
-#		define JARR_ASSERT_SIZE(expr)
+#		define JARR_ST_ASSERT_SIZE(expr)
 #	endif // JARR_HAS_GENERIC
 #	define JARR_MACRO_START ({
 #	define JARR_MACRO_END ;})

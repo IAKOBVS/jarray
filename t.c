@@ -1,7 +1,8 @@
 #include "jarr.h"
+#include "macros.h"
 #include <assert.h>
 
-ALWAYS_INLINE static int debug()
+JARR_INLINE__ static int debug()
 {
 	jarray(int, arr);
 	jarray(int, tmp);
@@ -26,16 +27,7 @@ ALWAYS_INLINE static int debug()
 	return 1;
 }
 
-#define jarray_(T, cap, name)     \
-	struct {                 \
-		size_t size;     \
-		size_t capacity; \
-		T *data;         \
-	} name = { .size = 0, .capacity = cap, .data = malloc(arr.capacity) }
-
 int main()
 {
-	assert(debug());
-	jarray_(int, 10, arr);
-	int i = (1, 3);
+	debug();
 }
