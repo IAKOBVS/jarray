@@ -45,11 +45,6 @@
 
 #define JARR_MIN_CAP 8
 
-JARR_INLINE__
-static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
-JARR_INLINE__
-static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
-
 #define jarray(T, name) \
 	struct {                         \
 		size_t size;             \
@@ -329,11 +324,11 @@ JARR_MACRO_END
 		elem < jarr_size__; ++elem)
 
 #define jarr_foreach(elem, this_)                                                                                                          \
-	for (typeof(*((this_)->data)) *elem = ((this_)->data), *const RESTRICT jarr_end__ = ((this_)->data) + ((this_)->size); \
+	for (typeof(*((this_)->data)) *elem = ((this_)->data), *const JARR_RESTRICT__ jarr_end__ = ((this_)->data) + ((this_)->size); \
 		elem < jarr_end__; ++elem)
 
 #define jarr_st_foreach(elem, arr)                                                                   \
-	for (typeof(*(arr)) *elem = (arr), *const RESTRICT jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
+	for (typeof(*(arr)) *elem = (arr), *const JARR_RESTRICT__ jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
 		elem < jarr_end__; ++elem)
 
 #define jarr_foreach_cout(elem, this_)             \
@@ -350,10 +345,11 @@ JARR_MACRO_END
 #endif // JARR_HAS_TYPEOF
 
 JARR_INLINE__
+JARR_WARN_UNUSED
 static
-int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
+int private_jarr_realloc_exact(void **JARR_RESTRICT__ data, size_t *JARR_RESTRICT__ cap, const size_t target_cap, const size_t sizeof_data)
 {
-	void *RESTRICT tmp;
+	void *JARR_RESTRICT__ tmp;
 	if (unlikely(!(tmp = realloc(*data, target_cap * sizeof_data))))
 		return 0;
 	*data = tmp;
@@ -362,13 +358,14 @@ int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const
 }
 
 JARR_INLINE__
+JARR_WARN_UNUSED
 static
-int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data)
+int private_jarr_realloc_grow(void **JARR_RESTRICT__ data, size_t *JARR_RESTRICT__ cap, const size_t target_cap, const size_t sizeof_data)
 {
 	size_t tmp_cap = *cap * 2;
 	while (tmp_cap < target_cap)
 		tmp_cap *= 2;
-	void *RESTRICT tmp;
+	void *JARR_RESTRICT__ tmp;
 	if (unlikely(!(tmp = realloc(*data, tmp_cap * sizeof_data))))
 		return 0;
 	*data = tmp;
@@ -378,11 +375,11 @@ int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const 
 
 JARR_INLINE__
 static
-void private_jarr_swap(void **RESTRICT data, size_t *RESTRICT cap, size_t *RESTRICT size, void **RESTRICT other_data, size_t *RESTRICT other_cap, size_t *RESTRICT other_size)
+void private_jarr_swap(void **JARR_RESTRICT__ data, size_t *JARR_RESTRICT__ cap, size_t *JARR_RESTRICT__ size, void **JARR_RESTRICT__ other_data, size_t *JARR_RESTRICT__ other_cap, size_t *JARR_RESTRICT__ other_size)
 {
 	const size_t tmp_size = *size;
 	const size_t tmp_cap = *cap;
-	void *RESTRICT tmp_data = *data;
+	void *JARR_RESTRICT__ const tmp_data = *data;
 	*size = *other_size;
 	*cap = *other_cap;
 	*data = *other_data;

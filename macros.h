@@ -40,13 +40,13 @@
 #endif // JARR_ALIGN_POWER_OF_TWO
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#	define RESTRICT restrict
+#	define JARR_RESTRICT__ restrict
 #elif defined(__GNUC__) || defined(__clang__)
-#	define RESTRICT __restrict__
+#	define JARR_RESTRICT__ __restrict__
 #elif defined(_MSC_VER)
-#	define RESTRICT __restrict
+#	define JARR_RESTRICT__ __restrict
 #else
-#	define RESTRICT
+#	define JARR_RESTRICT__
 #endif // restrict
 
 #if defined(__PRETTY_FUNCTION__)
