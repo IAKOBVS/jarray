@@ -24,9 +24,9 @@
 #endif // static_assert
 
 #ifdef JARR_HAS_STATIC_ASSERT
-#	define JARR_ASSERT(expr, msg) static_assert(expr, msg)
+#	define JARR_ST_ASSERT(expr, msg) static_assert(expr, msg)
 #elif defined(JARR_HAS__STATIC_ASSERT_)
-#	define JARR_ASSERT(expr, msg) _Static_assert(expr, msg)
+#	define JARR_ST_ASSERT(expr, msg) _Static_assert(expr, msg)
 #endif // JARR_HAS_STATIC_ASSERT
 
 #ifdef JARR_ALIGN_POWER_OF_TWO

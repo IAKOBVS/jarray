@@ -26,7 +26,15 @@ ALWAYS_INLINE static int debug()
 	return 1;
 }
 
+#define jarray_(T, cap, name)     \
+	struct {                 \
+		size_t size;     \
+		size_t capacity; \
+		T *data;         \
+	} name = { .size = 0, .capacity = cap, .data = malloc(arr.capacity) }
+
 int main()
 {
 	assert(debug());
+	jarray_(int, 10, arr);
 }
