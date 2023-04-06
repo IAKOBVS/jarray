@@ -37,4 +37,5 @@ int main()
 {
 	assert(debug());
 	jarray_(int, 10, arr);
+	int i = (1, 3);
 }

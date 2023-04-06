@@ -48,11 +48,11 @@
 ALWAYS_INLINE static int private_jarr_realloc_exact(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
 ALWAYS_INLINE static int private_jarr_realloc_grow(void **RESTRICT data, size_t *RESTRICT cap, const size_t target_cap, const size_t sizeof_data) JARR_WARN_UNUSED;
 
-#define jarray(T, name)          \
-	struct {                 \
-		size_t size;     \
-		size_t capacity; \
-		T *data;         \
+#define jarray(T, name) \
+	struct {                         \
+		size_t size;             \
+		size_t capacity;         \
+		T *data;                 \
 	} name = {0}
 
 #define jarr_st(T, capacity)                      \
@@ -269,10 +269,24 @@ JARR_MACRO_START                                                                
 	private_jarr_swap((void **)&((this_)->data), &((this_)->capacity), &((this_)->size), (void **)&((other_)->data), &((other_)->capacity), &((other_)->size)) \
 JARR_MACRO_END
 
-#define jarr_pop_back(this_) --((this_)->size)
+#define jarr_pop_back(this_) \
+(                            \
+	--((this_)->size)    \
+)
+
+#define jarr_pop_back_s(this_) \
+(                              \
+	((this_)->size)        \
+	&& --((this_)->size)   \
+)
+
+#define jarr_pop_front_s(this_)                                             \
+JARR_MACRO_START                                                            \
+	((this_)->size)                                                     \
+	&& memmove(((this_)->data), ((this_)->data + 1), --((this_)->size)) \
+JARR_MACRO_END
 
 #define jarr_pop_front(this_)                                            \
-(void)                                                                   \
 JARR_MACRO_START                                                         \
 	memmove(((this_)->data), ((this_)->data + 1), --((this_)->size)) \
 JARR_MACRO_END
@@ -287,6 +301,7 @@ JARR_MACRO_END
 
 #define jarr_push_front_f(this_, value)         \
 JARR_MACRO_START                                \
+	JARR_ST_ASSERT_RIGHT_TYPE(this_, value) \
 	(likely(jarr_reserve_2x(this_)))        \
 	&& (jarr_push_front_u(this_, value), 1) \
 JARR_MACRO_END
