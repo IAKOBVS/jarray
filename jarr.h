@@ -45,11 +45,11 @@
 
 #define JARR_MIN_CAP 8
 
-#define jarray(T, name) \
-	struct {                         \
-		size_t size;             \
-		size_t capacity;         \
-		T *data;                 \
+#define jarray(T, name)          \
+	struct {                 \
+		size_t size;     \
+		size_t capacity; \
+		T *data;         \
 	} name = {0}
 
 #define jarr_st(T, capacity)                      \
@@ -72,6 +72,12 @@
 (void)(                      \
 	free((this_)->data), \
 	jarr_init(this_)     \
+)
+
+#define jarr_at(this_, index)             \
+(                                         \
+	assert(index <= ((this_)->size)), \
+	(((this_)->data) + index)         \
 )
 
 #define private_jarr_new_alloc(this_, cap)                                             \
