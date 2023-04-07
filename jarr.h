@@ -83,22 +83,30 @@ JARR_MACRO_START                                                                
 	|| (jarr_init(this_), 0)                                                       \
 JARR_MACRO_END
 
-#define jarr_reserve_f_exact(this_, cap)                                                                           \
-JARR_MACRO_START                                                                                                   \
-	JARR_ST_ASSERT_SIZE(cap)                                                                                   \
-	private_jarr_realloc_exact((void **)&((this_)->data), &((this_)->capacity), cap, sizeof(*((this_)->data))) \
+#define jarr_reserve_f_exact(this_, cap)                      \
+JARR_MACRO_START                                              \
+	JARR_ST_ASSERT_SIZE(cap)                              \
+	private_jarr_realloc_exact((void **)&((this_)->data), \
+				&((this_)->capacity),         \
+				cap,                          \
+				sizeof(*((this_)->data)))     \
 JARR_MACRO_END
 
-#define jarr_reserve_f(this_, cap)                                                                                \
-JARR_MACRO_START                                                                                                  \
-	JARR_ST_ASSERT_SIZE(cap)                                                                                  \
-	private_jarr_realloc_grow((void **)&((this_)->data), &((this_)->capacity), cap, sizeof(*((this_)->data))) \
+#define jarr_reserve_f(this_, cap)                           \
+JARR_MACRO_START                                             \
+	JARR_ST_ASSERT_SIZE(cap)                             \
+	private_jarr_realloc_grow((void **)&((this_)->data), \
+			&((this_)->capacity),                \
+			cap,                                 \
+			sizeof(*((this_)->data)))            \
 JARR_MACRO_END
 
-#define jarr_reserve(this_, cap)                                         \
-JARR_MACRO_START                                                         \
-	JARR_ST_ASSERT_SIZE(cap)                                         \
-	((cap) > ((this_)->capacity)) ? (jarr_reserve_f(this_, cap)) : 1 \
+#define jarr_reserve(this_, cap)               \
+JARR_MACRO_START                               \
+	JARR_ST_ASSERT_SIZE(cap)               \
+	((cap) > ((this_)->capacity))          \
+		? (jarr_reserve_f(this_, cap)) \
+		: 1                            \
 JARR_MACRO_END
 
 #define private_jarr_reserve_x(this_, multiplier)                         \
@@ -207,8 +215,8 @@ JARR_MACRO_END
 #define private_jarr_cat_u(this_, argc, ...)                         \
 (void)                                                               \
 JARR_MACRO_START                                                     \
-	JARR_ST_ASSERT_SIZE(argc)                                       \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, PP_FIRST_ARG(__VA_ARGS__))     \
+	JARR_ST_ASSERT_SIZE(argc)                                    \
+	JARR_ST_ASSERT_RIGHT_TYPE(this_, PP_FIRST_ARG(__VA_ARGS__))  \
 	PP_LOOP_FROM(((this_)->data), ((this_)->size), __VA_ARGS__), \
 	(((this_)->size) += argc)                                    \
 JARR_MACRO_END
@@ -260,10 +268,15 @@ JARR_MACRO_START                                                                
 		(jarr_init(this_), 0)                                                     \
 JARR_MACRO_END
 
-#define jarr_swap(this_, other_)                                                                                                                                   \
-JARR_MACRO_START                                                                                                                                                   \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, *((other_)->data))                                                                                                        \
-	private_jarr_swap((void **)&((this_)->data), &((this_)->capacity), &((this_)->size), (void **)&((other_)->data), &((other_)->capacity), &((other_)->size)) \
+#define jarr_swap(this_, other_)                            \
+JARR_MACRO_START                                            \
+	JARR_ST_ASSERT_RIGHT_TYPE(this_, *((other_)->data)) \
+	private_jarr_swap((void **)&((this_)->data),        \
+			&((this_)->capacity),               \
+			&((this_)->size),                   \
+			(void **)&((other_)->data),         \
+			&((other_)->capacity),              \
+			&((other_)->size))                  \
 JARR_MACRO_END
 
 #define jarr_pop_back(this_) \
@@ -314,22 +327,28 @@ JARR_MACRO_END
 #define jarr_push_front_s(this_, value)                            \
 	(likely(this_)->capacity) && jarr_push_front(this_, value)
 
-#define jarr_cmp_f(jarr_dest, jarr_src)                                                  \
+#define jarr_cmp_f(jarr_dest, jarr_src)                                        \
 	(memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
-#define jarr_cmp(jarr_dest, jarr_src)                                                    \
-	((((jarr_dest)->size) != ((jarr_src)->size)) || jarr_cmp_f(jarr_dest, jarr_src))
+
+#define jarr_cmp(jarr_dest, jarr_src)                \
+	((((jarr_dest)->size) != ((jarr_src)->size)) \
+	|| jarr_cmp_f(jarr_dest, jarr_src))
 
 #define jarr_foreach_index(elem, this_)                      \
 	for (size_t elem = 0, jarr_size__ = ((this_)->size); \
 		elem < jarr_size__; ++elem)
 
-#define jarr_foreach(elem, this_)                                                                                                          \
-	for (typeof(*((this_)->data)) *elem = ((this_)->data), *const JARR_RESTRICT__ jarr_end__ = ((this_)->data) + ((this_)->size); \
-		elem < jarr_end__; ++elem)
+#define jarr_foreach(elem, this_)                                              \
+	for (typeof(*((this_)->data)) *elem = ((this_)->data),                 \
+	*const JARR_RESTRICT__ jarr_end__ = ((this_)->data) + ((this_)->size); \
+		elem < jarr_end__;                                             \
+			++elem)
 
-#define jarr_st_foreach(elem, arr)                                                                   \
-	for (typeof(*(arr)) *elem = (arr), *const JARR_RESTRICT__ jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
-		elem < jarr_end__; ++elem)
+#define jarr_st_foreach(elem, arr)                                       \
+	for (typeof(*(arr)) *elem = (arr),                               \
+	*const JARR_RESTRICT__ jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
+		elem < jarr_end__;                                       \
+		++elem)
 
 #define jarr_foreach_cout(elem, this_)             \
 	jarr_foreach(elem, this_) pp_cout(*(elem))
