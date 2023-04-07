@@ -288,10 +288,7 @@ JARR_MACRO_START                                            \
 			&((other_)->size))                  \
 JARR_MACRO_END
 
-#define jarr_pop_back(this_) \
-(                            \
-	--((this_)->size)    \
-)
+#define jarr_pop_back(this_) (--((this_)->size))
 
 #define jarr_pop_back_s(this_) \
 (                              \
