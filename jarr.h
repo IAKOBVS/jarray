@@ -390,8 +390,8 @@ int private_jarr_realloc_grow(void **JARR_RESTRICT__ data,
 	size_t tmp_cap = *cap * 2;
 	while (tmp_cap < target_cap)
 		tmp_cap *= 2;
-	void *JARR_RESTRICT__ tmp;
-	if (unlikely(!(tmp = realloc(*data, tmp_cap * sizeof_data))))
+	void *JARR_RESTRICT__ const tmp = realloc(*data, tmp_cap * sizeof_data);
+	if (unlikely(!tmp))
 		return 0;
 	*data = tmp;
 	*cap = tmp_cap;
@@ -405,7 +405,7 @@ void private_jarr_swap(void **JARR_RESTRICT__ data,
 			size_t *JARR_RESTRICT__ size,
 			void **JARR_RESTRICT__ other_data,
 			size_t *JARR_RESTRICT__ other_cap,
-			size_t *JARR_RESTRICT__ other_size)
+				size_t *JARR_RESTRICT__ other_size)
 {
 	const size_t tmp_size = *size;
 	const size_t tmp_cap = *cap;
