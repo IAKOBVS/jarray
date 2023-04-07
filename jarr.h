@@ -16,6 +16,9 @@
 
    realloc is done to a temporary pointer first,
    so the original pointer will not be nullified.
+
+   at() will do bounds checking by asserting that index <= this->size.
+   it will crash at runtime if assertion fails.
 */
 
 #ifdef JARR_DEBUG
