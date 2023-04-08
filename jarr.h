@@ -25,6 +25,10 @@
    it will crash at runtime if assertion fails.
 */
 
+#define JARR_INCLUDE
+#define JARR_ALIGN_POWER_OF_TWO
+#define JARR_64_BIT
+
 #ifdef JARR_DEBUG
 #	define JARR_ASSERT(x) assert(x),
 #else
@@ -34,20 +38,23 @@
 #define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity)),
 #define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data)),
 
-#define JARR_INCLUDE
-#define JARR_ALIGN_POWER_OF_TWO
-#define JARR_64_BIT
-
 #include JARR_PATH_TO_PP_VA_ARGS_MACROS_H
 #include "macros.h" // .gch
 
 #define JARR_ST_ASSERT_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr)
+
+#ifdef __cplusplus
+#	define JARR_NOEXCEPT__ noexcept
+#else
+#	define JARR_NOEXCEPT__
+#endif // __cplusplus
 
 #ifdef JARR_INCLUDE
 #	include <stdio.h>
 #	include <string.h>
 #	include <stdlib.h>
 #	include <assert.h>
+#	include "macros.h"
 #endif // JARR_INCLUDE
 
 #define JARR_MIN_CAP 8
@@ -379,7 +386,7 @@ static
 int private_jarr_realloc_exact(void **JARR_RESTRICT__ data,
 				size_t *JARR_RESTRICT__ cap,
 				const size_t target_cap,
-				const size_t sizeof_data)
+				const size_t sizeof_data) JARR_NOEXCEPT__
 {
 	void *JARR_RESTRICT__ tmp;
 	if (unlikely(!(tmp = realloc(*data, target_cap * sizeof_data))))
@@ -395,7 +402,7 @@ static
 int private_jarr_realloc_grow(void **JARR_RESTRICT__ data,
 				size_t *JARR_RESTRICT__ cap,
 				const size_t target_cap,
-				const size_t sizeof_data)
+				const size_t sizeof_data) JARR_NOEXCEPT__
 {
 	size_t tmp_cap = *cap * 2;
 	while (tmp_cap < target_cap)
@@ -415,7 +422,7 @@ void private_jarr_swap(void **JARR_RESTRICT__ data,
 			size_t *JARR_RESTRICT__ size,
 			void **JARR_RESTRICT__ other_data,
 			size_t *JARR_RESTRICT__ other_cap,
-				size_t *JARR_RESTRICT__ other_size)
+			size_t *JARR_RESTRICT__ other_size) JARR_NOEXCEPT__
 {
 	const size_t tmp_size = *size;
 	const size_t tmp_cap = *cap;
