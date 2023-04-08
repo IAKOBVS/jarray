@@ -89,6 +89,14 @@
 	jarr_init(this_)     \
 )
 
+#define jarr_jstr_delete(jarr)                                                                 \
+do {                                                                                           \
+	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); jarr_i__ < jarr_sz__; ++jarr_i__) { \
+		jstr_delete(&((jarr)->data)[jarr_i__]);                                        \
+	}                                                                                      \
+	jarr_delete(this_)                                                                     \
+} while (0)
+
 #define jarr_at(this_, index)             \
 JARR_MACRO_START                          \
 	JARR_ST_ASSERT_SIZE(index)        \
