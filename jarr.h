@@ -213,7 +213,7 @@ JARR_MACRO_END
 
 #define jarr_append_arr(dest, src, src_size)                       \
 JARR_MACRO_START                                                   \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                               \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                   \
 	JARR_ST_ASSERT_SIZE(src_size)                              \
 	(((dest)->size) + (src_size) > ((dest)->capacity))         \
 	?                                                          \
@@ -227,7 +227,7 @@ JARR_MACRO_END
 
 #define jarr_append_jarr(dest, src)                                                                \
 JARR_MACRO_START                                                                                   \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                                                               \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                                                   \
 	(((dest)->size) + ((src)->size) > ((dest)->capacity))                                      \
 	?                                                                                          \
 		(jarr_reserve_f(dest, ((dest)->size) + ((src)->size))                              \
