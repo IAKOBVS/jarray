@@ -1,6 +1,10 @@
 #ifndef JARR_H_DEF__
 #define JARR_H_DEF__
 
+/* rename to the right path */
+
+#define JARR_PATH_TO_PP_VA_ARGS_MACROS_H "/home/james/c/pp_macros/pp_va_args_macros.h"
+
 /*
    _f (force / fast) macros will not error check user input,
    e.g., if (ptr) before delete,
@@ -34,7 +38,7 @@
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
 
-#include "/home/james/c/pp_macros/pp_va_args_macros.h" // .gch
+#include JARR_PATH_TO_PP_VA_ARGS_MACROS_H
 #include "macros.h" // .gch
 
 #define JARR_ST_ASSERT_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr)
