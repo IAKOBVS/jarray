@@ -425,6 +425,7 @@ void private_jarr_swap(void **JARR_RESTRICT__ data,
 }
 
 JARR_INLINE__
+JARR_WARN_UNUSED
 JARR_CONST__
 static
 const void *private_jarr_constify(const void *data) { return data; }
