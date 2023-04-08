@@ -42,6 +42,7 @@
 #include "macros.h" // .gch
 
 #define JARR_ST_ASSERT_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr)
+#define JARR_ST_ASSERT_IS_SAME_JARR(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
 
 #ifdef __cplusplus
 #	define JARR_NOEXCEPT__ noexcept
@@ -73,7 +74,7 @@
 	}
 
 #define jarr_st_get_cap(jarr_st)           \
-	(sizeof(jarr_st)/sizeof(*jarr_st))
+	(sizeof(jarr_st)/sizeof(*(jarr_st)))
 
 #define jarr_init(this_)         \
 (void)(                          \
@@ -89,10 +90,11 @@
 )
 
 #define jarr_at(this_, index)             \
-(                                         \
+JARR_MACRO_START                          \
+	JARR_ST_ASSERT_SIZE(index)        \
 	assert(index <= ((this_)->size)), \
 	(((this_)->data) + index)         \
-)
+JARR_MACRO_END
 
 #define private_jarr_new_alloc(this_, cap)                                             \
 JARR_MACRO_START                                                                       \
@@ -157,18 +159,21 @@ JARR_MACRO_END
 #define jarr_shrink_to_size_f(this_, size__) \
 (void)                                       \
 JARR_MACRO_START                             \
+	JARR_ST_ASSERT_SIZE(size_)           \
 	((this_)->size) = size__             \
 JARR_MACRO_END
 
 #define jarr_shrink_to_size(this_, size__)           \
 (void)                                               \
 JARR_MACRO_START                                     \
+	JARR_ST_ASSERT_SIZE(size_)                   \
 	(size__ < ((this_)->size))                   \
 	&& (jarr_shrink_to_size_f(this_, size__), 0) \
 JARR_MACRO_END
 
 #define jarr_shrink_to_f(this_, cap)     \
 JARR_MACRO_START                         \
+	JARR_ST_ASSERT_SIZE(cap)         \
 	jarr_reserve_f_exact(this_, cap) \
 	&& (((this_)->size) = cap, 1)    \
 JARR_MACRO_END
@@ -206,22 +211,23 @@ JARR_MACRO_START                             \
 	jarr_push_back_u(this_, value)       \
 JARR_MACRO_END
 
-#define jarr_append_arr(dest, src_arr, src_arr_size)                   \
-JARR_MACRO_START                                                       \
-	JARR_ST_ASSERT_SIZE(src_arr_size)                              \
-	(((dest)->size) + (src_arr_size) > ((dest)->capacity))         \
-	?                                                              \
-		(jarr_reserve_f(dest, ((dest)->size) + (src_arr_size)) \
-		&& (memcpy(((dest)->data), src_arr, sizeof(src_arr)),  \
-		((dest)->size) += (src_arr_size), 1))                  \
-	:                                                              \
-		(memcpy(((dest)->data), src_arr, sizeof(src_arr)),     \
-		((dest)->size) += (src_arr_size), 1)                   \
+#define jarr_append_arr(dest, src, src_size)                       \
+JARR_MACRO_START                                                   \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                               \
+	JARR_ST_ASSERT_SIZE(src_size)                              \
+	(((dest)->size) + (src_size) > ((dest)->capacity))         \
+	?                                                          \
+		(jarr_reserve_f(dest, ((dest)->size) + (src_size)) \
+		&& (memcpy(((dest)->data), src, sizeof(src)),      \
+		((dest)->size) += (src_size), 1))                  \
+	:                                                          \
+		(memcpy(((dest)->data), src, sizeof(src)),         \
+		((dest)->size) += (src_size), 1)                   \
 JARR_MACRO_END
 
 #define jarr_append_jarr(dest, src)                                                                \
 JARR_MACRO_START                                                                                   \
-	JARR_ST_ASSERT_TYPECHECK(((dest)->data), ((dest)->src))                                    \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                                                               \
 	(((dest)->size) + ((src)->size) > ((dest)->capacity))                                      \
 	?                                                                                          \
 		(jarr_reserve_f(dest, ((dest)->size) + ((src)->size))                              \
@@ -344,12 +350,18 @@ JARR_MACRO_END
 #define jarr_push_front_s(this_, value)                            \
 	(likely(this_)->capacity) && jarr_push_front(this_, value)
 
-#define jarr_cmp_f(jarr_dest, jarr_src)                                        \
-	(memcmp(((jarr_dest)->data), ((jarr_src)->data), ((jarr_dest)->size)))
+#define jarr_cmp_f(dest, src)                                   \
+JARR_MACRO_START                                                \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                            \
+	(memcmp(((dest)->data), ((src)->data), ((dest)->size))) \
+JARR_MACRO_END
 
-#define jarr_cmp(jarr_dest, jarr_src)                \
-	((((jarr_dest)->size) != ((jarr_src)->size)) \
-	|| jarr_cmp_f(jarr_dest, jarr_src))
+#define jarr_cmp(dest, src)               \
+JARR_MACRO_START                          \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)      \
+	(((dest)->size) != ((src)->size)) \
+	|| cmp_f(dest, src)               \
+JARR_MACRO_END
 
 #define jarr_foreach_index(elem, this_)                      \
 	for (size_t elem = 0, jarr_size__ = ((this_)->size); \
