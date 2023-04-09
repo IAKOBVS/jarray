@@ -290,7 +290,8 @@ do {                                                                            
 		(PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__));                \
 		((this_)->size) = PP_NARG(__VA_ARGS__);                         \
 	} else {                                                                \
-		jarr_init(this_);                                               \
+		((this_)->size) = 0;                                            \
+		((this_)->capacity) = 0;                                        \
 	}                                                                       \
 } while (0)
 
