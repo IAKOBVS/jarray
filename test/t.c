@@ -33,6 +33,5 @@
 int main()
 {
 	jarray(int, arr);
-	jarr_new_auto(&arr, 1, 2, 3);
-	jarr_delete(&arr);
+	(arr.data)[100] = '\0';
 }
