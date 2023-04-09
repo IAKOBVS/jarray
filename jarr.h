@@ -55,8 +55,9 @@
 #	include <string.h>
 #	include <stdlib.h>
 #	include <assert.h>
-#	include "macros.h"
 #endif // JARR_INCLUDE
+
+#include "macros.h"
 
 #define JARR_MIN_CAP 8
 
@@ -213,10 +214,10 @@ JARR_MACRO_START                                         \
 		 : (jarr_push_back_f(this_, value))      \
 JARR_MACRO_END
 
-#define jarr_st_push_back(this_, value)      \
-JARR_MACRO_START                             \
+#define jarr_st_push_back(this_, value)         \
+JARR_MACRO_START                                \
 	JARR_ST_ASSERT_RIGHT_TYPE(this_, value) \
-	jarr_push_back_u(this_, value)       \
+	jarr_push_back_u(this_, value)          \
 JARR_MACRO_END
 
 #define jarr_append_arr(dest, src, src_size)                       \
@@ -360,15 +361,15 @@ JARR_MACRO_END
 
 #define jarr_cmp_f(dest, src)                                   \
 JARR_MACRO_START                                                \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                            \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                \
 	(memcmp(((dest)->data), ((src)->data), ((dest)->size))) \
 JARR_MACRO_END
 
-#define jarr_cmp(dest, src)               \
-JARR_MACRO_START                          \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)      \
-	(((dest)->size) != ((src)->size)) \
-	|| cmp_f(dest, src)               \
+#define jarr_cmp(dest, src)                      \
+JARR_MACRO_START                                 \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src) \
+	(((dest)->size) != ((src)->size))        \
+	|| cmp_f(dest, src)                      \
 JARR_MACRO_END
 
 #define jarr_foreach_index(elem, this_)                      \
