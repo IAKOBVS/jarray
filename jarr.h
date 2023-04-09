@@ -25,7 +25,6 @@
    it will crash at runtime if assertion fails.
 */
 
-#define JARR_INCLUDE
 #define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
 
@@ -459,6 +458,6 @@ JARR_INLINE__
 JARR_WARN_UNUSED
 JARR_CONST__
 static
-const void *private_jarr_constify(const void *data) { return data; }
+const void *private_jarr_constify(const void *data) JARR_NOEXCEPT__ { return data; }
 
 #endif // JARR_H_DEF__
