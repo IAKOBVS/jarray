@@ -33,5 +33,6 @@
 int main()
 {
 	jarray(int, arr);
-	*jarr_at(&arr, 1) = '\0';
+	jarr_new_auto(&arr, 1, 2, 3);
+	jarr_delete(&arr);
 }
