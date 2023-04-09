@@ -90,6 +90,7 @@
 	jarr_init(this_)     \
 )
 
+#ifdef JSTR_H_DEF__
 #define jarr_jstr_delete(jarr)                                                                 \
 do {                                                                                           \
 	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); jarr_i__ < jarr_sz__; ++jarr_i__) { \
@@ -97,12 +98,13 @@ do {                                                                            
 	}                                                                                      \
 	jarr_delete(this_)                                                                     \
 } while (0)
+#endif // JSTR_H_DEF__
 
-#define jarr_at(this_, index)             \
-JARR_MACRO_START                          \
-	JARR_ST_ASSERT_SIZE(index)        \
-	assert(index <= ((this_)->size)), \
-	(((this_)->data) + index)         \
+#define jarr_at(this_jarr, index)             \
+JARR_MACRO_START                              \
+	JARR_ST_ASSERT_SIZE(index)            \
+	assert(index <= ((this_jarr)->size)), \
+	(((this_jarr)->data) + index)         \
 JARR_MACRO_END
 
 #define private_jarr_new_alloc(this_, cap)                                             \

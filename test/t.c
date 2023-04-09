@@ -30,34 +30,8 @@
 /* 	return 1; */
 /* } */
 
-void jarr_jstr_delete(jstring_t *s)
-{
-
-}
-
-#define jarr_jstr_delete(jarr)                              \
-do {                                                        \
-	for (int i = 0, sz = ((jarr)->size); i < sz; ++i) { \
-		jstr_delete(&((jarr)->data)[i]);            \
-	}                                                   \
-} while (0)
-
 int main()
 {
-	/* debug(); */
-
-	jarray(jstring_t, n);
-
-	/* jarr_new(&n, 10); */
-
-	private_jarr_new_alloc(&n, 10);
-
-	jstr_new(&n.data[0], "hello");
-
-	jstr_new(&n.data[1], "world");
-
-	puts(n.data[0].data);
-	puts(n.data[1].data);
-
-	jarr_jstr_delete(&n);
+	jarray(int, arr);
+	*jarr_at(&arr, 1) = '\0';
 }
