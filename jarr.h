@@ -103,14 +103,14 @@ JARR_MACRO_START                              \
 	(((this_jarr)->data) + index)         \
 JARR_MACRO_END
 
-#define private_jarr_new_alloc(this_, cap)                                             \
-JARR_MACRO_START                                                                       \
-	JARR_ST_ASSERT_SIZE(cap)                                                       \
-	((this_)->size) = 0,                                                           \
-	(((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),            \
-	(likely(((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)))) \
-	|| (jarr_init(this_), 0)                                                       \
-JARR_MACRO_END
+#define jarr_new(this_, cap)                                                  \
+do {                                                                          \
+	((this_)->size) = 0;                                                  \
+	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);     \
+	((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
+	if (unlikely(!(this_)->data))                                         \
+		jarr_init(this_)                                              \
+} while (0)
 
 #define jarr_reserve_f_exact(this_, cap)                      \
 JARR_MACRO_START                                              \
@@ -276,30 +276,44 @@ JARR_MACRO_END
 #define jarr_cat_u(this_, ...) private_cat(private_jarr_cat_u, this_, __VA_ARGS__)
 #define jarr_cat_f(this_, ...) private_cat(private_jarr_cat_f, this_, __VA_ARGS__)
 
-#define jarr_new(this_, ...)                                                 \
-JARR_MACRO_START                                                             \
-	(PP_NARG(__VA_ARGS__) == 1)                                          \
-		? private_jarr_new_alloc(this_, PP_FIRST_ARG(__VA_ARGS__))   \
-		: private_jarr_new(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
-JARR_MACRO_END
-
 #define jarr_new_auto(this_, ...)                                  \
 JARR_MACRO_START                                                   \
 	private_jarr_new(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__) \
 JARR_MACRO_END
 
-#define private_jarr_new(this_, cap, ...)                                                 \
-JARR_MACRO_START                                                                          \
-	JARR_ST_ASSERT_SIZE(cap)                                                          \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, PP_FIRST_ARG(__VA_ARGS__))                       \
-	((((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP)),              \
-	(likely(((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_))))) \
-	?                                                                                 \
-		((PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__)),                         \
-		(((this_)->size) = PP_NARG(__VA_ARGS__)), 1)                              \
-	:                                                                                 \
-		(jarr_init(this_), 0)                                                     \
-JARR_MACRO_END
+#define jarr_new_cat(this_, cap, ...)                                             \
+do {                                                                              \
+	JARR_ST_ASSERT_SIZE(cap)                                                  \
+	JARR_ST_ASSERT_RIGHT_TYPE(this_, PP_FIRST_ARG(__VA_ARGS__))               \
+	(((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP));       \
+	(((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_))); \
+	if (likely((this_)->data)) {                                              \
+		(PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__));                  \
+		(((this_)->size) = PP_NARG(__VA_ARGS__));                         \
+	} else {                                                                  \
+		jarr_init(this_);                                                 \
+	}                                                                         \
+} while (0)
+
+#if defined(__GNUC__) || defined(__clang__)
+
+#define jarr_swap(this_, other_)                                \
+(void)({                                                        \
+	JARR_ST_ASSERT_RIGHT_TYPE(this_, *((other_)->data))     \
+	size_t tmp_size = ((this_)->size);                      \
+	size_t tmp_cap = ((this_)->capacity);                   \
+	typeof(((this_)->data)) tmp_data = ((this_)->data);     \
+                                                                \
+	((this_)->size) = ((other_)->size);                     \
+	((this_)->capacity) = ((other_)->capacity);             \
+	((this_)->data) = ((other_)->data);                     \
+                                                                \
+	((other_)->size) = tmp_size;                            \
+	((other_)->capacity) = tmp_cap;                         \
+	((other_)->data) = tmp_data;                            \
+})
+
+#else
 
 #define jarr_swap(this_, other_)                            \
 JARR_MACRO_START                                            \
@@ -311,6 +325,8 @@ JARR_MACRO_START                                            \
 			&((other_)->capacity),              \
 			&((other_)->size))                  \
 JARR_MACRO_END
+
+#endif
 
 #define jarr_pop_back(this_) (--((this_)->size))
 

@@ -23,10 +23,12 @@
 #	define JARR_HAS__STATIC_ASSERT_
 #endif // static_assert
 
-#ifdef JARR_HAS_STATIC_ASSERT
+#if defined(JARR_HAS_STATIC_ASSERT) && (defined(__GNUC__) || defined(__clang__))
 #	define JARR_ST_ASSERT(expr, msg) static_assert(expr, msg)
-#elif defined(JARR_HAS__STATIC_ASSERT_)
+#elif defined(JARR_HAS__STATIC_ASSERT_) && (defined(__GNUC__) || defined(__clang__))
 #	define JARR_ST_ASSERT(expr, msg) _Static_assert(expr, msg)
+#else
+#	define JARR_ST_ASSERT(expr, msg)
 #endif // JARR_HAS_STATIC_ASSERT
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
@@ -128,6 +130,7 @@
 		return 1ull << (index + 1);
 	}
 #else
+#	include <stddef.h>
 	JARR_CONST__ JARR_INLINE__ size_t private_jarr_next_pow2_32(size_t x)
 	{
 		--x;
@@ -200,16 +203,21 @@
 #		define JARR_ST_ASSERT_CHAR(expr)                                                          \
 			JARR_ST_ASSERT(JARR_IS_CHAR(expr), "Not using a char where a char is required!");
 #		define JARR_ST_ASSERT_TYPECHECK(Texpr, expr) JARR_ST_ASSERT(JARR_SAME_TYPE(Texpr, expr), "Passing the wrong data type!");
-#	else
-#		define JARR_IS_SIZE(expr)
-#		define JARR_ST_ASSERT_SIZE(expr)
 #	endif // JARR_HAS_GENERIC
-#	define JARR_MACRO_START ({
-#	define JARR_MACRO_END ;})
+#	define JARR_MACRO_START (__extension__({
+#	define JARR_MACRO_END ;}))
+#	define JARR_END ;
 #else
 #	define JARR_IS_SIZE(val)
+#	define JARR_IS_STR(val)
+#	define JARR_IS_CHAR(val)
+#	define JARR_ST_ASSERT_SIZE(expr)
+#	define JARR_ST_ASSERT_STR(expr)
+#	define JARR_ST_ASSERT_CHAR(expr)
+#	define JARR_ST_ASSERT_TYPECHECK(Texpr, expr)
 #	define JARR_MACRO_START (
 #	define JARR_MACRO_END )
+#	define JARR_END ,
 #endif // __GNUC__ || __clang__
 
 #ifndef MAX
