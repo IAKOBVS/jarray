@@ -87,12 +87,13 @@
 )
 
 #ifdef JSTR_H_DEF__
-#define jarr_jstr_delete(jarr)                                                                 \
-do {                                                                                           \
-	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); jarr_i__ < jarr_sz__; ++jarr_i__) { \
-		jstr_delete(&((jarr)->data)[jarr_i__]);                                        \
-	}                                                                                      \
-	jarr_delete(this_)                                                                     \
+#define jarr_jstr_delete(jarr)                             \
+do {                                                       \
+	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); \
+			jarr_i__ < jarr_sz__;              \
+			++jarr_i__)                        \
+		jstr_delete(&((jarr)->data)[jarr_i__]);    \
+	jarr_delete(this_)                                 \
 } while (0)
 #endif // JSTR_H_DEF__
 
@@ -293,20 +294,20 @@ do {                                                                            
 	}                                                                       \
 } while (0)
 
-#define jarr_swap(this_, other_)                                  \
-do {                                                              \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(this_, other_)              \
-	size_t tmp_size = ((this_)->size);                        \
-	size_t tmp_cap = ((this_)->capacity);                     \
-	typeof(((this_)->data)) tmp_data = ((this_)->data);       \
-                                                                  \
-	((this_)->size) = ((other_)->size);                       \
-	((this_)->capacity) = ((other_)->capacity);               \
-	((this_)->data) = ((other_)->data);                       \
-                                                                  \
-	((other_)->size) = tmp_size;                              \
-	((other_)->capacity) = tmp_cap;                           \
-	((other_)->data) = tmp_data;                              \
+#define jarr_swap(this_, other_)                                   \
+do {                                                               \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(this_, other_)               \
+	size_t tmp_size = ((this_)->size);                         \
+	size_t tmp_cap = ((this_)->capacity);                      \
+	typeof(((this_)->data)) tmp_data = ((this_)->data);        \
+                                                                   \
+	((this_)->size) = ((other_)->size);                        \
+	((this_)->capacity) = ((other_)->capacity);                \
+	((this_)->data) = ((other_)->data);                        \
+                                                                   \
+	((other_)->size) = tmp_size;                               \
+	((other_)->capacity) = tmp_cap;                            \
+	((other_)->data) = tmp_data;                               \
 } while (0)
 
 #define jarr_pop_back(this_) (--((this_)->size))
