@@ -110,7 +110,7 @@ do {                                                                          \
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);     \
 	((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
 	if (unlikely(!(this_)->data))                                         \
-		jarr_init(this_);                                             \
+		((this_)->capacity) = 0;                                      \
 } while (0)
 
 #define jarr_reserve_f_exact(this_, cap)                      \
