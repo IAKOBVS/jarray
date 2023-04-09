@@ -376,16 +376,16 @@ JARR_MACRO_END
 	for (size_t elem = 0, jarr_size__ = ((this_)->size); \
 		elem < jarr_size__; ++elem)
 
-#define jarr_foreach(elem, this_)                                              \
-	for (typeof(*((this_)->data)) *elem = ((this_)->data),                 \
-	*const JARR_RESTRICT__ jarr_end__ = ((this_)->data) + ((this_)->size); \
-		elem < jarr_end__;                                             \
+#define jarr_foreach(elem, this_)                              \
+	for (typeof(*((this_)->data)) *elem = ((this_)->data), \
+	*const jarr_end__ = ((this_)->data) + ((this_)->size); \
+		elem < jarr_end__;                             \
 			++elem)
 
-#define jarr_st_foreach(elem, arr)                                       \
-	for (typeof(*(arr)) *elem = (arr),                               \
-	*const JARR_RESTRICT__ jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
-		elem < jarr_end__;                                       \
+#define jarr_st_foreach(elem, arr)                       \
+	for (typeof(*(arr)) *elem = (arr),               \
+	*const jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
+		elem < jarr_end__;                       \
 		++elem)
 
 #define jarr_foreach_cout(elem, this_)             \
