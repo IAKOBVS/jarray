@@ -50,13 +50,10 @@
 #	define JARR_NOEXCEPT__
 #endif // __cplusplus
 
-#ifdef JARR_INCLUDE
-#	include <stdio.h>
-#	include <string.h>
-#	include <stdlib.h>
-#	include <assert.h>
-#endif // JARR_INCLUDE
-
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
 #include "macros.h"
 
 #define JARR_MIN_CAP 8
@@ -68,7 +65,7 @@
 		T *data;         \
 	} name = {0}
 
-#define jarr_st(T, capacity)                      \
+#define jarr_static(T, capacity)                  \
 	struct {                                  \
 		size_t size;                      \
 		T data[JARR_NEXT_POW2(capacity)]; \
