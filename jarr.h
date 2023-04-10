@@ -13,7 +13,8 @@
    _u (unsafe) macros will skip allocation,
    i.e., it asserts that jarray has enough capacity.
 
-   _s (safe) macros will do all the checks.
+   _s (safe) macros will assert that jarray has been allocated.
+   if not, it will crash.
 
    you shall check non-_u macros for non-zero value
    and decide how to error-handle malloc or realloc failures.
@@ -74,17 +75,19 @@
 	(sizeof(jarr_st)/sizeof(*(jarr_st)))
 
 #define jarr_init(this_)         \
-(void)(                          \
-	((this_)->capacity) = 0, \
-	((this_)->size) = 0,     \
-	((this_)->data) = NULL   \
-)
+do {                             \
+	((this_)->data) = NULL;  \
+	((this_)->capacity) = 0; \
+	((this_)->size) = 0;     \
+} while (0)
 
-#define jarr_delete(this_)   \
-(void)(                      \
-	free((this_)->data), \
-	jarr_init(this_)     \
-)
+#define jarr_delete(this_)       \
+do {                             \
+	((this_)->capacity) = 0; \
+	((this_)->size) = 0;     \
+	free(((this_)->data));   \
+	((this_)->data) = NULL;  \
+} while (0)
 
 #ifdef JSTR_H_DEF__
 #define jarr_jstr_delete(jarr)                             \
@@ -358,7 +361,7 @@ do {                                                          \
 } while (0)
 
 #define jarr_push_front_s(this_, value)                            \
-	(likely(this_)->capacity) && jarr_push_front(this_, value)
+	(assert(((this_)->capacity)), jarr_push_front(this_, value))
 
 #define jarr_cmp_f(dest, src)                                   \
 JARR_MACRO_START                                                \
