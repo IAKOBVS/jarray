@@ -81,7 +81,7 @@ do {                             \
 	((this_)->size) = 0;     \
 } while (0)
 
-#define jarr_delete(this_)       \
+#define jarr_dealloc(this_)      \
 do {                             \
 	((this_)->capacity) = 0; \
 	((this_)->size) = 0;     \
@@ -90,13 +90,13 @@ do {                             \
 } while (0)
 
 #ifdef JSTR_H_DEF__
-#define jarr_jstr_delete(jarr)                             \
+#define jarr_jstr_dealloc(jarr)                            \
 do {                                                       \
 	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); \
 			jarr_i__ < jarr_sz__;              \
 			++jarr_i__)                        \
-		jstr_delete(&((this_)->data)[jarr_i__]);   \
-	jarr_delete(this_);                                \
+		jstr_dealloc(&((this_)->data)[jarr_i__]);  \
+	jarr_dealloc(this_);                               \
 } while (0)
 #endif // JSTR_H_DEF__
 
@@ -106,7 +106,7 @@ do {                                                       \
 	(((this_jarr)->data) + index)         \
 )
 
-#define jarr_new(this_, cap)                                                  \
+#define jarr_alloc(this_, cap)                                                \
 do {                                                                          \
 	((this_)->size) = 0;                                                  \
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);     \
@@ -115,10 +115,10 @@ do {                                                                          \
 		((this_)->capacity) = 0;                                      \
 } while (0)
 
-#define jarr_new_auto(this_, ...)                              \
-	jarr_new_cat(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+#define jarr_alloc_cat(this_, ...)                                    \
+	jarr_alloc_cat_wcap(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarr_new_cat(this_, cap, ...)                                           \
+#define jarr_alloc_cat_wcap(this_, cap, ...)                                    \
 do {                                                                            \
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);       \
 	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
