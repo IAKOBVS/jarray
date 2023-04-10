@@ -262,7 +262,7 @@ do {                                                                            
 
 #define private_jarr_cat_u(this_, argc, ...)                         \
 do {                                                                 \
-	PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);    \
+	PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);              \
 	PP_LOOP_FROM(((this_)->data), ((this_)->size), __VA_ARGS__), \
 	(((this_)->size) += argc)                                    \
 } while (0)
