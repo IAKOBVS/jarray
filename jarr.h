@@ -41,8 +41,8 @@
 #include JARR_PATH_TO_PP_VA_ARGS_MACROS_H
 #include "macros.h" // .gch
 
-#define JARR_ST_ASSERT_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
-#define JARR_ST_ASSERT_IS_SAME_JARR(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
+#define JARR_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
+#define JARR_IS_SAME_JARR(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
 
 #ifdef __cplusplus
 #	define JARR_NOEXCEPT__ noexcept
@@ -123,7 +123,7 @@ do {                                                                            
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);       \
 	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
 	if (likely((this_)->data)) {                                            \
-		PP_ST_ASSERT_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);       \
+		PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);       \
 		(PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__));                \
 		((this_)->size) = PP_NARG(__VA_ARGS__);                         \
 	} else {                                                                \
@@ -203,10 +203,10 @@ do {                                         \
 		jarr_shrink_to_f(this_, cap);\
 } while (0)
 
-#define jarr_push_back_u(this_, value)               \
-do {                                                 \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, value)      \
-	(((this_)->data)[((this_)->size)++] = value);\
+#define jarr_push_back_u(this_, value)                \
+do {                                                  \
+	JARR_RIGHT_TYPE(this_, value)                 \
+	(((this_)->data)[((this_)->size)++] = value); \
 } while (0)
 
 #define jarr_push_back_f(this_, value)                        \
@@ -224,15 +224,15 @@ do {                                               \
 		jarr_push_back_f(this_, value);    \
 } while (0)
 
-#define jarr_st_push_back(this_, value)         \
-JARR_MACRO_START                                \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, value) \
-	jarr_push_back_u(this_, value)          \
+#define jarr_st_push_back(this_, value) \
+JARR_MACRO_START                        \
+	JARR_RIGHT_TYPE(this_, value)   \
+	jarr_push_back_u(this_, value)  \
 JARR_MACRO_END
 
 #define jarr_append_arr(dest, src, src_size)                       \
 do {                                                               \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                   \
+	JARR_IS_SAME_JARR_T(dest, src)                             \
 	if (((dest)->size) + (src_size) > ((dest)->capacity)) {    \
 		jarr_reserve_f(dest, ((dest)->size) + (src_size)); \
 		if (likely(((this_)->data))) {                     \
@@ -247,7 +247,7 @@ do {                                                               \
 
 #define jarr_append_jarr(dest, src)                                                                    \
 do {                                                                                                   \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                                                       \
+	JARR_IS_SAME_JARR_T(dest, src)                                                                 \
 	if (((dest)->size) + ((src)->size) > ((dest)->capacity)) {                                     \
 		jarr_reserve_f(dest, ((dest)->size) + ((src)->size));                                  \
 		if (likely(((dest)->data))) {                                                          \
@@ -262,7 +262,7 @@ do {                                                                            
 
 #define private_jarr_cat_u(this_, argc, ...)                         \
 do {                                                                 \
-	PP_ST_ASSERT_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);    \
+	PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);    \
 	PP_LOOP_FROM(((this_)->data), ((this_)->size), __VA_ARGS__), \
 	(((this_)->size) += argc)                                    \
 } while (0)
@@ -291,20 +291,20 @@ JARR_MACRO_END
 
 #ifdef JARR_HAS_TYPEOF
 
-#define jarr_swap(this_, other_)                                     \
-do {                                                                 \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(this_, other_)                 \
-	size_t tmp_size = ((this_)->size);                           \
-	size_t tmp_cap = ((this_)->capacity);                        \
-	typeof(((this_)->data)) tmp_data = ((this_)->data);          \
-                                                                     \
-	((this_)->size) = ((other_)->size);                          \
-	((this_)->capacity) = ((other_)->capacity);                  \
-	((this_)->data) = ((other_)->data);                          \
-                                                                     \
-	((other_)->size) = tmp_size;                                 \
-	((other_)->capacity) = tmp_cap;                              \
-	((other_)->data) = tmp_data;                                 \
+#define jarr_swap(this_, other_)                                      \
+do {                                                                  \
+	JARR_IS_SAME_JARR_T(this_, other_)                            \
+	size_t tmp_size = ((this_)->size);                            \
+	size_t tmp_cap = ((this_)->capacity);                         \
+	typeof(((this_)->data)) tmp_data = ((this_)->data);           \
+                                                                      \
+	((this_)->size) = ((other_)->size);                           \
+	((this_)->capacity) = ((other_)->capacity);                   \
+	((this_)->data) = ((other_)->data);                           \
+                                                                      \
+	((other_)->size) = tmp_size;                                  \
+	((other_)->capacity) = tmp_cap;                               \
+	((other_)->data) = tmp_data;                                  \
 } while (0)
 
 #else
@@ -338,7 +338,7 @@ do {                                                                 \
 
 #define jarr_push_front_u(this_, value)                                   \
 do {                                                                      \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, value)                           \
+	JARR_RIGHT_TYPE(this_, value)                                     \
 	memmove(((this_)->data) + 1, ((this_)->data), ((this_)->size)++); \
 	(*(((this_)->data)) = value);                                     \
 } while (0)
@@ -346,14 +346,14 @@ do {                                                                      \
 
 #define jarr_push_front_f(this_, value)          \
 do {                                             \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, value)  \
+	JARR_RIGHT_TYPE(this_, value)            \
 	if (likely(jarr_reserve_2x(this_)))      \
 		jarr_push_front_u(this_, value); \
 } while (0)
 
 #define jarr_push_front(this_, value)                         \
 do {                                                          \
-	JARR_ST_ASSERT_RIGHT_TYPE(this_, value)               \
+	JARR_RIGHT_TYPE(this_, value)                         \
 	if (unlikely(((this_)->capacity) == ((this_)->size))) \
 		jarr_push_front_f(this_, value);              \
 	else                                                  \
@@ -365,15 +365,15 @@ do {                                                          \
 
 #define jarr_cmp_f(dest, src)                                   \
 JARR_MACRO_START                                                \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src)                \
+	JARR_IS_SAME_JARR_T(dest, src)                          \
 	(memcmp(((dest)->data), ((src)->data), ((dest)->size))) \
 JARR_MACRO_END
 
-#define jarr_cmp(dest, src)                      \
-JARR_MACRO_START                                 \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(dest, src) \
-	(((dest)->size) != ((src)->size))        \
-	|| cmp_f(dest, src)                      \
+#define jarr_cmp(dest, src)               \
+JARR_MACRO_START                          \
+	JARR_IS_SAME_JARR_T(dest, src)    \
+	(((dest)->size) != ((src)->size)) \
+	|| cmp_f(dest, src)               \
 JARR_MACRO_END
 
 #define jarr_foreach_index(elem, this_)                      \
