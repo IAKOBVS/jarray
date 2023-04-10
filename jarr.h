@@ -291,20 +291,20 @@ JARR_MACRO_END
 
 #ifdef JARR_HAS_TYPEOF
 
-#define jarr_swap(this_, other_)                                   \
-do {                                                               \
-	JARR_ST_ASSERT_IS_SAME_JARR_T(this_, other_)               \
-	size_t tmp_size = ((this_)->size);                         \
-	size_t tmp_cap = ((this_)->capacity);                      \
-	typeof(((this_)->data)) tmp_data = ((this_)->data);        \
-                                                                   \
-	((this_)->size) = ((other_)->size);                        \
-	((this_)->capacity) = ((other_)->capacity);                \
-	((this_)->data) = ((other_)->data);                        \
-                                                                   \
-	((other_)->size) = tmp_size;                               \
-	((other_)->capacity) = tmp_cap;                            \
-	((other_)->data) = tmp_data;                               \
+#define jarr_swap(this_, other_)                                     \
+do {                                                                 \
+	JARR_ST_ASSERT_IS_SAME_JARR_T(this_, other_)                 \
+	size_t tmp_size = ((this_)->size);                           \
+	size_t tmp_cap = ((this_)->capacity);                        \
+	typeof(((this_)->data)) tmp_data = ((this_)->data);          \
+                                                                     \
+	((this_)->size) = ((other_)->size);                          \
+	((this_)->capacity) = ((other_)->capacity);                  \
+	((this_)->data) = ((other_)->data);                          \
+                                                                     \
+	((other_)->size) = tmp_size;                                 \
+	((other_)->capacity) = tmp_cap;                              \
+	((other_)->data) = tmp_data;                                 \
 } while (0)
 
 #else
