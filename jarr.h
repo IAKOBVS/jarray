@@ -35,11 +35,11 @@
 #	define JARR_ASSERT(x)
 #endif // JARR_DEBUG
 
-#define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity)),
-#define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data)),
-
 #include JARR_PATH_TO_PP_VA_ARGS_MACROS_H
 #include "macros.h" // .gch
+
+#define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity)),
+#define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data)),
 
 #define JARR_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
 #define JARR_IS_SAME_JARR(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
@@ -285,9 +285,15 @@ JARR_MACRO_END
 
 #define private_cat(F, this_, ...) F(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarr_cat(this_, ...) private_cat(private_jarr_cat, this_, __VA_ARGS__)
-#define jarr_cat_u(this_, ...) private_cat(private_jarr_cat_u, this_, __VA_ARGS__)
-#define jarr_cat_f(this_, ...) private_cat(private_jarr_cat_f, this_, __VA_ARGS__)
+#define jarr_cat_s(this_, ...)        \
+do {                                  \
+	assert(((this_)->capacity));  \
+	jarr_cat(this_, __VA_ARGS__); \
+} while (0)
+
+#define jarr_cat(this_, ...) private_jarr_cat(this_, PP_NARG(__VVA_ARGS__), __VA_ARGS__)
+#define jarr_cat_u(this_, ...) private_jarr_cat_u(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+#define jarr_cat_f(this_, ...) private_jarr_cat_f(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
 #ifdef JARR_HAS_TYPEOF
 
