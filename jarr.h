@@ -106,10 +106,10 @@ do {                                                       \
 	(((this_jarr)->data) + index)         \
 )
 
-#define jarr_alloc(this_, cap)                                                \
+#define jarr_alloc(this_, cap_)                                                \
 do {                                                                          \
 	((this_)->size) = 0;                                                  \
-	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);     \
+	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);     \
 	((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
 	if (unlikely(!((this_)->data)))                                       \
 		((this_)->capacity) = 0;                                      \
@@ -118,9 +118,9 @@ do {                                                                          \
 #define jarr_alloc_cat(this_, ...)                                    \
 	jarr_alloc_cat_wcap(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarr_alloc_cat_wcap(this_, cap, ...)                                    \
+#define jarr_alloc_cat_wcap(this_, cap_, ...)                                   \
 do {                                                                            \
-	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);       \
+	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);      \
 	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
 	if (likely((this_)->data)) {                                            \
 		PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);                 \
@@ -134,11 +134,11 @@ do {                                                                            
 
 #define jarr_reserve_f_exact(this_, cap_)                                              \
 do {                                                                                   \
-	((this_)->cap) = (cap_);                                                       \
+	((this_)->capacity) = (cap_);                                                  \
 	((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
 	if (unlikely(!((this_)->data))) {                                              \
 		((this_)->size) = 0;                                                   \
-		((this_)->cap) = 0;                                                    \
+		((this_)->capacity) = 0;                                               \
 	}                                                                              \
 } while (0)
 
@@ -150,14 +150,14 @@ do {                                                                            
 	((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
 	if (unlikely(!((this_)->data))) {                                              \
 		((this_)->size) = 0;                                                   \
-		((this_)->cap) = 0;                                                    \
+		((this_)->capacity) = 0;                                               \
 	}                                                                              \
 } while (0)
 
-#define jarr_reserve(this_, cap)            \
+#define jarr_reserve(this_, cap_)            \
 do {                                        \
-	if ((cap) > ((this_)->capacity))    \
-		jarr_reserve_f(this_, cap); \
+	if ((cap_) > ((this_)->capacity))    \
+		jarr_reserve_f(this_, cap_); \
 } while (0)
 
 #define private_jarr_reserve_x(this_, multiplier)                         \
@@ -190,17 +190,17 @@ do {                                                 \
 		jarr_shrink_to_size_f(this_, size_); \
 } while (0)
 
-#define jarr_shrink_to_f(this_, cap)      \
+#define jarr_shrink_to_f(this_, cap_)      \
 do {                                      \
-	jarr_reserve_f_exact(this_, cap); \
+	jarr_reserve_f_exact(this_, cap_); \
 	if (likely((this_)->data))        \
 		((this_)->size) = cap;    \
 } while (0)
 
-#define jarr_shrink_to(this_, cap)           \
-do {                                         \
-	if (cap < ((this_)->size))           \
-		jarr_shrink_to_f(this_, cap);\
+#define jarr_shrink_to(this_, cap_)            \
+do {                                           \
+	if (cap < ((this_)->size))             \
+		jarr_shrink_to_f(this_, cap_); \
 } while (0)
 
 #define jarr_push_back_u(this_, value)                \
