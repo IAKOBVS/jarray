@@ -95,7 +95,7 @@ do {                                                       \
 	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); \
 			jarr_i__ < jarr_sz__;              \
 			++jarr_i__)                        \
-		jstr_delete(&((this_)->data)[jarr_i__]);    \
+		jstr_delete(&((this_)->data)[jarr_i__]);   \
 	jarr_delete(this_);                                \
 } while (0)
 #endif // JSTR_H_DEF__
