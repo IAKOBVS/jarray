@@ -231,4 +231,10 @@
 #define JARR_SIZEOF_T(var) (sizeof(*((var)->data)))
 #define JARR_SIZEOF_ARR(arr) (sizeof(arr)/sizeof(*(arr)))
 
+ #ifdef __cplusplus
+#	define JARR_NOEXCEPT__ noexcept
+#else
+#	define JARR_NOEXCEPT__
+#endif // __cplusplus
+
 #endif // JARR_MACROS_H_DEF__

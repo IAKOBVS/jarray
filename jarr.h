@@ -26,8 +26,8 @@
    it will crash at runtime if assertion fails.
 */
 
-#define JARR_ALIGN_POWER_OF_TWO
 #define JARR_64_BIT
+#define JARR_ALIGN_POWER_OF_TWO
 
 #ifdef JARR_DEBUG
 #	define JARR_ASSERT(x) assert(x),
@@ -38,17 +38,11 @@
 #include JARR_PATH_TO_PP_VA_ARGS_MACROS_H
 #include "macros.h" // .gch
 
-#define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity)),
-#define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data)),
+#define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity));
+#define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data));
 
 #define JARR_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
 #define JARR_IS_SAME_JARR(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
-
-#ifdef __cplusplus
-#	define JARR_NOEXCEPT__ noexcept
-#else
-#	define JARR_NOEXCEPT__
-#endif // __cplusplus
 
 #include <stdio.h>
 #include <string.h>
@@ -123,7 +117,7 @@ do {                                                                            
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap), JARR_MIN_CAP);       \
 	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
 	if (likely((this_)->data)) {                                            \
-		PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);       \
+		PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);                 \
 		(PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__));                \
 		((this_)->size) = PP_NARG(__VA_ARGS__);                         \
 	} else {                                                                \
