@@ -1,4 +1,4 @@
-#include "/home/james/c/jstring/jstr.h"
+/* #include "/home/james/c/jstring/jstr.h" */
 
 #include "../jarr.h"
 #include "../macros.h"
@@ -33,5 +33,5 @@
 int main()
 {
 	jarray(int, arr);
-	(arr.data)[100] = '\0';
+	jarr_new_cat(&arr, 10, 1, 2);
 }
