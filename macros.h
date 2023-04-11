@@ -98,22 +98,19 @@
 #	include <stdint.h>
 #	if __has_builtin(__builtin_clzll)
 
-/* 		JARR_CONST__ JARR_INLINE__ uint64_t private_jarr_next_pow2_64(uint64_t x) */
-/* 		{ */
-/* 			return 1ull << (64 - __builtin_clzll(x - 1)); */
-/* 		} */
-
-#		define private_jarr_next_pow2_64(x) (1ull << (32 - __builtin_clz(x - 1)))
+		JARR_CONST__ JARR_INLINE__ uint64_t private_jarr_next_pow2_64(uint64_t x)
+		{
+			return 1ull << (64 - __builtin_clzll(x - 1));
+		}
 
 #	endif // __has_builtin(__builtin_clzll)
 #	if __has_builtin(__builtin_clz)
 
-		/* JARR_CONST__ JARR_INLINE__ uint32_t private_jarr_next_pow2_32(uint32_t x) */
-		/* { */
-		/* 	return 1u << (32 - __builtin_clz(x - 1)); */
-		/* } */
+		JARR_CONST__ JARR_INLINE__ uint32_t private_jarr_next_pow2_32(uint32_t x)
+		{
+			return 1u << (32 - __builtin_clz(x - 1));
+		}
 
-#		define private_jarr_next_pow2_32(x) (1u << (32 - __builtin_clz(x - 1)))
 #	endif // __has_builtin(__builtin_clz)
 #elif defined(_MSC_VER)
 #	include <stdint.h>
