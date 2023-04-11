@@ -48,9 +48,10 @@
 #define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data));
 
 #define JARR_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
-#define JARR_IS_SAME_JARR(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
+#define JARR_IS_SAME_JARR_T(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
 
 #ifdef JARR_HAS_STATIC_ASSERT
+#	define JARR_ST_ASSERT_SEMICOLON(expr, msg) JARR_ST_ASSERT(expr, msg);
 #	define JARR_IS_T_VA_ARGS(Texpr, ...) PP_IS_T_VA_ARGS(Texpr, __VA_ARGS__);
 #else
 #	define JARR_IS_T_VA_ARGS(Texpr, ...)
@@ -196,10 +197,10 @@ do {                                                 \
 } while (0)
 
 #define jarr_shrink_to_f(this_, cap_)      \
-do {                                      \
+do {                                       \
 	jarr_reserve_f_exact(this_, cap_); \
-	if (likely((this_)->data))        \
-		((this_)->size) = cap;    \
+	if (likely((this_)->data))         \
+		((this_)->size) = cap;     \
 } while (0)
 
 #define jarr_shrink_to(this_, cap_)            \
@@ -235,34 +236,36 @@ JARR_MACRO_START                        \
 	jarr_push_back_u(this_, value)  \
 JARR_MACRO_END
 
-#define jarr_append_arr(dest, src, src_size)                       \
-do {                                                               \
-	JARR_IS_SAME_JARR_T(dest, src)                             \
-	if (((dest)->size) + (src_size) > ((dest)->capacity)) {    \
-		jarr_reserve_f(dest, ((dest)->size) + (src_size)); \
-		if (likely(((this_)->data))) {                     \
-			memcpy(((dest)->data), src, sizeof(src));  \
-			((dest)->size) += (src_size);              \
-		}                                                  \
-	} else {                                                   \
-		memcpy(((dest)->data), src, sizeof(src));          \
-		((dest)->size) += (src_size);                      \
-	}                                                          \
-} while (0)
-
-#define jarr_append_jarr(dest, src)                                                                    \
+#define jarr_append_arr(dest, src, src_size)                                                           \
 do {                                                                                                   \
 	JARR_IS_SAME_JARR_T(dest, src)                                                                 \
-	if (((dest)->size) + ((src)->size) > ((dest)->capacity)) {                                     \
-		jarr_reserve_f(dest, ((dest)->size) + ((src)->size));                                  \
-		if (likely(((dest)->data))) {                                                          \
-			memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data))); \
-			((dest)->size) += ((src)->size);                                               \
+	JARR_ST_ASSERT_SEMICOLON(sizeof(dest) == sizeof(src), "Passing jarrays not of the same type!") \
+	if (((dest)->size) + (src_size) > ((dest)->capacity)) {                                        \
+		jarr_reserve_f(dest, ((dest)->size) + (src_size));                                     \
+		if (likely(((this_)->data))) {                                                         \
+			memcpy(((dest)->data), src, sizeof(src));                                      \
+			((dest)->size) += (src_size);                                                  \
 		}                                                                                      \
 	} else {                                                                                       \
-		(memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data))),        \
-		((dest)->size) += ((src)->size), 1)                                                    \
+		memcpy(((dest)->data), src, sizeof(src));                                              \
+		((dest)->size) += (src_size);                                                          \
 	}                                                                                              \
+} while (0)
+
+#define jarr_append_jarr(dest, src)                                                                          \
+do {                                                                                                         \
+	JARR_IS_SAME_JARR_T(dest, src)                                                                       \
+	JARR_ST_ASSERT_SEMICOLON(sizeof(*(dest)) == sizeof(*(src)), "Passing jarrays not of the same type!") \
+	if (((dest)->size) + ((src)->size) > ((dest)->capacity)) {                                           \
+		jarr_reserve_f(dest, ((dest)->size) + ((src)->size));                                        \
+		if (likely(((dest)->data))) {                                                                \
+			memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data)));       \
+			((dest)->size) += ((src)->size);                                                     \
+		}                                                                                            \
+	} else {                                                                                             \
+		(memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data))),              \
+		((dest)->size) += ((src)->size));                                                            \
+	}                                                                                                    \
 } while (0)
 
 #define private_jarr_cat_u(this_, argc, ...)                         \
@@ -302,20 +305,21 @@ do {                                  \
 
 #ifdef JARR_HAS_TYPEOF
 
-#define jarr_swap(this_, other_)                                      \
-do {                                                                  \
-	JARR_IS_SAME_JARR_T(this_, other_)                            \
-	size_t tmp_size = ((this_)->size);                            \
-	size_t tmp_cap = ((this_)->capacity);                         \
-	typeof(((this_)->data)) tmp_data = ((this_)->data);           \
-                                                                      \
-	((this_)->size) = ((other_)->size);                           \
-	((this_)->capacity) = ((other_)->capacity);                   \
-	((this_)->data) = ((other_)->data);                           \
-                                                                      \
-	((other_)->size) = tmp_size;                                  \
-	((other_)->capacity) = tmp_cap;                               \
-	((other_)->data) = tmp_data;                                  \
+#define jarr_swap(this_, other_)                                                                            \
+do {                                                                                                        \
+	JARR_ST_ASSERT_SEMICOLON(sizeof(this_) == sizeof(other_), "Passing jarrays not of the same type!")  \
+	JARR_IS_SAME_JARR_T(this_, other_)                                                                  \
+	size_t tmp_size = ((this_)->size);                                                                  \
+	size_t tmp_cap = ((this_)->capacity);                                                               \
+	typeof(((this_)->data)) tmp_data = ((this_)->data);                                                 \
+                                                                                                            \
+	((this_)->size) = ((other_)->size);                                                                 \
+	((this_)->capacity) = ((other_)->capacity);                                                         \
+	((this_)->data) = ((other_)->data);                                                                 \
+                                                                                                            \
+	((other_)->size) = tmp_size;                                                                        \
+	((other_)->capacity) = tmp_cap;                                                                     \
+	((other_)->data) = tmp_data;                                                                        \
 } while (0)
 
 #else
