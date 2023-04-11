@@ -96,17 +96,21 @@
 
 #if defined(__GNUC__) || defined(__clang__)
 #	include <stdint.h>
-#	if __has_builtin(__builtin_clzll)
+#	if __has_builtin(__builtin_clzll) && defined(JARR_64_BIT)
 
-		JARR_CONST__ JARR_INLINE__ uint64_t private_jarr_next_pow2_64(uint64_t x)
+		JARR_CONST__
+		JARR_INLINE__
+		uint64_t private_jarr_next_pow2_64(uint64_t x)
 		{
 			return 1ull << (64 - __builtin_clzll(x - 1));
 		}
 
 #	endif // __has_builtin(__builtin_clzll)
-#	if __has_builtin(__builtin_clz)
+#	if __has_builtin(__builtin_clz) && defined(JARR_32_BIT)
 
-		JARR_CONST__ JARR_INLINE__ uint32_t private_jarr_next_pow2_32(uint32_t x)
+		JARR_CONST__
+		JARR_INLINE__
+		uint32_t private_jarr_next_pow2_32(uint32_t x)
 		{
 			return 1u << (32 - __builtin_clz(x - 1));
 		}
@@ -116,21 +120,29 @@
 #	include <stdint.h>
 #	include <intrin.h>
 #	pragma intrinsic(_BitScanReverse64)
+
+#ifdef JARR_32_BIT
 	JARR_CONST__ JARR_INLINE__ uint32_t private_jarr_next_pow2_32(uint32_t x)
 	{
 		unsigned long index;
 		_BitScanReverse(&index, x - 1);
 		return 1 << (index + 1);
 	}
+#endif // JARR_32_BIT
 
+#ifdef JARR_64_BIT
 	JARR_CONST__ JARR_INLINE__ uint64_t private_jarr_next_pow2_64(uint64_t x)
 	{
 		unsigned long index;
 		_BitScanReverse64(&index, x - 1);
 		return 1ull << (index + 1);
 	}
+#endif // JARR_64_BIT
+
 #else
 #	include <stddef.h>
+
+#ifdef JARR_32_BIT
 	JARR_CONST__ JARR_INLINE__ size_t private_jarr_next_pow2_32(size_t x)
 	{
 		--x;
@@ -141,7 +153,9 @@
 		x |= x >> 16;
 		return x + 1;
 	}
+#endif // JARR_32_BIT
 
+#ifdef JARR_64_BIT
 	JARR_CONST__ JARR_INLINE__ size_t private_jarr_next_pow2_64(size_t x)
 	{
 		--x;
@@ -153,6 +167,8 @@
 		x |= x >> 32;
 		return x + 1;
 	}
+#endif // JARR_64_BIT
+
 #endif // __GNUC__ || __clang__
 
 #if defined(JARR_HAS_TYPEOF) && defined(JARR_HAS_GENERIC)
