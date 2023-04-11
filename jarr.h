@@ -90,7 +90,7 @@ do {                             \
 } while (0)
 
 #ifdef JSTR_H_DEF__
-#define jarr_jstr_dealloc(jarr)                            \
+#define jarr_of_jstr_dealloc(jarr)                         \
 do {                                                       \
 	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); \
 			jarr_i__ < jarr_sz__;              \
@@ -106,10 +106,10 @@ do {                                                       \
 	(((this_jarr)->data) + index)         \
 )
 
-#define jarr_alloc(this_, cap_)                                                \
+#define jarr_alloc(this_, cap_)                                               \
 do {                                                                          \
 	((this_)->size) = 0;                                                  \
-	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);     \
+	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);    \
 	((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
 	if (unlikely(!((this_)->data)))                                       \
 		((this_)->capacity) = 0;                                      \
@@ -155,7 +155,7 @@ do {                                                                            
 } while (0)
 
 #define jarr_reserve(this_, cap_)            \
-do {                                        \
+do {                                         \
 	if ((cap_) > ((this_)->capacity))    \
 		jarr_reserve_f(this_, cap_); \
 } while (0)
