@@ -42,7 +42,7 @@
 #endif // JARR_DEBUG
 
 #include JARR_PATH_TO_PP_VA_ARGS_MACROS_H
-#include "macros.h" // .gch
+#include "macros.h"
 
 #define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity));
 #define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data));
@@ -50,11 +50,16 @@
 #define JARR_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
 #define JARR_IS_SAME_JARR(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
 
+#ifdef JARR_HAS_STATIC_ASSERT
+#	define JARR_IS_T_VA_ARGS(Texpr, ...) PP_IS_T_VA_ARGS(Texpr, __VA_ARGS__);
+#else
+#	define JARR_IS_T_VA_ARGS(Texpr, ...)
+#endif // JARR_HAS_STATIC_ASSERT
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "macros.h"
 
 #define JARR_MIN_CAP 8
 
@@ -123,7 +128,7 @@ do {                                                                            
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);      \
 	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
 	if (likely((this_)->data)) {                                            \
-		PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);                 \
+		JARR_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__)                \
 		(PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__));                \
 		((this_)->size) = PP_NARG(__VA_ARGS__);                         \
 	} else {                                                                \
@@ -262,7 +267,7 @@ do {                                                                            
 
 #define private_jarr_cat_u(this_, argc, ...)                         \
 do {                                                                 \
-	PP_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__);              \
+	JARR_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__)             \
 	PP_LOOP_FROM(((this_)->data), ((this_)->size), __VA_ARGS__), \
 	(((this_)->size) += argc)                                    \
 } while (0)

@@ -18,18 +18,14 @@
 #endif // JARR_HAS_GENERIC
 
 #if defined(static_assert)
+#	define JARR_ST_ASSERT(expr, msg) static_assert(expr, msg)
 #	define JARR_HAS_STATIC_ASSERT
 #elif __STDC_VERSION__ >= 201112L
-#	define JARR_HAS__STATIC_ASSERT_
-#endif // static_assert
-
-#if defined(JARR_HAS_STATIC_ASSERT) && (defined(__GNUC__) || defined(__clang__))
-#	define JARR_ST_ASSERT(expr, msg) static_assert(expr, msg)
-#elif defined(JARR_HAS__STATIC_ASSERT_) && (defined(__GNUC__) || defined(__clang__))
 #	define JARR_ST_ASSERT(expr, msg) _Static_assert(expr, msg)
+#	define JARR_HAS_STATIC_ASSERT
 #else
 #	define JARR_ST_ASSERT(expr, msg)
-#endif // JARR_HAS_STATIC_ASSERT
+#endif // static_assert
 
 #ifdef JARR_ALIGN_POWER_OF_TWO
 #	ifdef JARR_64_BIT
