@@ -114,6 +114,7 @@ do {                                                       \
 
 #define jarr_alloc(this_, cap_)                                               \
 do {                                                                          \
+	JARR_ST_ASSERT_SIZE(cap_)                                             \
 	((this_)->size) = 0;                                                  \
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);    \
 	((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
@@ -126,6 +127,7 @@ do {                                                                          \
 
 #define jarr_alloc_cat_wcap(this_, cap_, ...)                                   \
 do {                                                                            \
+	JARR_ST_ASSERT_SIZE(cap_)                                               \
 	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);      \
 	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
 	if (likely((this_)->data)) {                                            \
@@ -140,6 +142,7 @@ do {                                                                            
 
 #define jarr_reserve_f_exact(this_, cap_)                                              \
 do {                                                                                   \
+	JARR_ST_ASSERT_SIZE(cap_)                                                      \
 	((this_)->capacity) = (cap_);                                                  \
 	((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
 	if (unlikely(!((this_)->data))) {                                              \
@@ -150,6 +153,7 @@ do {                                                                            
 
 #define jarr_reserve_f(this_, cap_)                                                    \
 do {                                                                                   \
+	JARR_ST_ASSERT_SIZE(cap_)                                                      \
 	do {                                                                           \
 		((this_)->capacity) *= 2;                                              \
 	} while (((this_)->capacity) < cap_);                                          \
@@ -162,6 +166,7 @@ do {                                                                            
 
 #define jarr_reserve(this_, cap_)            \
 do {                                         \
+	JARR_ST_ASSERT_SIZE(cap_)            \
 	if ((cap_) > ((this_)->capacity))    \
 		jarr_reserve_f(this_, cap_); \
 } while (0)
@@ -198,6 +203,7 @@ do {                                                 \
 
 #define jarr_shrink_to_f(this_, cap_)      \
 do {                                       \
+	JARR_ST_ASSERT_SIZE(cap_)          \
 	jarr_reserve_f_exact(this_, cap_); \
 	if (likely((this_)->data))         \
 		((this_)->size) = cap;     \
@@ -205,6 +211,7 @@ do {                                       \
 
 #define jarr_shrink_to(this_, cap_)            \
 do {                                           \
+	JARR_ST_ASSERT_SIZE(cap_)              \
 	if (cap < ((this_)->size))             \
 		jarr_shrink_to_f(this_, cap_); \
 } while (0)
