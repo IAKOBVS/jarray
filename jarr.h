@@ -63,6 +63,9 @@
 #include <assert.h>
 
 #define JARR_MIN_CAP 8
+#define JARR_MULTIPLIER 2
+
+#define JSTR_GET_MALLOC_SIZE(x) (((x) > 4) ? JSTR_NEXT_POW2(JARR_MULTIPLIER * (x)) : JARR_MIN_CAP)
 
 #define jarray(T, name)          \
 	struct {                 \
@@ -155,7 +158,7 @@ do {                                                                            
 do {                                                                                   \
 	JARR_ST_ASSERT_SIZE(cap_)                                                      \
 	do {                                                                           \
-		((this_)->capacity) *= 2;                                              \
+		((this_)->capacity) *= JARR_MULTIPLIER;                                \
 	} while (((this_)->capacity) < cap_);                                          \
 	((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
 	if (unlikely(!((this_)->data))) {                                              \
