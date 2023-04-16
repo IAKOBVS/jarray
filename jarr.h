@@ -404,8 +404,7 @@ JARR_MACRO_END
 #endif // JARR_HAS_TYPEOF
 
 JARR_INLINE__
-static
-void private_jarr_swap(void **JARR_RESTRICT__ data,
+static void private_jarr_swap(void **JARR_RESTRICT__ data,
 			size_t *JARR_RESTRICT__ cap,
 			size_t *JARR_RESTRICT__ size,
 			void **JARR_RESTRICT__ other_data,
@@ -426,7 +425,6 @@ void private_jarr_swap(void **JARR_RESTRICT__ data,
 JARR_INLINE__
 JARR_WARN_UNUSED
 JARR_CONST__
-static
-const void *private_jarr_constify(const void *data) JARR_NOEXCEPT__ { return data; }
+static const void *private_jarr_constify(const void *data) JARR_NOEXCEPT__ { return data; }
 
 #endif // JARR_H_DEF__
