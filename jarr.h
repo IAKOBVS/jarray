@@ -13,9 +13,6 @@
    _u (unsafe) macros will skip allocation,
    i.e., it asserts that jarray has enough capacity.
 
-   _s (safe) macros will assert that jarray has been allocated.
-   if not, it will crash.
-
    you shall check non-_u macros for non-zero value
    and decide how to error-handle malloc or realloc failures.
 
