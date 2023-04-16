@@ -86,10 +86,10 @@ do {                             \
 
 #define jarr_dealloc(this_)      \
 do {                             \
-	((this_)->capacity) = 0; \
-	((this_)->size) = 0;     \
 	free(((this_)->data));   \
 	((this_)->data) = NULL;  \
+	((this_)->capacity) = 0; \
+	((this_)->size) = 0;     \
 } while (0)
 
 #ifdef JSTR_H_DEF__
