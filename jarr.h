@@ -26,12 +26,6 @@
    it will crash at runtime if assertion fails.
 */
 
-#if defined(__GNUC__) || defined(__GLIBC__)
-#	ifndef _GNU_SOURCE
-#		define _GNU_SOURCE
-#	endif
-#endif
-
 #define JARR_64_BIT
 #define JARR_ALIGN_POWER_OF_TWO
 
