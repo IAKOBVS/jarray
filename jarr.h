@@ -303,12 +303,6 @@ JARR_MACRO_END
 
 #define private_cat(F, this_, ...) F(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarr_cat_s(this_, ...)        \
-do {                                  \
-	assert(((this_)->capacity));  \
-	jarr_cat(this_, __VA_ARGS__); \
-} while (0)
-
 #define jarr_cat(this_, ...) private_jarr_cat(this_, PP_NARG(__VVA_ARGS__), __VA_ARGS__)
 #define jarr_cat_u(this_, ...) private_jarr_cat_u(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #define jarr_cat_f(this_, ...) private_jarr_cat_f(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
@@ -346,18 +340,6 @@ do {                                                                            
 
 #define jarr_pop_back(this_) (--((this_)->size))
 
-#define jarr_pop_back_s(this_) \
-(                              \
-	((this_)->size)        \
-	&& --((this_)->size)   \
-)
-
-#define jarr_pop_front_s(this_)                                             \
-(                                                                           \
-	((this_)->size)                                                     \
-	&& memmove(((this_)->data), ((this_)->data + 1), --((this_)->size)) \
-)
-
 #define jarr_pop_front(this_)                                            \
 	memmove(((this_)->data), ((this_)->data + 1), --((this_)->size))
 
@@ -384,9 +366,6 @@ do {                                                          \
 	else                                                  \
 		jarr_push_front_u(this_, value);              \
 } while (0)
-
-#define jarr_push_front_s(this_, value)                            \
-	(assert(((this_)->capacity)), jarr_push_front(this_, value))
 
 #define jarr_cmp_f(dest, src)                                   \
 JARR_MACRO_START                                                \
