@@ -319,13 +319,17 @@ do {                                                                            
 
 #else
 
-#define jarr_swap(this_, other_)                 \
-	private_jarr_swap(&((this_)->data),      \
-			  &((this_)->capacity),  \
-			  &((this_)->size),      \
-			  &((other_)->data),     \
-			  &((other_)->capacity), \
-			  &((other_)->size))
+#define jarr_swap(this_, other_)                                                                           \
+do {                                                                                                       \
+	JARR_ST_ASSERT_SEMICOLON(sizeof(this_) == sizeof(other_), "Passing jarrays not of the same type!") \
+	JARR_IS_SAME_JARR_T(this_, other_)                                                                 \
+	private_jarr_swap(&((this_)->data),                                                                \
+			  &((this_)->capacity),                                                            \
+			  &((this_)->size),                                                                \
+			  &((other_)->data),                                                               \
+			  &((other_)->capacity),                                                           \
+			  &((other_)->size))                                                               \
+} while (0)
 
 #endif // JARR_HAS_TYPEOF
 
