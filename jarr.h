@@ -65,7 +65,7 @@
 #define JARR_MIN_CAP 8
 #define JARR_MULTIPLIER 2
 
-#define JSTR_GET_MALLOC_SIZE(x) (((x) > 4) ? JSTR_NEXT_POW2(JARR_MULTIPLIER * (x)) : JARR_MIN_CAP)
+#define JARR_GET_MALLOC_SIZE(x) (((x) > 4) ? JARR_NEXT_POW2(JARR_MULTIPLIER * (x)) : JARR_MIN_CAP)
 
 #define jarray(T, name)          \
 	struct {                 \
@@ -119,7 +119,7 @@ do {                                                       \
 do {                                                                          \
 	JARR_ST_ASSERT_SIZE(cap_)                                             \
 	((this_)->size) = 0;                                                  \
-	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);    \
+	((this_)->capacity) = JARR_GET_MALLOC_SIZE(cap_);                     \
 	((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
 	if (unlikely(!((this_)->data)))                                       \
 		((this_)->capacity) = 0;                                      \
@@ -131,7 +131,7 @@ do {                                                                          \
 #define jarr_alloc_cat_wcap(this_, cap_, ...)                                   \
 do {                                                                            \
 	JARR_ST_ASSERT_SIZE(cap_)                                               \
-	((this_)->capacity) = MAX(JARR_NEXT_POW2(2 * cap_), JARR_MIN_CAP);      \
+	((this_)->capacity) = JARR_GET_MALLOC_SIZE(cap_);                       \
 	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
 	if (likely((this_)->data)) {                                            \
 		JARR_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__)                \
