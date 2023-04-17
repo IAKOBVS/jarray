@@ -237,11 +237,11 @@
 #endif // __GNUC__ || __clang__
 
 #ifndef MAX
-#	define MAX(a,b) ((a)>(b)?(a):(b))
+#	define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #endif // MAX
 
 #ifndef MIN
-#	define MIN(a,b) ((a)<(b)?(a):(b))
+#	define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #endif // MIN
 
 #define JARR_SIZEOF_T(var) (sizeof(*((var)->data)))
