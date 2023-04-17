@@ -220,9 +220,6 @@
 			JARR_ST_ASSERT(JARR_IS_CHAR(expr), "Not using a char where a char is required!");
 #		define JARR_ST_ASSERT_TYPECHECK(Texpr, expr) JARR_ST_ASSERT(JARR_SAME_TYPE(Texpr, expr), "Passing the wrong data type!");
 #	endif // JARR_HAS_GENERIC
-#	define JARR_MACRO_START (__extension__({
-#	define JARR_MACRO_END ;}))
-#	define JARR_END ;
 #else
 #	define JARR_IS_SIZE(val)
 #	define JARR_IS_STR(val)
@@ -231,9 +228,6 @@
 #	define JARR_ST_ASSERT_STR(expr)
 #	define JARR_ST_ASSERT_CHAR(expr)
 #	define JARR_ST_ASSERT_TYPECHECK(Texpr, expr)
-#	define JARR_MACRO_START (
-#	define JARR_MACRO_END )
-#	define JARR_END ,
 #endif // __GNUC__ || __clang__
 
 #ifndef MAX

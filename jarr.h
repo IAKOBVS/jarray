@@ -286,12 +286,13 @@ do {                                                                \
 		private_jarr_cat_u(this_, (argc), __VA_ARGS__), 1 \
 } while (0)
 
-#define private_jarr_cat(this_, argc, ...)                            \
-JARR_MACRO_START                                                      \
-	(((this_)->size) + argc > ((this_)->capacity))                \
-		? (private_jarr_cat_f(this_, (argc), __VA_ARGS__))    \
-		: (private_jarr_cat_u(this_, (argc), __VA_ARGS__), 1) \
-JARR_MACRO_END
+#define private_jarr_cat(this_, argc, ...)                      \
+do {                                                            \
+	if (((this_)->size) + argc > ((this_)->capacity))       \
+		private_jarr_cat_f(this_, (argc), __VA_ARGS__); \
+	else                                                    \
+		private_jarr_cat_u(this_, (argc), __VA_ARGS__); \
+} while (0)
 
 #define private_cat(F, this_, ...) F(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
