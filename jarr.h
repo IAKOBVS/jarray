@@ -43,8 +43,9 @@
 
 #ifdef JARR_HAS_STATIC_ASSERT
 #	define JARR_ST_ASSERT_SEMICOLON(expr, msg) JARR_ST_ASSERT(expr, msg);
-#	define JARR_IS_T_VA_ARGS(Texpr, ...) PP_IS_T_VA_ARGS(Texpr, __VA_ARGS__);
+#	define JARR_IS_T_VA_ARGS(Texpr, ...) PP_ST_ASSERT_IS_T_VA_ARGS(Texpr, __VA_ARGS__);
 #else
+#	define JARR_ST_ASSERT_SEMICOLON(expr, msg)
 #	define JARR_IS_T_VA_ARGS(Texpr, ...)
 #endif // JARR_HAS_STATIC_ASSERT
 
