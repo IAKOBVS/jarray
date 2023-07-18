@@ -1,5 +1,5 @@
-#ifndef JARR_H_DEF__
-#define JARR_H_DEF__
+#ifndef JARR_H_DEF
+#define JARR_H_DEF
 
 /* rename to the right path */
 
@@ -36,25 +36,25 @@
 #include "macros.h"
 
 #define JARR_ASSERT_HAS_SPACE(jarr) JARR_ASSERT(((jarr)->size) != ((jarr)->capacity));
-#define JARR_ASSERT_NOT_NULL(jarr) JARR_ASSERT(((jarr)->data));
+#define JARR_ASSERT_NOT_NULL(jarr)  JARR_ASSERT(((jarr)->data));
 
-#define JARR_RIGHT_TYPE(T, expr) JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
+#define JARR_RIGHT_TYPE(T, expr)	   JARR_ST_ASSERT_TYPECHECK(*((T)->data), expr);
 #define JARR_IS_SAME_JARR_T(this_, other_) JARR_ST_ASSERT(JARR_SAME_TYPE(((this_)->data), ((other_)->data)), "Passing two jarrays not of same type");
 
 #ifdef JARR_HAS_STATIC_ASSERT
 #	define JARR_ST_ASSERT_SEMICOLON(expr, msg) JARR_ST_ASSERT(expr, msg);
-#	define JARR_IS_T_VA_ARGS(Texpr, ...) PP_ST_ASSERT_IS_T_VA_ARGS(Texpr, __VA_ARGS__);
+#	define JARR_IS_T_VA_ARGS(Texpr, ...)	    PP_ST_ASSERT_IS_T_VA_ARGS(Texpr, __VA_ARGS__);
 #else
 #	define JARR_ST_ASSERT_SEMICOLON(expr, msg)
 #	define JARR_IS_T_VA_ARGS(Texpr, ...)
 #endif // JARR_HAS_STATIC_ASSERT
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define JARR_MIN_CAP 8
+#define JARR_MIN_CAP	8
 #define JARR_MULTIPLIER 2
 
 #define JARR_GET_MALLOC_SIZE(x) (((x) > 4) ? JARR_NEXT_POW2(JARR_MULTIPLIER * (x)) : JARR_MIN_CAP)
@@ -64,7 +64,7 @@
 		size_t size;     \
 		size_t capacity; \
 		T *data;         \
-	} name = {0}
+	} name = { 0 }
 
 #define jarr_static(T, capacity)                  \
 	struct {                                  \
@@ -72,351 +72,348 @@
 		T data[JARR_NEXT_POW2(capacity)]; \
 	}
 
-#define jarr_st_get_cap(jarr_st)           \
-	(sizeof(jarr_st)/sizeof(*(jarr_st)))
+#define jarr_st_get_cap(jarr_st) \
+	(sizeof(jarr_st) / sizeof(*(jarr_st)))
 
-#define jarr_init(this_)         \
-do {                             \
-	((this_)->data) = NULL;  \
-	((this_)->capacity) = 0; \
-	((this_)->size) = 0;     \
-} while (0)
+#define jarr_init(this_)                 \
+	do {                             \
+		((this_)->data) = NULL;  \
+		((this_)->capacity) = 0; \
+		((this_)->size) = 0;     \
+	} while (0)
 
-#define jarr_dealloc(this_)      \
-do {                             \
-	free(((this_)->data));   \
-	((this_)->data) = NULL;  \
-	((this_)->capacity) = 0; \
-	((this_)->size) = 0;     \
-} while (0)
+#define jarr_dealloc(this_)              \
+	do {                             \
+		free(((this_)->data));   \
+		((this_)->data) = NULL;  \
+		((this_)->capacity) = 0; \
+		((this_)->size) = 0;     \
+	} while (0)
 
 #ifdef JSTR_H_DEF__
-#define jarr_of_jstr_dealloc(jarr)                         \
-do {                                                       \
-	for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); \
-			jarr_i__ < jarr_sz__;              \
-			++jarr_i__)                        \
-		jstr_dealloc(&((this_)->data)[jarr_i__]);  \
-	jarr_dealloc(this_);                               \
-} while (0)
+#	define jarr_of_jstr_dealloc(jarr)                                 \
+		do {                                                       \
+			for (int jarr_i__ = 0, jarr_sz__ = ((jarr)->size); \
+			     jarr_i__ < jarr_sz__;                         \
+			     ++jarr_i__)                                   \
+				jstr_dealloc(&((this_)->data)[jarr_i__]);  \
+			jarr_dealloc(this_);                               \
+		} while (0)
 #endif // JSTR_H_DEF__
 
 #define jarr_at(this_jarr, index)             \
-(                                             \
+	(                                     \
 	assert(index <= ((this_jarr)->size)), \
-	(((this_jarr)->data) + index)         \
-)
+	(((this_jarr)->data) + index))
 
-#define jarr_alloc(this_, cap_)                                               \
-do {                                                                          \
-	JARR_ST_ASSERT_SIZE(cap_)                                             \
-	((this_)->size) = 0;                                                  \
-	((this_)->capacity) = JARR_GET_MALLOC_SIZE(cap_);                     \
-	((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
-	if (unlikely(!((this_)->data)))                                       \
-		((this_)->capacity) = 0;                                      \
-} while (0)
+#define jarr_alloc(this_, cap_)                                                       \
+	do {                                                                          \
+		JARR_ST_ASSERT_SIZE(cap_)                                             \
+		((this_)->size) = 0;                                                  \
+		((this_)->capacity) = JARR_GET_MALLOC_SIZE(cap_);                     \
+		((this_)->data) = malloc(((this_)->capacity) * JARR_SIZEOF_T(this_)); \
+		if (unlikely(!((this_)->data)))                                       \
+			((this_)->capacity) = 0;                                      \
+	} while (0)
 
-#define jarr_alloc_cat(this_, ...)                                    \
+#define jarr_alloc_cat(this_, ...) \
 	jarr_alloc_cat_wcap(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarr_alloc_cat_wcap(this_, cap_, ...)                                   \
-do {                                                                            \
-	JARR_ST_ASSERT_SIZE(cap_)                                               \
-	((this_)->capacity) = JARR_GET_MALLOC_SIZE(cap_);                       \
-	((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
-	if (likely((this_)->data)) {                                            \
-		JARR_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__)                \
-		(PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__));                \
-		((this_)->size) = PP_NARG(__VA_ARGS__);                         \
-	} else {                                                                \
-		((this_)->size) = 0;                                            \
-		((this_)->capacity) = 0;                                        \
-	}                                                                       \
-} while (0)
+#define jarr_alloc_cat_wcap(this_, cap_, ...)                                           \
+	do {                                                                            \
+		JARR_ST_ASSERT_SIZE(cap_)                                               \
+		((this_)->capacity) = JARR_GET_MALLOC_SIZE(cap_);                       \
+		((this_)->data) = malloc((((this_)->capacity)) * JARR_SIZEOF_T(this_)); \
+		if (likely((this_)->data)) {                                            \
+			JARR_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__)                \
+			(PP_LOOP_FROM(((this_)->data), 0, __VA_ARGS__));                \
+			((this_)->size) = PP_NARG(__VA_ARGS__);                         \
+		} else {                                                                \
+			((this_)->size) = 0;                                            \
+			((this_)->capacity) = 0;                                        \
+		}                                                                       \
+	} while (0)
 
-#define jarr_reserve_f_exact(this_, cap_)                                              \
-do {                                                                                   \
-	JARR_ST_ASSERT_SIZE(cap_)                                                      \
-	((this_)->capacity) = (cap_);                                                  \
-	((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
-	if (unlikely(!((this_)->data))) {                                              \
-		((this_)->size) = 0;                                                   \
-		((this_)->capacity) = 0;                                               \
-	}                                                                              \
-} while (0)
+#define jarr_reserve_f_exact(this_, cap_)                                                      \
+	do {                                                                                   \
+		JARR_ST_ASSERT_SIZE(cap_)                                                      \
+		((this_)->capacity) = (cap_);                                                  \
+		((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
+		if (unlikely(!((this_)->data))) {                                              \
+			((this_)->size) = 0;                                                   \
+			((this_)->capacity) = 0;                                               \
+		}                                                                              \
+	} while (0)
 
-#define jarr_reserve_f(this_, cap_)                                                    \
-do {                                                                                   \
-	JARR_ST_ASSERT_SIZE(cap_)                                                      \
-	do {                                                                           \
-		((this_)->capacity) *= JARR_MULTIPLIER;                                \
-	} while (((this_)->capacity) < cap_);                                          \
-	((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
-	if (unlikely(!((this_)->data))) {                                              \
-		((this_)->size) = 0;                                                   \
-		((this_)->capacity) = 0;                                               \
-	}                                                                              \
-} while (0)
+#define jarr_reserve_f(this_, cap_)                                                            \
+	do {                                                                                   \
+		JARR_ST_ASSERT_SIZE(cap_)                                                      \
+		do {                                                                           \
+			((this_)->capacity) *= JARR_MULTIPLIER;                                \
+		} while (((this_)->capacity) < cap_);                                          \
+		((this_)->data) = realloc(((this_)->data), (cap_) * sizeof(*((this_)->data))); \
+		if (unlikely(!((this_)->data))) {                                              \
+			((this_)->size) = 0;                                                   \
+			((this_)->capacity) = 0;                                               \
+		}                                                                              \
+	} while (0)
 
-#define jarr_reserve(this_, cap_)            \
-do {                                         \
-	JARR_ST_ASSERT_SIZE(cap_)            \
-	if ((cap_) > ((this_)->capacity))    \
-		jarr_reserve_f(this_, cap_); \
-} while (0)
+#define jarr_reserve(this_, cap_)                    \
+	do {                                         \
+		JARR_ST_ASSERT_SIZE(cap_)            \
+		if ((cap_) > ((this_)->capacity))    \
+			jarr_reserve_f(this_, cap_); \
+	} while (0)
 
-#define private_jarr_reserve_x(this_, multiplier)                         \
+#define private_jarr_reserve_x(this_, multiplier) \
 	jarr_reserve_f_exact(this_, ((multiplier) * ((this_)->capacity)))
 
-#define jarr_reserve_2x(this_) private_jarr_reserve_x(this_, 2)
-#define jarr_reserve_4x(this_) private_jarr_reserve_x(this_, 4)
-#define jarr_reserve_8x(this_) private_jarr_reserve_x(this_, 8)
+#define jarr_reserve_2x(this_)	private_jarr_reserve_x(this_, 2)
+#define jarr_reserve_4x(this_)	private_jarr_reserve_x(this_, 4)
+#define jarr_reserve_8x(this_)	private_jarr_reserve_x(this_, 8)
 #define jarr_reserve_16x(this_) private_jarr_reserve_x(this_, 16)
 #define jarr_reserve_32x(this_) private_jarr_reserve_x(this_, 32)
 #define jarr_reserve_64x(this_) private_jarr_reserve_x(this_, 64)
 
-#define jarr_shrink_to_fit_f(this_)                  \
-	jarr_reserve_f_exact(this_, ((this_)->size)) \
+#define jarr_shrink_to_fit_f(this_) \
+	jarr_reserve_f_exact(this_, ((this_)->size))
 
-#define jarr_shrink_to_fit(this_)                           \
-do {                                                        \
-	if (likely(((this_)->capacity) != ((this_)->size))) \
-		jarr_shrink_to_fit_f(this_)                 \
-} while (0)
+#define jarr_shrink_to_fit(this_)                                   \
+	do {                                                        \
+		if (likely(((this_)->capacity) != ((this_)->size))) \
+			jarr_shrink_to_fit_f(this_)                 \
+	} while (0)
 
 #define jarr_shrink_to_size_f(this_, size_) \
-(void)(                                     \
-	((this_)->size) = size_             \
-)
+	(void)(((this_)->size) = size_)
 
-#define jarr_shrink_to_size(this_, size_)            \
-do {                                                 \
-	if (size_ < ((this_)->size))                 \
-		jarr_shrink_to_size_f(this_, size_); \
-} while (0)
+#define jarr_shrink_to_size(this_, size_)                    \
+	do {                                                 \
+		if (size_ < ((this_)->size))                 \
+			jarr_shrink_to_size_f(this_, size_); \
+	} while (0)
 
-#define jarr_shrink_to_f(this_, cap_)      \
-do {                                       \
-	JARR_ST_ASSERT_SIZE(cap_)          \
-	jarr_reserve_f_exact(this_, cap_); \
-	if (likely((this_)->data))         \
-		((this_)->size) = cap;     \
-} while (0)
+#define jarr_shrink_to_f(this_, cap_)              \
+	do {                                       \
+		JARR_ST_ASSERT_SIZE(cap_)          \
+		jarr_reserve_f_exact(this_, cap_); \
+		if (likely((this_)->data))         \
+			((this_)->size) = cap;     \
+	} while (0)
 
-#define jarr_shrink_to(this_, cap_)            \
-do {                                           \
-	JARR_ST_ASSERT_SIZE(cap_)              \
-	if (cap < ((this_)->size))             \
-		jarr_shrink_to_f(this_, cap_); \
-} while (0)
+#define jarr_shrink_to(this_, cap_)                    \
+	do {                                           \
+		JARR_ST_ASSERT_SIZE(cap_)              \
+		if (cap < ((this_)->size))             \
+			jarr_shrink_to_f(this_, cap_); \
+	} while (0)
 
-#define jarr_push_back_u(this_, value)                \
-do {                                                  \
-	JARR_RIGHT_TYPE(this_, value)                 \
-	(((this_)->data)[((this_)->size)++] = value); \
-} while (0)
+#define jarr_push_back_u(this_, value)                        \
+	do {                                                  \
+		JARR_RIGHT_TYPE(this_, value)                 \
+		(((this_)->data)[((this_)->size)++] = value); \
+	} while (0)
 
-#define jarr_push_back_f(this_, value)                        \
-do {                                                          \
-	jarr_reserve_f_exact(this_, ((this_)->capacity) * 2); \
-	if (likely(((this_)->data)))                          \
-		jarr_push_back_u(this_, value);               \
-} while (0)
+#define jarr_push_back_f(this_, value)                                \
+	do {                                                          \
+		jarr_reserve_f_exact(this_, ((this_)->capacity) * 2); \
+		if (likely(((this_)->data)))                          \
+			jarr_push_back_u(this_, value);               \
+	} while (0)
 
-#define jarr_push_back(this_, value)               \
-do {                                               \
-	if (((this_)->capacity) > ((this_)->size)) \
-		 jarr_push_back_u(this_, value);   \
-	else                                       \
-		jarr_push_back_f(this_, value);    \
-} while (0)
+#define jarr_push_back(this_, value)                       \
+	do {                                               \
+		if (((this_)->capacity) > ((this_)->size)) \
+			jarr_push_back_u(this_, value);    \
+		else                                       \
+			jarr_push_back_f(this_, value);    \
+	} while (0)
 
 #define jarr_st_push_back(this_, value) \
-JARR_MACRO_START                        \
+	JARR_MACRO_START                \
 	JARR_RIGHT_TYPE(this_, value)   \
 	jarr_push_back_u(this_, value)  \
-JARR_MACRO_END
+	JARR_MACRO_END
 
-#define jarr_append_arr(dest, src, src_size)                                                           \
-do {                                                                                                   \
-	JARR_IS_SAME_JARR_T(dest, src)                                                                 \
-	JARR_ST_ASSERT_SEMICOLON(sizeof(dest) == sizeof(src), "Passing jarrays not of the same type!") \
-	if (((dest)->size) + (src_size) > ((dest)->capacity)) {                                        \
-		jarr_reserve_f(dest, ((dest)->size) + (src_size));                                     \
-		if (likely(((this_)->data))) {                                                         \
-			memcpy(((dest)->data), src, sizeof(src));                                      \
-			((dest)->size) += (src_size);                                                  \
-		}                                                                                      \
-	} else {                                                                                       \
-		memcpy(((dest)->data), src, sizeof(src));                                              \
-		((dest)->size) += (src_size);                                                          \
-	}                                                                                              \
-} while (0)
+#define jarr_append_arr(dest, src, src_size)                                                                   \
+	do {                                                                                                   \
+		JARR_IS_SAME_JARR_T(dest, src)                                                                 \
+		JARR_ST_ASSERT_SEMICOLON(sizeof(dest) == sizeof(src), "Passing jarrays not of the same type!") \
+		if (((dest)->size) + (src_size) > ((dest)->capacity)) {                                        \
+			jarr_reserve_f(dest, ((dest)->size) + (src_size));                                     \
+			if (likely(((this_)->data))) {                                                         \
+				memcpy(((dest)->data), src, sizeof(src));                                      \
+				((dest)->size) += (src_size);                                                  \
+			}                                                                                      \
+		} else {                                                                                       \
+			memcpy(((dest)->data), src, sizeof(src));                                              \
+			((dest)->size) += (src_size);                                                          \
+		}                                                                                              \
+	} while (0)
 
-#define jarr_append_jarr(dest, src)                                                                          \
-do {                                                                                                         \
-	JARR_IS_SAME_JARR_T(dest, src)                                                                       \
-	JARR_ST_ASSERT_SEMICOLON(sizeof(*(dest)) == sizeof(*(src)), "Passing jarrays not of the same type!") \
-	if (((dest)->size) + ((src)->size) > ((dest)->capacity)) {                                           \
-		jarr_reserve_f(dest, ((dest)->size) + ((src)->size));                                        \
-		if (likely(((dest)->data))) {                                                                \
-			memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data)));       \
-			((dest)->size) += ((src)->size);                                                     \
-		}                                                                                            \
-	} else {                                                                                             \
-		(memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data))),              \
-		((dest)->size) += ((src)->size));                                                            \
-	}                                                                                                    \
-} while (0)
+#define jarr_append_jarr(dest, src)                                                                                  \
+	do {                                                                                                         \
+		JARR_IS_SAME_JARR_T(dest, src)                                                                       \
+		JARR_ST_ASSERT_SEMICOLON(sizeof(*(dest)) == sizeof(*(src)), "Passing jarrays not of the same type!") \
+		if (((dest)->size) + ((src)->size) > ((dest)->capacity)) {                                           \
+			jarr_reserve_f(dest, ((dest)->size) + ((src)->size));                                        \
+			if (likely(((dest)->data))) {                                                                \
+				memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data)));       \
+				((dest)->size) += ((src)->size);                                                     \
+			}                                                                                            \
+		} else {                                                                                             \
+			(memcpy(((dest)->data), ((src)->data), ((src)->size) * sizeof(*((src)->data))),              \
+			 ((dest)->size) += ((src)->size));                                                           \
+		}                                                                                                    \
+	} while (0)
 
-#define private_jarr_cat_u(this_, argc, ...)                         \
-do {                                                                 \
-	JARR_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__)             \
-	PP_LOOP_FROM(((this_)->data), ((this_)->size), __VA_ARGS__), \
-	(((this_)->size) += argc)                                    \
-} while (0)
+#define private_jarr_cat_u(this_, argc, ...)                                 \
+	do {                                                                 \
+		JARR_IS_T_VA_ARGS(*((this_)->data), __VA_ARGS__)             \
+		PP_LOOP_FROM(((this_)->data), ((this_)->size), __VA_ARGS__), \
+		(((this_)->size) += argc)                                    \
+	} while (0)
 
-#define jarr_st_cat(jarr_st, ...)                                      \
+#define jarr_st_cat(jarr_st, ...) \
 	private_jarr_cat_u(jarr_st, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define private_jarr_cat_f(this_, argc, ...)                        \
-do {                                                                \
-	if (jarr_reserve_f(this_, ((this_)->size) + (argc)))        \
-		private_jarr_cat_u(this_, (argc), __VA_ARGS__), 1 \
-} while (0)
+#define private_jarr_cat_f(this_, argc, ...)                              \
+	do {                                                              \
+		if (jarr_reserve_f(this_, ((this_)->size) + (argc)))      \
+			private_jarr_cat_u(this_, (argc), __VA_ARGS__), 1 \
+	} while (0)
 
-#define private_jarr_cat(this_, argc, ...)                      \
-do {                                                            \
-	if (((this_)->size) + argc > ((this_)->capacity))       \
-		private_jarr_cat_f(this_, (argc), __VA_ARGS__); \
-	else                                                    \
-		private_jarr_cat_u(this_, (argc), __VA_ARGS__); \
-} while (0)
+#define private_jarr_cat(this_, argc, ...)                              \
+	do {                                                            \
+		if (((this_)->size) + argc > ((this_)->capacity))       \
+			private_jarr_cat_f(this_, (argc), __VA_ARGS__); \
+		else                                                    \
+			private_jarr_cat_u(this_, (argc), __VA_ARGS__); \
+	} while (0)
 
 #define private_cat(F, this_, ...) F(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
-#define jarr_cat(this_, ...) private_jarr_cat(this_, PP_NARG(__VVA_ARGS__), __VA_ARGS__)
+#define jarr_cat(this_, ...)   private_jarr_cat(this_, PP_NARG(__VVA_ARGS__), __VA_ARGS__)
 #define jarr_cat_u(this_, ...) private_jarr_cat_u(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #define jarr_cat_f(this_, ...) private_jarr_cat_f(this_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 
 #ifdef JARR_HAS_TYPEOF
 
-#define jarr_swap(this_, other_)                                                                            \
-do {                                                                                                        \
-	JARR_ST_ASSERT_SEMICOLON(sizeof(this_) == sizeof(other_), "Passing jarrays not of the same type!")  \
-	JARR_IS_SAME_JARR_T(this_, other_)                                                                  \
-	size_t tmp_size = ((this_)->size);                                                                  \
-	size_t tmp_cap = ((this_)->capacity);                                                               \
-	typeof(((this_)->data)) tmp_data = ((this_)->data);                                                 \
-                                                                                                            \
-	((this_)->size) = ((other_)->size);                                                                 \
-	((this_)->capacity) = ((other_)->capacity);                                                         \
-	((this_)->data) = ((other_)->data);                                                                 \
-                                                                                                            \
-	((other_)->size) = tmp_size;                                                                        \
-	((other_)->capacity) = tmp_cap;                                                                     \
-	((other_)->data) = tmp_data;                                                                        \
-} while (0)
+#	define jarr_swap(this_, other_)                                                                                   \
+		do {                                                                                                       \
+			JARR_ST_ASSERT_SEMICOLON(sizeof(this_) == sizeof(other_), "Passing jarrays not of the same type!") \
+			JARR_IS_SAME_JARR_T(this_, other_)                                                                 \
+			size_t tmp_size = ((this_)->size);                                                                 \
+			size_t tmp_cap = ((this_)->capacity);                                                              \
+			typeof(((this_)->data)) tmp_data = ((this_)->data);                                                \
+                                                                                                                           \
+			((this_)->size) = ((other_)->size);                                                                \
+			((this_)->capacity) = ((other_)->capacity);                                                        \
+			((this_)->data) = ((other_)->data);                                                                \
+                                                                                                                           \
+			((other_)->size) = tmp_size;                                                                       \
+			((other_)->capacity) = tmp_cap;                                                                    \
+			((other_)->data) = tmp_data;                                                                       \
+		} while (0)
 
 #else
 
-#define jarr_swap(this_, other_)                                                                           \
-do {                                                                                                       \
-	JARR_ST_ASSERT_SEMICOLON(sizeof(this_) == sizeof(other_), "Passing jarrays not of the same type!") \
-	JARR_IS_SAME_JARR_T(this_, other_)                                                                 \
-	private_jarr_swap(&((this_)->data),                                                                \
-			  &((this_)->capacity),                                                            \
-			  &((this_)->size),                                                                \
-			  &((other_)->data),                                                               \
-			  &((other_)->capacity),                                                           \
-			  &((other_)->size))                                                               \
-} while (0)
+#	define jarr_swap(this_, other_)                                                                                   \
+		do {                                                                                                       \
+			JARR_ST_ASSERT_SEMICOLON(sizeof(this_) == sizeof(other_), "Passing jarrays not of the same type!") \
+			JARR_IS_SAME_JARR_T(this_, other_)                                                                 \
+			private_jarr_swap(&((this_)->data),                                                                \
+					  &((this_)->capacity),                                                            \
+					  &((this_)->size),                                                                \
+					  &((other_)->data),                                                               \
+					  &((other_)->capacity),                                                           \
+					  &((other_)->size))                                                               \
+		} while (0)
 
 #endif // JARR_HAS_TYPEOF
 
 #define jarr_pop_back(this_) (--((this_)->size))
 
-#define jarr_pop_front(this_)                                            \
+#define jarr_pop_front(this_) \
 	memmove(((this_)->data), ((this_)->data + 1), --((this_)->size))
 
-#define jarr_push_front_u(this_, value)                                   \
-do {                                                                      \
-	JARR_RIGHT_TYPE(this_, value)                                     \
-	memmove(((this_)->data) + 1, ((this_)->data), ((this_)->size)++); \
-	(*(((this_)->data)) = value);                                     \
-} while (0)
+#define jarr_push_front_u(this_, value)                                           \
+	do {                                                                      \
+		JARR_RIGHT_TYPE(this_, value)                                     \
+		memmove(((this_)->data) + 1, ((this_)->data), ((this_)->size)++); \
+		(*(((this_)->data)) = value);                                     \
+	} while (0)
 
+#define jarr_push_front_f(this_, value)                  \
+	do {                                             \
+		JARR_RIGHT_TYPE(this_, value)            \
+		if (likely(jarr_reserve_2x(this_)))      \
+			jarr_push_front_u(this_, value); \
+	} while (0)
 
-#define jarr_push_front_f(this_, value)          \
-do {                                             \
-	JARR_RIGHT_TYPE(this_, value)            \
-	if (likely(jarr_reserve_2x(this_)))      \
-		jarr_push_front_u(this_, value); \
-} while (0)
-
-#define jarr_push_front(this_, value)                         \
-do {                                                          \
-	JARR_RIGHT_TYPE(this_, value)                         \
-	if (unlikely(((this_)->capacity) == ((this_)->size))) \
-		jarr_push_front_f(this_, value);              \
-	else                                                  \
-		jarr_push_front_u(this_, value);              \
-} while (0)
+#define jarr_push_front(this_, value)                                 \
+	do {                                                          \
+		JARR_RIGHT_TYPE(this_, value)                         \
+		if (unlikely(((this_)->capacity) == ((this_)->size))) \
+			jarr_push_front_f(this_, value);              \
+		else                                                  \
+			jarr_push_front_u(this_, value);              \
+	} while (0)
 
 #define jarr_cmp_f(dest, src)                                   \
-JARR_MACRO_START                                                \
+	JARR_MACRO_START                                        \
 	JARR_IS_SAME_JARR_T(dest, src)                          \
 	(memcmp(((dest)->data), ((src)->data), ((dest)->size))) \
-JARR_MACRO_END
+	JARR_MACRO_END
 
 #define jarr_cmp(dest, src)               \
-JARR_MACRO_START                          \
+	JARR_MACRO_START                  \
 	JARR_IS_SAME_JARR_T(dest, src)    \
 	(((dest)->size) != ((src)->size)) \
-	|| cmp_f(dest, src)               \
-JARR_MACRO_END
+	|| jarr_cmp_f(dest, src)          \
+	JARR_MACRO_END
 
-#define jarr_foreach_index(elem, this_)                      \
+#define jarr_foreach_index(elem, this_)                     \
 	for (size_t elem = 0, jarr_size_ = ((this_)->size); \
-		elem < jarr_size_; ++elem)
+	     elem < jarr_size_;                             \
+	     ++elem)
 
-#define jarr_foreach(elem, this_)                              \
-	for (typeof(*((this_)->data)) *elem = ((this_)->data), \
-	*const jarr_end__ = ((this_)->data) + ((this_)->size); \
-		elem < jarr_end__;                             \
-			++elem)
+#define jarr_foreach(elem, this_)                                                            \
+	for (typeof(*((this_)->data)) *elem = ((this_)->data),                               \
+				      *const jarr_end__ = ((this_)->data) + ((this_)->size); \
+	     elem < jarr_end__;                                                              \
+	     ++elem)
 
-#define jarr_st_foreach(elem, arr)                       \
-	for (typeof(*(arr)) *elem = (arr),               \
-	*const jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
-		elem < jarr_end__;                       \
-		++elem)
+#define jarr_st_foreach(elem, arr)                                           \
+	for (typeof(*(arr)) *elem = (arr),                                   \
+			    *const jarr_end__ = (&(JARR_SIZEOF_ARR((arr)))); \
+	     elem < jarr_end__;                                              \
+	     ++elem)
 
-#define jarr_foreach_cout(elem, this_)             \
+#define jarr_foreach_cout(elem, this_) \
 	jarr_foreach(elem, this_) pp_cout(*(elem))
 
-#define jarr_begin(this_) ((this_)->data)
-#define jarr_end(this_) (((this_)->data) + ((this_)->size))
+#define jarr_begin(this_)  ((this_)->data)
+#define jarr_end(this_)	   (((this_)->data) + ((this_)->size))
 #define jarr_cbegin(this_) private_jarr_constify(((this_)->data))
-#define jarr_cend(this_) private_jarr_constify(((this_)->data) + ((this_)->size))
+#define jarr_cend(this_)   private_jarr_constify(((this_)->data) + ((this_)->size))
 
 #ifdef JARR_HAS_TYPEOF
 #	define jarr_typeof_data(this_) typeof(((this_)->data))
-#	define jarr_typeof(this_) typeof(((this_)))
+#	define jarr_typeof(this_)	typeof(((this_)))
 #endif // JARR_HAS_TYPEOF
 
-JARR_INLINE__
-static void private_jarr_swap(void **JARR_RESTRICT__ data,
-			size_t *JARR_RESTRICT__ cap,
-			size_t *JARR_RESTRICT__ size,
-			void **JARR_RESTRICT__ other_data,
-			size_t *JARR_RESTRICT__ other_cap,
-			size_t *JARR_RESTRICT__ other_size) JARR_NOEXCEPT__
+JARR_INLINE
+static void private_jarr_swap(void **JARR_RESTRICT data,
+			      size_t *JARR_RESTRICT cap,
+			      size_t *JARR_RESTRICT size,
+			      void **JARR_RESTRICT other_data,
+			      size_t *JARR_RESTRICT other_cap,
+			      size_t *JARR_RESTRICT other_size) JARR_NOEXCEPT
 {
 	const size_t tmp_size = *size;
 	const size_t tmp_cap = *cap;
-	void *JARR_RESTRICT__ const tmp_data = *data;
+	void *JARR_RESTRICT const tmp_data = *data;
 	*size = *other_size;
 	*cap = *other_cap;
 	*data = *other_data;
@@ -425,9 +422,9 @@ static void private_jarr_swap(void **JARR_RESTRICT__ data,
 	*other_data = tmp_data;
 }
 
-JARR_INLINE__
+JARR_INLINE
 JARR_WARN_UNUSED
-JARR_CONST__
-static const void *private_jarr_constify(const void *data) JARR_NOEXCEPT__ { return data; }
+JARR_CONST
+static const void *private_jarr_constify(const void *data) JARR_NOEXCEPT { return data; }
 
-#endif // JARR_H_DEF__
+#endif // JARR_H_DEF

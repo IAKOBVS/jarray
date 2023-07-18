@@ -1,5 +1,5 @@
-#ifndef JARR_MACROS_H_DEF__
-#define JARR_MACROS_H_DEF__
+#ifndef JARR_MACROS_H_DEF
+#define JARR_MACROS_H_DEF
 
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) || defined(__GNUC__) && (__GNUC__ >= 4 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 #	define JARR_WARN_UNUSED __attribute__((warn_unused_result))
@@ -38,13 +38,13 @@
 #endif // JARR_ALIGN_POWER_OF_TWO
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#	define JARR_RESTRICT__ restrict
+#	define JARR_RESTRICT restrict
 #elif defined(__GNUC__) || defined(__clang__)
-#	define JARR_RESTRICT__ __restrict__
+#	define JARR_RESTRICT __restrict__
 #elif defined(_MSC_VER)
-#	define JARR_RESTRICT__ __restrict
+#	define JARR_RESTRICT __restrict
 #else
-#	define JARR_RESTRICT__
+#	define JARR_RESTRICT
 #endif // restrict
 
 #if defined(__PRETTY_FUNCTION__)
@@ -66,40 +66,40 @@
 #endif // __has_builtin(__builtin_expect)
 
 #if defined(__GNUC__) || defined(__clang__)
-#	define JARR_INLINE__ __attribute__((always_inline)) inline
+#	define JARR_INLINE __attribute__((always_inline)) inline
 #	if __has_attribute(pure)
-#		define JARR_PURE__ __attribute__((pure))
+#		define JARR_PURE __attribute__((pure))
 #	else
-#		define JARR_PURE__
-#	endif // JARR_PURE__
+#		define JARR_PURE
+#	endif // JARR_PURE
 #	if __has_attribute(const)
-#		define JARR_CONST__ __attribute__((const))
+#		define JARR_CONST __attribute__((const))
 #	else
-#		define JARR_CONST__
-#	endif // JARR_CONST__
+#		define JARR_CONST
+#	endif // JARR_CONST
 #	if __has_attribute(flatten)
-#		define JARR_FLATTEN__ __attribute__((flatten))
+#		define JARR_FLATTEN __attribute__((flatten))
 #	else
-#		define JARR_FLATTEN__
-#	endif // JARR_FLATTEN__
+#		define JARR_FLATTEN
+#	endif // JARR_FLATTEN
 #elif defined(_MSC_VER)
-#	define JARR_INLINE__ __forceinline inline
-#	define JARR_PURE__ __declspec(noalias)
-#	define JARR_CONST__ __declspec(restrict)
-#	define JARR_FLATTEN__
+#	define JARR_INLINE __forceinline inline
+#	define JARR_PURE __declspec(noalias)
+#	define JARR_CONST __declspec(restrict)
+#	define JARR_FLATTEN
 #else
-#	define JARR_INLINE__ inline
-#	define JARR_PURE__
-#	define JARR_CONST__
-#	define JARR_FLATTEN__
+#	define JARR_INLINE inline
+#	define JARR_PURE
+#	define JARR_CONST
+#	define JARR_FLATTEN
 #endif // __GNUC__ || __clang__ || _MSC_VER
 
 #if defined(__GNUC__) || defined(__clang__)
 #	include <stdint.h>
 #	if __has_builtin(__builtin_clzll) && defined(JARR_64_BIT)
 
-		JARR_CONST__
-		JARR_INLINE__
+		JARR_CONST
+		JARR_INLINE
 		uint64_t private_jarr_next_pow2_64(uint64_t x)
 		{
 			return 1ull << (64 - __builtin_clzll(x - 1));
@@ -108,8 +108,8 @@
 #	endif // __has_builtin(__builtin_clzll)
 #	if __has_builtin(__builtin_clz) && defined(JARR_32_BIT)
 
-		JARR_CONST__
-		JARR_INLINE__
+		JARR_CONST
+		JARR_INLINE
 		uint32_t private_jarr_next_pow2_32(uint32_t x)
 		{
 			return 1u << (32 - __builtin_clz(x - 1));
@@ -122,7 +122,7 @@
 #	pragma intrinsic(_BitScanReverse64)
 
 #ifdef JARR_32_BIT
-	JARR_CONST__ JARR_INLINE__ uint32_t private_jarr_next_pow2_32(uint32_t x)
+	JARR_CONST JARR_INLINE uint32_t private_jarr_next_pow2_32(uint32_t x)
 	{
 		unsigned long index;
 		_BitScanReverse(&index, x - 1);
@@ -131,7 +131,7 @@
 #endif // JARR_32_BIT
 
 #ifdef JARR_64_BIT
-	JARR_CONST__ JARR_INLINE__ uint64_t private_jarr_next_pow2_64(uint64_t x)
+	JARR_CONST JARR_INLINE uint64_t private_jarr_next_pow2_64(uint64_t x)
 	{
 		unsigned long index;
 		_BitScanReverse64(&index, x - 1);
@@ -143,7 +143,7 @@
 #	include <stddef.h>
 
 #ifdef JARR_32_BIT
-	JARR_CONST__ JARR_INLINE__ size_t private_jarr_next_pow2_32(size_t x)
+	JARR_CONST JARR_INLINE size_t private_jarr_next_pow2_32(size_t x)
 	{
 		--x;
 		x |= x >> 1;
@@ -156,7 +156,7 @@
 #endif // JARR_32_BIT
 
 #ifdef JARR_64_BIT
-	JARR_CONST__ JARR_INLINE__ size_t private_jarr_next_pow2_64(size_t x)
+	JARR_CONST JARR_INLINE size_t private_jarr_next_pow2_64(size_t x)
 	{
 		--x;
 		x |= x >> 1;
@@ -242,9 +242,9 @@
 #define JARR_SIZEOF_ARR(arr) (sizeof(arr)/sizeof(*(arr)))
 
  #ifdef __cplusplus
-#	define JARR_NOEXCEPT__ noexcept
+#	define JARR_NOEXCEPT noexcept
 #else
-#	define JARR_NOEXCEPT__
+#	define JARR_NOEXCEPT
 #endif // __cplusplus
 
-#endif // JARR_MACROS_H_DEF__
+#endif // JARR_MACROS_H_DEF
