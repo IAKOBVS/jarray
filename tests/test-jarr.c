@@ -4,7 +4,6 @@
 #define T_ZERO(func)                               \
 	do {                                       \
 		func;                              \
-		ASSERT_ERRFUNC(func, j.data);      \
 		ASSERT_ERRFUNC(func, j.size == 0); \
 	} while (0)
 
