@@ -93,16 +93,10 @@ PJARR_END_DECLS
 #	define JARR_ATTR_MAYBE_UNUSED __attribute__((__unused__))
 #endif
 
-#ifdef __cplusplus
-#	define JARR_INIT \
-		{         \
-		}
-#else
-#	define JARR_INIT \
-		{         \
-			0 \
-		}
-#endif
+#define JARR_INIT       \
+	{               \
+		0, 0, 0 \
+	}
 
 #define jarr_ty(T, name)                   \
 	typedef struct pjarr_##name##_ty { \
