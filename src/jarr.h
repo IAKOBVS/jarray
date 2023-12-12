@@ -39,6 +39,8 @@ PJARR_BEGIN_DECLS
 #include <errno.h>
 PJARR_END_DECLS
 
+#define JARR_PANIC 0
+
 #define JARR_MIN_CAP            ((sizeof(size_t) == 8) ? 24 : 16)
 #define JARR_MALLOC_ALIGNMENT   (sizeof(size_t) + sizeof(size_t))
 #define JARR_ARRAY_COUNT(array) (sizeof(array) / sizeof(array[0]))
