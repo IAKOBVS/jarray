@@ -44,7 +44,7 @@ PJARR_END_DECLS
 #define JARR_MIN_CAP            ((sizeof(size_t) == 8) ? 24 : 16)
 #define JARR_MALLOC_ALIGNMENT   (sizeof(size_t) + sizeof(size_t))
 #define JARR_ARRAY_COUNT(array) (sizeof(array) / sizeof(array[0]))
-#define JARR_GROWTH             1.5
+#define JARR_GROWTH             2
 
 #define JARR_ALIGN_DOWN(base, size)     ((base) & -((uintptr_t)(size)))
 #define JARR_ALIGN_UP(base, size)       JARR_ALIGN_DOWN((base) + (size)-1, (size))
